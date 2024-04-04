@@ -1,6 +1,8 @@
 import Phaser from "phaser";
+import Station from "./station";
 
 export default class Ingredient extends Phaser.GameObjects.Sprite {
+    station: Station | null;
     name: string;
 
     constructor(
@@ -36,6 +38,10 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
 
     dragLeave() {
         this.setScale(0.3);
+        if (this.station) {
+            this.station.ingredient = null;
+            this.station = null;
+        }
     }
 
     drag(pointer: Phaser.Input.Pointer) {
@@ -47,8 +53,10 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
         this.setScale(0.2);
     }
 
-    drop(ingrd: Ingredient, target: Phaser.GameObjects.Zone) {
+    drop(ingrd: Ingredient, target: Station) {
         if (target.name === "station") {
+            this.station = target;
+            target.ingredient = this;
             this.setPosition(target.x, target.y);
         }
     }
