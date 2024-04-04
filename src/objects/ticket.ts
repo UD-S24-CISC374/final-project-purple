@@ -22,6 +22,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             .setDepth(0)
             .setInteractive({ draggable: true })
             .setName("tricket")
+            // attach input events
             .on("pointerover", this.showDetails)
             .on("pointerout", this.hideDetails)
             .on("drag", this.drag)
@@ -47,14 +48,16 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     }
 
     dragStart() {
+        // when the user starts dragging
         this.setScale(0.6);
         this.depth = 2;
     }
 
     dragEnd() {
+        // when the user releases the ticket
         this.setScale(0.5);
         this.depth = 0;
-
+        // snap back to holder
         if (this.holder.name === "holder") {
             this.setPosition(this.holder.x, this.holder.y + 60);
         } else if (this.holder.name === "current") {
@@ -63,18 +66,20 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     }
 
     dragEnter(ticket: Ticket, target: TicketHolder | CurrentOrder) {
+        // make ticket bigger when above a droppable area
         console.log(`Entering ${target.name}`);
-        this.setScale(0.7);
+        target.ticket ? null : this.setScale(0.7);
     }
 
     dragLeave(ticket: Ticket, target: TicketHolder | CurrentOrder) {
         console.log(`Leaving ${target.name}`);
+        // shrink back down to slight increase in scale when leaving droppable area
         this.setScale(0.6);
     }
 
     drop(ticket: Ticket, target: TicketHolder | CurrentOrder) {
         if (target.ticket) {
-            // holder is occupied
+            // if holder is occupied, just end the drag event
             this.dragEnd();
             return;
         }
