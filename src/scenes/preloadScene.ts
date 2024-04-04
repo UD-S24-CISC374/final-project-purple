@@ -12,6 +12,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("career", "assets/gui/career.png");
         this.load.image("exit", "assets/gui/exit.png");
         this.load.image("milk", "assets/img/milk.png");
+        this.load.image("timer", "assets/img/timer.png");
+        this.load.image("inside-fridge", "assets/img/inside-fridge.png");
     }
 
     create() {
