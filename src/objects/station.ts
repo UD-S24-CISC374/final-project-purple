@@ -18,9 +18,10 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
         this.setDropZone().setName("station");
         scene.add.rectangle(x, y, width, height, 0xff0000).setAlpha(0.4);
         scene.add.existing(this);
+
         this.timer = scene.add
             .sprite(x, y - 30, "timer")
-            .setScale(0.3)
+            .setScale(5)
             .setAlpha(0)
             .setDepth(3);
         scene.events.on("update", this.update, this);
@@ -28,9 +29,9 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
 
     update() {
         if (this.ingredient) {
-            this.timer.setAlpha(1);
+            this.timer.setAlpha(1).anims.play("countdown-timer", true);
         } else {
-            this.timer.setAlpha(0);
+            this.timer.setAlpha(0).anims.stop();
         }
     }
 }
