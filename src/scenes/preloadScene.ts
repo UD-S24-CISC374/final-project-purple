@@ -14,6 +14,6 @@ export default class PreloadScene extends Phaser.Scene {
     }
 
     create() {
-        this.scene.start("MainMenu");
+        this.scene.start("Shift1");
     }
 }

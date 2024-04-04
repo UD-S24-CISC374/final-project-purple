@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import Ticket from "./ticket";
 
 export default class TicketHolder extends Phaser.GameObjects.Zone {
-    public clip: Phaser.GameObjects.Sprite;
+    clip: Phaser.GameObjects.Sprite;
     public ticket: Ticket | null;
     occ: Phaser.GameObjects.Text;
 
@@ -20,7 +20,6 @@ export default class TicketHolder extends Phaser.GameObjects.Zone {
             .setScale(4)
             .setDepth(1);
         scene.add.existing(this);
-        scene.add.rectangle(x, y, this.width, this.height, 0xfff, 80);
         this.occ = scene.add.text(
             this.x,
             this.y + 150,
