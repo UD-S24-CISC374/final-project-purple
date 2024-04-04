@@ -22,7 +22,7 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     dragStart(pointer: Phaser.Input.Pointer) {
     }
 
-    drag(pointer: Phaser.Input.Pointer) {
+     drag(pointer: Phaser.Input.Pointer) {
             this.x = pointer.worldX;
             this.y = pointer.worldY;
     }
