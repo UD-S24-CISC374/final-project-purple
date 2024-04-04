@@ -25,6 +25,7 @@ export default class Shift1 extends Phaser.Scene {
     sinks: Sink[] = new Array<Sink>(2);
     service: Service;
     plating: Plating;
+    milk: Ingredient;
 
     constructor() {
         super({ key: "Shift1" });
@@ -64,8 +65,13 @@ export default class Shift1 extends Phaser.Scene {
         this.initStations();
         this.setNextTicket();
 
-        //const milk = new Ingredient(this, this.cameras.main.centerX, this.cameras.main.centerY, "milk", "milk")
-        
+        this.milk = new Ingredient(
+            this,
+            this.cameras.main.centerX,
+            this.cameras.main.centerY,
+            "milk",
+            "Milk"
+        );
     }
 
     initStations() {
