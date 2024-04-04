@@ -18,5 +18,6 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
         this.setDropZone().setName("station");
         scene.add.rectangle(x, y, width, height, 0xff0000).setAlpha(0.4);
         scene.add.existing(this);
+        this.timer = scene.add.sprite(x, y - 10, "timer").setScale(0.3);
     }
 }
