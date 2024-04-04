@@ -1,12 +1,12 @@
 import Phaser from "phaser";
 
-export default class ingredient extends Phaser.GameObjects.Sprite {
+export default class Ingredient extends Phaser.GameObjects.Sprite {
     name: string;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, image: Phaser.GameObjects.Sprite, name: string) 
+    constructor(scene: Phaser.Scene, x: number, y: number, image: string , name: string) 
     {
         
-    super(scene, x, y, "imageKey");
+    super(scene, x, y, image);
     this.name = name;
         this.setScale(0.5)
         .setDepth(0)
@@ -22,15 +22,12 @@ export default class ingredient extends Phaser.GameObjects.Sprite {
     dragStart(pointer: Phaser.Input.Pointer) {
     }
 
-    private drag(pointer: Phaser.Input.Pointer) {
-        if (this.getData('isDragging')) {
+    drag(pointer: Phaser.Input.Pointer) {
             this.x = pointer.worldX;
             this.y = pointer.worldY;
-        }
     }
 
     dragEnd(pointer: Phaser.Input.Pointer) {
-        this.setData('isDragging', false);
     }
 
 

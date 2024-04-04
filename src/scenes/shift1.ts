@@ -10,6 +10,7 @@ import Oven from "../objects/stations/oven";
 import Sink from "../objects/stations/sink";
 import Service from "../objects/stations/service";
 import Plating from "../objects/stations/plating";
+import Ingredient from "../objects/ingredient";
 
 // FIRST COME FIRST SERVED
 export default class Shift1 extends Phaser.Scene {
@@ -62,6 +63,9 @@ export default class Shift1 extends Phaser.Scene {
         this.currentOrder = new CurrentOrder(this, 900, 110, 240, 240);
         this.initStations();
         this.setNextTicket();
+
+        //const milk = new Ingredient(this, this.cameras.main.centerX, this.cameras.main.centerY, "milk", "milk")
+        
     }
 
     initStations() {
