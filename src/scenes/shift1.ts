@@ -68,14 +68,14 @@ export default class Shift1 extends Phaser.Scene {
         this.setNextTicket();
 
         //const milk = new Ingredient(this, this.cameras.main.centerX, this.cameras.main.centerY, "milk", "milk")
-        
+        this.initIngredientHolders();
     }
 
     initIngredientHolders(){
     this.fridge = new Fridge(
             this,
-            this.cameras.main.centerX,
-            this.cameras.main.height /2,
+            this.cameras.main.x + 10,
+            this.cameras.main.height -385,
         )
 
     }

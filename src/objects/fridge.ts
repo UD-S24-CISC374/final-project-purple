@@ -14,7 +14,7 @@ export default class Fridge extends Phaser.GameObjects.Zone {
         super(scene, x, y, 190, 320);
         this.setInteractive()
         .on("pointerdown", this.click)
-        scene.add.rectangle(x, y, 190, 320, 0xff0000).setAlpha(0.4);
+        scene.add.rectangle(x, y, 155, 200, 0xff0000).setAlpha(0.4);
         scene.add.existing(this);
     }
 
