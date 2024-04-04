@@ -11,6 +11,7 @@ import Sink from "../objects/stations/sink";
 import Service from "../objects/stations/service";
 import Plating from "../objects/stations/plating";
 import Ingredient from "../objects/ingredient";
+import Fridge from "../objects/fridge";
 
 // FIRST COME FIRST SERVED
 export default class Shift1 extends Phaser.Scene {
@@ -26,6 +27,7 @@ export default class Shift1 extends Phaser.Scene {
     service: Service;
     plating: Plating;
     milk: Ingredient;
+    fridge: Fridge;
 
     constructor() {
         super({ key: "Shift1" });
@@ -71,6 +73,15 @@ export default class Shift1 extends Phaser.Scene {
             this.cameras.main.centerY,
             "milk",
             "Milk"
+        );
+        this.initIngredientHolders();
+    }
+
+    initIngredientHolders() {
+        this.fridge = new Fridge(
+            this,
+            this.cameras.main.x + 10,
+            this.cameras.main.height - 385
         );
     }
 
