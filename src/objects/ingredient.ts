@@ -1,9 +1,18 @@
 import Phaser from "phaser";
 import Station from "./station";
 
+enum IngredientState {
+    BAKED,
+    PREPPED,
+    WASHED,
+    COOKED,
+    RAW,
+}
+
 export default class Ingredient extends Phaser.GameObjects.Sprite {
     station: Station | null;
     name: string;
+    state: IngredientState = IngredientState.RAW;
 
     constructor(
         scene: Phaser.Scene,
