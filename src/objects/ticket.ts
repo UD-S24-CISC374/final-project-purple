@@ -95,11 +95,14 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     }
 
     showDetails() {
+        this.details.setAlpha(1);
+        /* we'll add tweens later
         this.scene.tweens.add({
             targets: [this.details],
             alpha: { from: 0, to: 1 },
             duration: 300,
         });
+        */
     }
 
     hideDetails() {

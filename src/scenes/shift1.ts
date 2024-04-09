@@ -21,7 +21,7 @@ export default class Shift1 extends Phaser.Scene {
     gui: ShiftGUI;
     nextTicket: Ticket;
     stoves: Stove[] = new Array<Stove>(2);
-    ovens: Oven[] = [];
+    ovens: Oven[] = new Array<Oven>(4);
     preps: Prep[] = new Array<Prep>(5);
     sinks: Sink[] = new Array<Sink>(2);
     service: Service;
@@ -45,6 +45,13 @@ export default class Shift1 extends Phaser.Scene {
             this.cameras.main.centerY,
             "kitchen"
         );
+
+        this.anims.create({
+            key: "countdown-timer",
+            frames: "timer",
+            frameRate: 1,
+            repeat: -1,
+        });
 
         this.add
             .text(this.cameras.main.width - 15, 15, version, {
@@ -203,14 +210,5 @@ export default class Shift1 extends Phaser.Scene {
         console.log(this.nextTicket);
     }
 
-    update() {
-        if (
-            this.currentOrder.ticket &&
-            this.currentOrder.ticket === this.nextTicket
-        ) {
-            console.log("RIGHT");
-        } else if (this.currentOrder.ticket) {
-            console.log("WRONG");
-        }
-    }
+    update() {}
 }
