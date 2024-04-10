@@ -26,6 +26,10 @@ export default class PreloadScene extends Phaser.Scene {
             frameWidth: 32,
             frameHeight: 32,
         });
+        this.load.spritesheet("dish", "assets/img/dish.png", {
+            frameWidth: 15,
+            frameHeight: 15,
+        });
     }
 
     create() {
@@ -38,6 +42,12 @@ export default class PreloadScene extends Phaser.Scene {
             key: "ring-bell",
             frames: "bell",
             duration: 300,
+            repeat: 0,
+        });
+        this.anims.create({
+            key: "fill-dish",
+            frames: "dish",
+            frameRate: 20,
             repeat: 0,
         });
         this.scene.start("MainMenu");

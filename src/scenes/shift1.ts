@@ -41,6 +41,7 @@ export default class Shift1 extends Phaser.Scene {
 
     create() {
         const version = CONFIG.version;
+
         this.add.image(
             this.cameras.main.centerX,
             this.cameras.main.centerY,
@@ -59,6 +60,7 @@ export default class Shift1 extends Phaser.Scene {
                 new TicketHolder(this, 80 + 60 * i * 3, 75, 150, 320)
             );
         }
+
         this.ticketHolders.map((holder) => {
             holder.ticket = new Ticket(this, holder.x, 134, [1, 2], holder);
             this.tickets.push(holder.ticket);
@@ -85,6 +87,10 @@ export default class Shift1 extends Phaser.Scene {
 
     submitDish() {
         this.bell.anims.play("ring-bell", true);
+        //compareDishToTicket()
+        //compareTicketToAlgorithm()
+        //give feedback
+        //delete dish
     }
 
     initIngredientHolders() {

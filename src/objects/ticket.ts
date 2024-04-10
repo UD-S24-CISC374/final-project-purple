@@ -1,13 +1,13 @@
 import Phaser from "phaser";
 import CurrentOrder from "./currentOrder";
 import TicketHolder from "./ticketHolder";
+import Ingredient from "./ingredient";
 
 export default class Ticket extends Phaser.GameObjects.Sprite {
-    public length: number;
-    ingredients: number[];
     arrivalTime: number;
     details: Phaser.GameObjects.Text;
     holder: TicketHolder | CurrentOrder;
+    ingredients: Ingredient[];
 
     constructor(
         scene: Phaser.Scene,
@@ -31,13 +31,14 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             .on("dragenter", this.dragEnter)
             .on("dragleave", this.dragLeave)
             .on("drop", this.drop);
-        this.ingredients = ingredients.map((ingrd) => ingrd);
-        this.length = this.ingredients.length;
+
         this.arrivalTime = Phaser.Math.FloatBetween(0, 30);
+
         this.details = scene.add
             .text(x, y + 120, `Arrived ${this.arrivalTime.toFixed(2)}s ago.`)
             .setAlpha(0)
             .setOrigin(0.5, 1);
+
         scene.events.on("update", this.update, this);
         scene.add.existing(this);
     }

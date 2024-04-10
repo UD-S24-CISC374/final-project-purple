@@ -73,6 +73,7 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     drop(ingrd: Ingredient, target: Station | Service) {
         if (target instanceof Service) {
             target.dish?.ingredients.push({ ...this });
+            target.dish?.play("fill-dish", true);
             this.station?.setOccupied(false);
             this.destroy();
         } else if (target instanceof Station && !target.occupied) {
