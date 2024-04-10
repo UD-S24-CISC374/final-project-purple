@@ -10,5 +10,7 @@ export default class Sink extends Station {
         height: number
     ) {
         super(scene, x, y, width, height);
+        this.setName("sink");
+        this.duration = 3000;
     }
 }

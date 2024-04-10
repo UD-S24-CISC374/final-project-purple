@@ -1,13 +1,13 @@
 import Phaser from "phaser";
 import CurrentOrder from "./currentOrder";
 import TicketHolder from "./ticketHolder";
+import Ingredient from "./ingredient";
 
 export default class Ticket extends Phaser.GameObjects.Sprite {
-    public length: number;
-    ingredients: number[];
     arrivalTime: number;
     details: Phaser.GameObjects.Text;
     holder: TicketHolder | CurrentOrder;
+    ingredients: Ingredient[];
 
     constructor(
         scene: Phaser.Scene,
@@ -31,13 +31,14 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             .on("dragenter", this.dragEnter)
             .on("dragleave", this.dragLeave)
             .on("drop", this.drop);
-        this.ingredients = ingredients.map((ingrd) => ingrd);
-        this.length = this.ingredients.length;
+
         this.arrivalTime = Phaser.Math.FloatBetween(0, 30);
+
         this.details = scene.add
             .text(x, y + 120, `Arrived ${this.arrivalTime.toFixed(2)}s ago.`)
             .setAlpha(0)
             .setOrigin(0.5, 1);
+
         scene.events.on("update", this.update, this);
         scene.add.existing(this);
     }
@@ -58,39 +59,43 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         this.setScale(0.5);
         this.depth = 0;
         // snap back to holder
-        if (this.holder.name === "holder") {
-            this.setPosition(this.holder.x, this.holder.y + 60);
-        } else if (this.holder.name === "current") {
-            this.setPosition(this.holder.x, this.holder.y);
-        }
+        this.setPosition(
+            this.holder.x,
+            this.holder.y + (this.holder instanceof TicketHolder ? 60 : 0)
+        );
     }
 
     dragEnter(ticket: Ticket, target: TicketHolder | CurrentOrder) {
         // make ticket bigger when above a droppable area
-        console.log(`Entering ${target.name}`);
-        target.ticket ? null : this.setScale(0.7);
+        if (
+            (target instanceof TicketHolder ||
+                target instanceof CurrentOrder) &&
+            !target.ticket
+        )
+            this.setScale(0.7);
     }
 
     dragLeave(ticket: Ticket, target: TicketHolder | CurrentOrder) {
-        console.log(`Leaving ${target.name}`);
         // shrink back down to slight increase in scale when leaving droppable area
-        this.setScale(0.6);
+        if (target instanceof TicketHolder || target instanceof CurrentOrder)
+            this.setScale(0.6);
     }
 
     drop(ticket: Ticket, target: TicketHolder | CurrentOrder) {
-        if (target.ticket) {
-            // if holder is occupied, just end the drag event
-            this.dragEnd();
-            return;
-        }
-
-        if (target.name === "holder" || target.name === "current") {
+        if (
+            (target instanceof TicketHolder ||
+                target instanceof CurrentOrder) &&
+            !target.ticket
+        ) {
             this.holder.ticket = null; // set prev holder to empty
             this.holder = target; // assign new holder
             this.holder.ticket = this; // set new holder's ticket to this
-            target.name === "holder"
-                ? this.setPosition(target.x, target.y + 60)
-                : this.setPosition(target.x, target.y);
+            this.setPosition(
+                this.holder.x,
+                this.holder.y + (this.holder instanceof TicketHolder ? 60 : 0)
+            ); // snap to new holder
+        } else {
+            this.dragEnd(); // if holder is occupied, just end the drag event
         }
     }
 

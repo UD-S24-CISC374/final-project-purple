@@ -9,7 +9,7 @@ import Prep from "../objects/stations/prep";
 import Oven from "../objects/stations/oven";
 import Sink from "../objects/stations/sink";
 import Service from "../objects/stations/service";
-import Plating from "../objects/stations/plating";
+import Plating from "../objects/plating";
 import Ingredient from "../objects/ingredient";
 import Fridge from "../objects/fridge";
 
@@ -28,6 +28,7 @@ export default class Shift1 extends Phaser.Scene {
     plating: Plating;
     milk: Ingredient;
     fridge: Fridge;
+    bell: Phaser.GameObjects.Sprite;
 
     constructor() {
         super({ key: "Shift1" });
@@ -40,18 +41,12 @@ export default class Shift1 extends Phaser.Scene {
 
     create() {
         const version = CONFIG.version;
+
         this.add.image(
             this.cameras.main.centerX,
             this.cameras.main.centerY,
             "kitchen"
         );
-
-        this.anims.create({
-            key: "countdown-timer",
-            frames: "timer",
-            frameRate: 1,
-            repeat: -1,
-        });
 
         this.add
             .text(this.cameras.main.width - 15, 15, version, {
@@ -65,6 +60,7 @@ export default class Shift1 extends Phaser.Scene {
                 new TicketHolder(this, 80 + 60 * i * 3, 75, 150, 320)
             );
         }
+
         this.ticketHolders.map((holder) => {
             holder.ticket = new Ticket(this, holder.x, 134, [1, 2], holder);
             this.tickets.push(holder.ticket);
@@ -82,6 +78,19 @@ export default class Shift1 extends Phaser.Scene {
             "Milk"
         );
         this.initIngredientHolders();
+        this.bell = this.add
+            .sprite(this.service.x, this.service.y - 120, "bell")
+            .setScale(4)
+            .setInteractive()
+            .on("pointerdown", this.submitDish, this);
+    }
+
+    submitDish() {
+        this.bell.anims.play("ring-bell", true);
+        //compareDishToTicket()
+        //compareTicketToAlgorithm()
+        //give feedback
+        //delete dish
     }
 
     initIngredientHolders() {

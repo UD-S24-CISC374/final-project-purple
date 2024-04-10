@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import Station from "./station";
+import Service from "./stations/service";
 
 enum IngredientState {
     BAKED,
@@ -8,6 +9,13 @@ enum IngredientState {
     COOKED,
     RAW,
 }
+
+const stationState: Record<string, IngredientState> = {
+    oven: IngredientState.BAKED,
+    prep: IngredientState.PREPPED,
+    sink: IngredientState.WASHED,
+    stove: IngredientState.COOKED,
+};
 
 export default class Ingredient extends Phaser.GameObjects.Sprite {
     station: Station | null;
@@ -41,14 +49,14 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
         this.setScale(0.3);
     }
 
-    dragEnter(ingrd: Ingredient, target: Phaser.GameObjects.Zone) {
-        if (target.name === "station") this.setScale(0.4);
+    dragEnter(ingrd: Ingredient, target: Station) {
+        if (target instanceof Station) this.setScale(0.4);
     }
 
     dragLeave() {
         this.setScale(0.3);
         if (this.station) {
-            this.station.ingredient = null;
+            this.station.occupied = false;
             this.station = null;
         }
     }
@@ -62,11 +70,24 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
         this.setScale(0.2);
     }
 
-    drop(ingrd: Ingredient, target: Station) {
-        if (target.name === "station") {
+    drop(ingrd: Ingredient, target: Station | Service) {
+        if (target instanceof Service) {
+            target.dish?.ingredients.push({ ...this });
+            target.dish?.play("fill-dish", true);
+            this.station?.setOccupied(false);
+            this.destroy();
+        } else if (target instanceof Station && !target.occupied) {
+            console.log(target);
+            target.occupied = true;
             this.station = target;
-            target.ingredient = this;
+            this.station.cook(this);
             this.setPosition(target.x, target.y);
+        } else {
+            this.dragEnd();
         }
+    }
+
+    updateState(station: string) {
+        this.state = stationState[station];
     }
 }

@@ -3,9 +3,9 @@ import Ingredient from "./ingredient";
 
 export default abstract class Station extends Phaser.GameObjects.Zone {
     duration: number;
-    public ingredient: Ingredient | null;
-    timer: Phaser.GameObjects.Sprite; // will be the dial timer
-    // needs to hold reference to current task/ingredient on station
+    occupied: boolean;
+    timer: Phaser.GameObjects.Sprite;
+    shield: Phaser.GameObjects.Rectangle; // shield to block player from dragging out in-progress ingredient
 
     constructor(
         scene: Phaser.Scene,
@@ -15,8 +15,8 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
         height: number
     ) {
         super(scene, x, y, width, height);
-        this.setDropZone().setName("station");
-        scene.add.rectangle(x, y, width, height, 0xff0000).setAlpha(0.4);
+        this.setDropZone();
+        //scene.add.rectangle(x, y, width, height, 0xff0000).setAlpha(0.4); // debug drop zone identifier
         scene.add.existing(this);
 
         this.timer = scene.add
@@ -24,14 +24,36 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
             .setScale(5)
             .setAlpha(0)
             .setDepth(3);
-        scene.events.on("update", this.update, this);
+
+        this.shield = scene.add
+            .rectangle(x, y, width + 10, height + 10, 0x0ff000)
+            .setAlpha(0.4)
+            .setDepth(0)
+            .setInteractive();
     }
 
-    update() {
-        if (this.ingredient) {
-            this.timer.setAlpha(1).anims.play("countdown-timer", true);
-        } else {
-            this.timer.setAlpha(0).anims.stop();
-        }
+    cook(ingrd: Ingredient) {
+        this.setTimer();
+        this.shield.setDepth(ingrd.depth + 1); // don't let player remove while cooking
+        // each station provides its own time (might switch to ingredient wise)
+        this.scene.time.delayedCall(this.duration, () => {
+            ingrd.updateState(this.name); // set to new state
+            this.timer.setAlpha(0); // remove timer
+            this.shield.setDepth(ingrd.depth - 1);
+        });
+    }
+
+    setTimer() {
+        this.timer.setAlpha(1).anims.play(
+            {
+                key: "countdown-timer",
+                duration: this.duration, // [tofix] this does not do anything, default duration is always used
+            },
+            true
+        );
+    }
+
+    setOccupied(newStatus: boolean) {
+        this.occupied = newStatus;
     }
 }
