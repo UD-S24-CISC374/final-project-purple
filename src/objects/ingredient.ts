@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import Station from "./station";
+import Service from "./stations/service";
 
 enum IngredientState {
     BAKED,
@@ -69,13 +70,17 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
         this.setScale(0.2);
     }
 
-    drop(ingrd: Ingredient, target: Station) {
-        if (target instanceof Station && !target.occupied) {
+    drop(ingrd: Ingredient, target: Station | Service) {
+        if (target instanceof Service) {
+            target.dish?.ingredients.push({ ...this });
+            this.station?.setOccupied(false);
+            this.destroy();
+        } else if (target instanceof Station && !target.occupied) {
+            console.log(target);
             target.occupied = true;
             this.station = target;
             this.station.cook(this);
             this.setPosition(target.x, target.y);
-            console.log(this.state);
         } else {
             this.dragEnd();
         }

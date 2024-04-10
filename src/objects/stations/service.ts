@@ -1,7 +1,10 @@
-import Station from "../station";
+import Dish from "../dish";
 import Phaser from "phaser";
+import Station from "../station";
 
 export default class Service extends Station {
+    dish: Dish | null = null;
+
     constructor(
         scene: Phaser.Scene,
         x: number,
@@ -10,7 +13,11 @@ export default class Service extends Station {
         height: number
     ) {
         super(scene, x, y, width, height);
-        this.setName("service");
-        this.duration = 1000;
+        this.shield.destroy();
+        this.timer.destroy();
+    }
+
+    setDish(newDish: Dish) {
+        this.dish = newDish;
     }
 }

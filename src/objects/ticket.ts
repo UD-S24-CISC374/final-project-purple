@@ -67,8 +67,9 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     dragEnter(ticket: Ticket, target: TicketHolder | CurrentOrder) {
         // make ticket bigger when above a droppable area
         if (
-            !target.ticket &&
-            (target instanceof TicketHolder || target instanceof CurrentOrder)
+            (target instanceof TicketHolder ||
+                target instanceof CurrentOrder) &&
+            !target.ticket
         )
             this.setScale(0.7);
     }
@@ -81,8 +82,9 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
 
     drop(ticket: Ticket, target: TicketHolder | CurrentOrder) {
         if (
-            !target.ticket &&
-            (target instanceof TicketHolder || target instanceof CurrentOrder)
+            (target instanceof TicketHolder ||
+                target instanceof CurrentOrder) &&
+            !target.ticket
         ) {
             this.holder.ticket = null; // set prev holder to empty
             this.holder = target; // assign new holder

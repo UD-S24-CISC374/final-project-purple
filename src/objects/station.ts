@@ -16,7 +16,7 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
     ) {
         super(scene, x, y, width, height);
         this.setDropZone();
-        scene.add.rectangle(x, y, width, height, 0xff0000).setAlpha(0.4); // debug drop zone identifier
+        //scene.add.rectangle(x, y, width, height, 0xff0000).setAlpha(0.4); // debug drop zone identifier
         scene.add.existing(this);
 
         this.timer = scene.add
@@ -30,7 +30,6 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
             .setAlpha(0.4)
             .setDepth(0)
             .setInteractive();
-        scene.events.on("update", this.update, this);
     }
 
     cook(ingrd: Ingredient) {
@@ -54,5 +53,7 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
         );
     }
 
-    update() {}
+    setOccupied(newStatus: boolean) {
+        this.occupied = newStatus;
+    }
 }
