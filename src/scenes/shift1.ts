@@ -28,6 +28,7 @@ export default class Shift1 extends Phaser.Scene {
     plating: Plating;
     milk: Ingredient;
     fridge: Fridge;
+    bell: Phaser.GameObjects.Sprite;
 
     constructor() {
         super({ key: "Shift1" });
@@ -75,6 +76,15 @@ export default class Shift1 extends Phaser.Scene {
             "Milk"
         );
         this.initIngredientHolders();
+        this.bell = this.add
+            .sprite(this.service.x, this.service.y - 120, "bell")
+            .setScale(4)
+            .setInteractive()
+            .on("pointerdown", this.submitDish, this);
+    }
+
+    submitDish() {
+        this.bell.anims.play("ring-bell", true);
     }
 
     initIngredientHolders() {

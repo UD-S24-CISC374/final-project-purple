@@ -22,12 +22,22 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("chicken", "assets/img/chicken.png");
         this.load.image("butter", "assets/img/butter.png");
         this.load.image("plate", "assets/img/plate.png");
+        this.load.spritesheet("bell", "assets/img/bell.png", {
+            frameWidth: 32,
+            frameHeight: 32,
+        });
     }
 
     create() {
         this.anims.create({
             key: "countdown-timer",
             frames: "timer",
+            repeat: 0,
+        });
+        this.anims.create({
+            key: "ring-bell",
+            frames: "bell",
+            duration: 300,
             repeat: 0,
         });
         this.scene.start("MainMenu");
