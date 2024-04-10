@@ -9,6 +9,13 @@ enum IngredientState {
     RAW,
 }
 
+// const stationState: Record<string, IngredientState> = {
+//     oven: IngredientState.BAKED,
+//     prep: IngredientState.PREPPED,
+//     sink: IngredientState.WASHED,
+//     stove: IngredientState.COOKED,
+// };
+
 export default class Ingredient extends Phaser.GameObjects.Sprite {
     station: Station | null;
     name: string;
@@ -48,7 +55,7 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     dragLeave() {
         this.setScale(0.3);
         if (this.station) {
-            this.station.ingredient = null;
+            this.station.occupied = false;
             this.station = null;
         }
     }
@@ -63,10 +70,12 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     }
 
     drop(ingrd: Ingredient, target: Station) {
-        if (target instanceof Station) {
+        if (target instanceof Station && !target.occupied) {
+            target.occupied = true;
             this.station = target;
-            target.ingredient = this;
             this.setPosition(target.x, target.y);
+        } else {
+            this.dragEnd();
         }
     }
 }

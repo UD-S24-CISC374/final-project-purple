@@ -1,11 +1,9 @@
 import Phaser from "phaser";
-import Ingredient from "./ingredient";
 
 export default abstract class Station extends Phaser.GameObjects.Zone {
     duration: number;
-    public ingredient: Ingredient | null;
-    timer: Phaser.GameObjects.Sprite; // will be the dial timer
-    // needs to hold reference to current task/ingredient on station
+    occupied: boolean;
+    timer: Phaser.GameObjects.Sprite;
 
     constructor(
         scene: Phaser.Scene,
@@ -28,8 +26,10 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
     }
 
     update() {
-        if (this.ingredient) {
-            this.timer.setAlpha(1).anims.play("countdown-timer", true);
+        if (this.occupied) {
+            this.timer
+                .setAlpha(1)
+                .anims.play({ key: "countdown-timer", duration: 2000 }, true);
             console.log(this.name);
         } else {
             this.timer.setAlpha(0).anims.stop();

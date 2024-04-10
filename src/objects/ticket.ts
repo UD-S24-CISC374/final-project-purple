@@ -80,13 +80,10 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     }
 
     drop(ticket: Ticket, target: TicketHolder | CurrentOrder) {
-        if (target.ticket) {
-            // if holder is occupied, just end the drag event
-            this.dragEnd();
-            return;
-        }
-
-        if (target instanceof TicketHolder || target instanceof CurrentOrder) {
+        if (
+            !target.ticket &&
+            (target instanceof TicketHolder || target instanceof CurrentOrder)
+        ) {
             this.holder.ticket = null; // set prev holder to empty
             this.holder = target; // assign new holder
             this.holder.ticket = this; // set new holder's ticket to this
@@ -94,6 +91,8 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
                 this.holder.x,
                 this.holder.y + (this.holder instanceof TicketHolder ? 60 : 0)
             ); // snap to new holder
+        } else {
+            this.dragEnd(); // if holder is occupied, just end the drag event
         }
     }
 

@@ -10,5 +10,6 @@ export default class Plating extends Station {
         height: number
     ) {
         super(scene, x, y, width, height);
+        this.setName("plating");
     }
 }
