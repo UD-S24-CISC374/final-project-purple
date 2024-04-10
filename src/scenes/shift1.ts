@@ -46,13 +46,6 @@ export default class Shift1 extends Phaser.Scene {
             "kitchen"
         );
 
-        this.anims.create({
-            key: "countdown-timer",
-            frames: "timer",
-            frameRate: 1,
-            repeat: -1,
-        });
-
         this.add
             .text(this.cameras.main.width - 15, 15, version, {
                 color: "#000000",

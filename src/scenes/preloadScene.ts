@@ -24,6 +24,11 @@ export default class PreloadScene extends Phaser.Scene {
     }
 
     create() {
+        this.anims.create({
+            key: "countdown-timer",
+            frames: "timer",
+            repeat: 0,
+        });
         this.scene.start("MainMenu");
     }
 }

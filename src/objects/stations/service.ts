@@ -11,5 +11,6 @@ export default class Service extends Station {
     ) {
         super(scene, x, y, width, height);
         this.setName("service");
+        this.duration = 1000;
     }
 }

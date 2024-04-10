@@ -11,5 +11,6 @@ export default class Oven extends Station {
     ) {
         super(scene, x, y, width, height);
         this.setName("oven");
+        this.duration = 20000;
     }
 }

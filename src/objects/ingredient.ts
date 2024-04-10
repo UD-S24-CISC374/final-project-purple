@@ -9,12 +9,12 @@ enum IngredientState {
     RAW,
 }
 
-// const stationState: Record<string, IngredientState> = {
-//     oven: IngredientState.BAKED,
-//     prep: IngredientState.PREPPED,
-//     sink: IngredientState.WASHED,
-//     stove: IngredientState.COOKED,
-// };
+const stationState: Record<string, IngredientState> = {
+    oven: IngredientState.BAKED,
+    prep: IngredientState.PREPPED,
+    sink: IngredientState.WASHED,
+    stove: IngredientState.COOKED,
+};
 
 export default class Ingredient extends Phaser.GameObjects.Sprite {
     station: Station | null;
@@ -73,9 +73,15 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
         if (target instanceof Station && !target.occupied) {
             target.occupied = true;
             this.station = target;
+            this.station.cook(this);
             this.setPosition(target.x, target.y);
+            console.log(this.state);
         } else {
             this.dragEnd();
         }
+    }
+
+    updateState(station: string) {
+        this.state = stationState[station];
     }
 }

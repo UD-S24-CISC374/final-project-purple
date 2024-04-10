@@ -1,9 +1,11 @@
 import Phaser from "phaser";
+import Ingredient from "./ingredient";
 
 export default abstract class Station extends Phaser.GameObjects.Zone {
     duration: number;
     occupied: boolean;
     timer: Phaser.GameObjects.Sprite;
+    shield: Phaser.GameObjects.Rectangle; // shield to block player from dragging out in-progress ingredient
 
     constructor(
         scene: Phaser.Scene,
@@ -14,7 +16,7 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
     ) {
         super(scene, x, y, width, height);
         this.setDropZone();
-        scene.add.rectangle(x, y, width, height, 0xff0000).setAlpha(0.4);
+        scene.add.rectangle(x, y, width, height, 0xff0000).setAlpha(0.4); // debug drop zone identifier
         scene.add.existing(this);
 
         this.timer = scene.add
@@ -22,17 +24,35 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
             .setScale(5)
             .setAlpha(0)
             .setDepth(3);
+
+        this.shield = scene.add
+            .rectangle(x, y, width + 10, height + 10, 0x0ff000)
+            .setAlpha(0.4)
+            .setDepth(0)
+            .setInteractive();
         scene.events.on("update", this.update, this);
     }
 
-    update() {
-        if (this.occupied) {
-            this.timer
-                .setAlpha(1)
-                .anims.play({ key: "countdown-timer", duration: 2000 }, true);
-            console.log(this.name);
-        } else {
-            this.timer.setAlpha(0).anims.stop();
-        }
+    cook(ingrd: Ingredient) {
+        this.setTimer();
+        this.shield.setDepth(ingrd.depth + 1); // don't let player remove while cooking
+        // each station provides its own time (might switch to ingredient wise)
+        this.scene.time.delayedCall(this.duration, () => {
+            ingrd.updateState(this.name); // set to new state
+            this.timer.setAlpha(0); // remove timer
+            this.shield.setDepth(ingrd.depth - 1);
+        });
     }
+
+    setTimer() {
+        this.timer.setAlpha(1).anims.play(
+            {
+                key: "countdown-timer",
+                duration: this.duration, // [tofix] this does not do anything, default duration is always used
+            },
+            true
+        );
+    }
+
+    update() {}
 }
