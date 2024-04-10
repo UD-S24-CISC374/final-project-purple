@@ -14,7 +14,7 @@ export default class TicketHolder extends Phaser.GameObjects.Zone {
         height: number
     ) {
         super(scene, x, y, width, height);
-        this.setDropZone().setName("holder");
+        this.setDropZone();
         this.clip = scene.add
             .sprite(x, y, "ticket-holder")
             .setScale(4)

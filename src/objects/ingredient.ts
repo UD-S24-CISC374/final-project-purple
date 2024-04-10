@@ -41,8 +41,8 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
         this.setScale(0.3);
     }
 
-    dragEnter(ingrd: Ingredient, target: Phaser.GameObjects.Zone) {
-        if (target.name === "station") this.setScale(0.4);
+    dragEnter(ingrd: Ingredient, target: Station) {
+        if (target instanceof Station) this.setScale(0.4);
     }
 
     dragLeave() {
@@ -63,7 +63,7 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     }
 
     drop(ingrd: Ingredient, target: Station) {
-        if (target.name === "station") {
+        if (target instanceof Station) {
             this.station = target;
             target.ingredient = this;
             this.setPosition(target.x, target.y);

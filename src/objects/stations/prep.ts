@@ -10,5 +10,6 @@ export default class Prep extends Station {
         height: number
     ) {
         super(scene, x, y, width, height);
+        this.setName("prep");
     }
 }

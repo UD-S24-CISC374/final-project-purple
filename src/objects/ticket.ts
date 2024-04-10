@@ -58,23 +58,25 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         this.setScale(0.5);
         this.depth = 0;
         // snap back to holder
-        if (this.holder.name === "holder") {
-            this.setPosition(this.holder.x, this.holder.y + 60);
-        } else if (this.holder.name === "current") {
-            this.setPosition(this.holder.x, this.holder.y);
-        }
+        this.setPosition(
+            this.holder.x,
+            this.holder.y + (this.holder instanceof TicketHolder ? 60 : 0)
+        );
     }
 
     dragEnter(ticket: Ticket, target: TicketHolder | CurrentOrder) {
         // make ticket bigger when above a droppable area
-        console.log(`Entering ${target.name}`);
-        target.ticket ? null : this.setScale(0.7);
+        if (
+            !target.ticket &&
+            (target instanceof TicketHolder || target instanceof CurrentOrder)
+        )
+            this.setScale(0.7);
     }
 
     dragLeave(ticket: Ticket, target: TicketHolder | CurrentOrder) {
-        console.log(`Leaving ${target.name}`);
         // shrink back down to slight increase in scale when leaving droppable area
-        this.setScale(0.6);
+        if (target instanceof TicketHolder || target instanceof CurrentOrder)
+            this.setScale(0.6);
     }
 
     drop(ticket: Ticket, target: TicketHolder | CurrentOrder) {
@@ -84,13 +86,14 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             return;
         }
 
-        if (target.name === "holder" || target.name === "current") {
+        if (target instanceof TicketHolder || target instanceof CurrentOrder) {
             this.holder.ticket = null; // set prev holder to empty
             this.holder = target; // assign new holder
             this.holder.ticket = this; // set new holder's ticket to this
-            target.name === "holder"
-                ? this.setPosition(target.x, target.y + 60)
-                : this.setPosition(target.x, target.y);
+            this.setPosition(
+                this.holder.x,
+                this.holder.y + (this.holder instanceof TicketHolder ? 60 : 0)
+            ); // snap to new holder
         }
     }
 
