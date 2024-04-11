@@ -26,6 +26,7 @@ export default class Shift1 extends Phaser.Scene {
 
     create() {
         const version = CONFIG.version;
+        this.kitchen = new Kitchen(this);
 
         this.add
             .text(this.cameras.main.width - 15, 15, version, {
@@ -42,12 +43,11 @@ export default class Shift1 extends Phaser.Scene {
                 134,
                 holder,
                 "Boiled Milk",
-                new Set([`milk${IngredientState.COOKED}`])
+                new Set([`${IngredientState.COOKED} milk`])
             );
             this.tickets.push(holder.ticket);
         });
 
-        this.kitchen = new Kitchen(this);
         this.setNextTicket();
 
         this.initIngredientHolders();
@@ -79,16 +79,10 @@ export default class Shift1 extends Phaser.Scene {
     }
 
     compareDishToTicket() {
-        console.log(this.kitchen.currentOrder.ticket?.requirements);
-        console.log(
-            this.kitchen.service.dish?.ingredients.map(
-                (ingrd) => ingrd.name + ingrd.state
-            )
-        );
         const res =
             this.kitchen.service.dish?.ingredients.every((ingrd) =>
                 this.kitchen.currentOrder.ticket?.requirements.has(
-                    ingrd.name + ingrd.state
+                    `${ingrd.state} ${ingrd.name}`
                 )
             ) &&
             this.kitchen.service.dish.ingredients.length ===
@@ -123,6 +117,5 @@ export default class Shift1 extends Phaser.Scene {
                 curr.arrivalTime < first.arrivalTime ? curr : first,
             this.tickets[0]
         );
-        console.log(this.nextTicket);
     }
 }

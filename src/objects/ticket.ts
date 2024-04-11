@@ -54,12 +54,15 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     dragStart() {
         // when the user starts dragging
         this.setScale(0.6).setDepth(3);
+        if (this.holder instanceof CurrentOrder) this.holder.hideRecipe();
     }
 
     dragEnd() {
         // when the user releases the ticket
         this.setScale(0.5).setDepth(1);
         // snap back to holder
+        if (this.holder instanceof CurrentOrder) this.holder.showRecipe();
+
         this.setPosition(
             this.holder.x,
             this.holder.y + (this.holder instanceof TicketHolder ? 60 : 0)
@@ -69,9 +72,8 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     dragEnter(ticket: Ticket, target: TicketHolder | CurrentOrder) {
         // make ticket bigger when above a droppable area
         if (
-            (target instanceof TicketHolder ||
-                target instanceof CurrentOrder) &&
-            !target.ticket
+            !target.ticket &&
+            (target instanceof TicketHolder || target instanceof CurrentOrder)
         )
             this.setScale(0.7);
     }
@@ -84,9 +86,8 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
 
     drop(ticket: Ticket, target: TicketHolder | CurrentOrder) {
         if (
-            (target instanceof TicketHolder ||
-                target instanceof CurrentOrder) &&
-            !target.ticket
+            !target.ticket &&
+            (target instanceof TicketHolder || target instanceof CurrentOrder)
         ) {
             this.holder.ticket = null; // set prev holder to empty
             this.holder = target; // assign new holder

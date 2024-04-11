@@ -74,7 +74,7 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
             target.dish?.play("fill-dish", true);
             this.station?.setOccupied(false);
             this.destroy();
-        } else if (target instanceof Station && !target.occupied) {
+        } else if (!target.occupied && target instanceof Station) {
             console.log(target);
             target.occupied = true;
             this.station = target;
