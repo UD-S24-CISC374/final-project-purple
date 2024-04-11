@@ -5,6 +5,8 @@ import Oven from "../objects/stations/oven";
 import Sink from "../objects/stations/sink";
 import Service from "../objects/stations/service";
 import Plating from "../objects/plating";
+import TicketHolder from "./ticketHolder";
+import CurrentOrder from "./currentOrder";
 
 // FOR HOLDING ALL STATIONS AS ONE KITCHEN OBJECT
 export default class Kitchen {
@@ -15,6 +17,9 @@ export default class Kitchen {
     service: Service;
     plating: Plating;
 
+    ticketHolders: TicketHolder[] = [];
+    currentOrder: CurrentOrder;
+
     constructor(scene: Phaser.Scene) {
         scene.add.image(
             scene.cameras.main.centerX,
@@ -22,7 +27,17 @@ export default class Kitchen {
             "kitchen"
         );
 
+        this.initHolders(scene);
         this.initStations(scene);
+    }
+
+    initHolders(scene: Phaser.Scene) {
+        for (let i = 0; i < 3; i++) {
+            this.ticketHolders.push(
+                new TicketHolder(scene, 80 + 60 * i * 3, 75, 150, 320)
+            );
+        }
+        this.currentOrder = new CurrentOrder(scene, 900, 110, 240, 240);
     }
 
     initStations(scene: Phaser.Scene) {

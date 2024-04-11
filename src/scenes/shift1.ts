@@ -1,21 +1,16 @@
 import Phaser from "phaser";
 import { CONFIG } from "../config";
 import Ticket from "../objects/ticket";
-import TicketHolder from "../objects/ticketHolder";
-import CurrentOrder from "../objects/currentOrder";
 import ShiftGUI from "./shiftGUI";
-import Ingredient, { IngredientState } from "../objects/ingredient";
+import { IngredientState } from "../objects/ingredient";
 import Fridge from "../objects/fridge";
 import Kitchen from "../objects/kitchen";
 
 // FIRST COME FIRST SERVED
 export default class Shift1 extends Phaser.Scene {
     tickets: Ticket[] = [];
-    ticketHolders: TicketHolder[] = [];
-    currentOrder: CurrentOrder;
     gui: ShiftGUI;
     nextTicket: Ticket;
-    milk: Ingredient;
     fridge: Fridge;
     bell: Phaser.GameObjects.Sprite;
     kitchen: Kitchen;
@@ -39,14 +34,8 @@ export default class Shift1 extends Phaser.Scene {
             })
             .setOrigin(1, 0);
 
-        for (let i = 0; i < 3; i++) {
-            this.ticketHolders.push(
-                new TicketHolder(this, 80 + 60 * i * 3, 75, 150, 320)
-            );
-        }
-
-        // Initialize holders and first 3 tickets
-        this.ticketHolders.map((holder) => {
+        // Initialize  first 3 tickets
+        this.kitchen.ticketHolders.map((holder) => {
             holder.ticket = new Ticket(
                 this,
                 holder.x,
@@ -57,7 +46,6 @@ export default class Shift1 extends Phaser.Scene {
             );
             this.tickets.push(holder.ticket);
         });
-        this.currentOrder = new CurrentOrder(this, 900, 110, 240, 240);
 
         this.kitchen = new Kitchen(this);
         this.setNextTicket();
@@ -77,21 +65,21 @@ export default class Shift1 extends Phaser.Scene {
 
     submitDish() {
         this.bell.anims.play("ring-bell", true);
-        if (this.currentOrder.ticket && this.kitchen.service.dish) {
+        if (this.kitchen.currentOrder.ticket && this.kitchen.service.dish) {
             this.compareDishToTicket();
             this.compareTicketToAlgorithm();
             //give feedback
 
             // cleanup
-            this.currentOrder.ticket.destroy();
-            this.currentOrder.ticket = null;
+            this.kitchen.currentOrder.ticket.destroy();
+            this.kitchen.currentOrder.ticket = null;
             this.kitchen.service.dish.destroy();
             this.kitchen.service.dish = null;
         }
     }
 
     compareDishToTicket() {
-        console.log(this.currentOrder.ticket?.requirements);
+        console.log(this.kitchen.currentOrder.ticket?.requirements);
         console.log(
             this.kitchen.service.dish?.ingredients.map(
                 (ingrd) => ingrd.name + ingrd.state
@@ -99,17 +87,17 @@ export default class Shift1 extends Phaser.Scene {
         );
         const res =
             this.kitchen.service.dish?.ingredients.every((ingrd) =>
-                this.currentOrder.ticket?.requirements.has(
+                this.kitchen.currentOrder.ticket?.requirements.has(
                     ingrd.name + ingrd.state
                 )
             ) &&
             this.kitchen.service.dish.ingredients.length ===
-                this.currentOrder.ticket?.requirements.size;
+                this.kitchen.currentOrder.ticket?.requirements.size;
         res ? console.log("RIGHT") : console.log("WRONG");
     }
 
     compareTicketToAlgorithm() {
-        if (this.currentOrder.ticket === this.nextTicket) {
+        if (this.kitchen.currentOrder.ticket === this.nextTicket) {
             console.log("masterfully scheduled");
             this.setNextTicket();
         } else {
@@ -137,6 +125,4 @@ export default class Shift1 extends Phaser.Scene {
         );
         console.log(this.nextTicket);
     }
-
-    update() {}
 }
