@@ -68,6 +68,7 @@ export default class Shift1 extends Phaser.Scene {
                 holder.x,
                 134,
                 holder,
+                "Boiled Milk",
                 new Set([`milk${IngredientState.COOKED}`])
             );
             this.tickets.push(holder.ticket);
@@ -96,7 +97,7 @@ export default class Shift1 extends Phaser.Scene {
         this.bell.anims.play("ring-bell", true);
         if (this.currentOrder.ticket && this.service.dish) {
             this.compareDishToTicket();
-            //compareTicketToAlgorithm()
+            this.compareTicketToAlgorithm();
             //give feedback
 
             // cleanup
@@ -123,6 +124,19 @@ export default class Shift1 extends Phaser.Scene {
             this.service.dish.ingredients.length ===
                 this.currentOrder.ticket?.requirements.size;
         res ? console.log("RIGHT") : console.log("WRONG");
+    }
+
+    compareTicketToAlgorithm() {
+        if (this.currentOrder.ticket === this.nextTicket) {
+            console.log("masterfully scheduled");
+            this.setNextTicket();
+        } else {
+            console.log(
+                `poorly scheduled, the right one was the ${
+                    this.nextTicket.name
+                }, which arrived ${this.nextTicket.arrivalTime.toFixed(2)}s ago`
+            );
+        }
     }
 
     initIngredientHolders() {
