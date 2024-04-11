@@ -1,8 +1,10 @@
 import Phaser from "phaser";
+import Ingredient from "./ingredient";
 
 
 export default class Fridge extends Phaser.GameObjects.Zone {
     
+    private ingredients: Phaser.GameObjects.Sprite[];
     public inside: Phaser.GameObjects.Sprite;
     tmpInside: Phaser.GameObjects.Rectangle;
 
@@ -15,13 +17,33 @@ export default class Fridge extends Phaser.GameObjects.Zone {
         this.setInteractive()
         .on("pointerdown", this.click)
         this.tmpInside = scene.add.rectangle(250, 445, 250, 400, 0xc0c0c0).setAlpha(0);
+        this.ingredients = [];
+        scene.add.rectangle(250, 445, 250, 400, 0xc0c0c0).setAlpha(0);
         scene.add.rectangle(x, y, 155, 200, 0xff0000).setAlpha(0.4);
+        
         scene.add.existing(this);
     }
 
     click(pointer: Phaser.Input.Pointer){
+
+        console.log("Fridge clicked");
+        this.toggleIngredientsVisibility();
+    }
+
+    private toggleIngredientsVisibility() {
+        for (const ingredient of this.ingredients) {
+            ingredient.visible = !ingredient.visible;
+        }
+    }
+
+    addIngredient(ingredient: Phaser.GameObjects.Sprite) {
+        this.ingredients.push(ingredient);
+        ingredient.setVisible(false);
+    }
+
+        /** 
         console.log("hey michyyyy") 
         //this.tmpInside.setAlpha(1);
         this.tmpInside.alpha > 0 ? this.tmpInside.setAlpha(0) : this.tmpInside.setAlpha(1);
+        */
     }
-}
