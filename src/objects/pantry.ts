@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 
-export default class Fridge extends Phaser.GameObjects.Zone {
+export default class Pantry extends Phaser.GameObjects.Zone {
     public inside: Phaser.GameObjects.Sprite;
     tmpInside: Phaser.GameObjects.Rectangle;
 
@@ -10,7 +10,7 @@ export default class Fridge extends Phaser.GameObjects.Zone {
         this.tmpInside = scene.add
             .rectangle(250, 445, 250, 400, 0xc0c0c0)
             .setAlpha(0);
-        scene.add.rectangle(x, y, 155, 200, 0xff0000).setAlpha(0.4);
+        scene.add.rectangle(x, y, 155, 200, 0xa52a2a).setAlpha(0.4);
         scene.add.existing(this);
     }
 
