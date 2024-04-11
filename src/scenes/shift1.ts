@@ -62,14 +62,8 @@ export default class Shift1 extends Phaser.Scene {
         this.kitchen = new Kitchen(this);
         this.setNextTicket();
 
-        this.milk = new Ingredient(
-            this,
-            this.cameras.main.centerX,
-            this.cameras.main.centerY,
-            "milk",
-            "milk"
-        );
         this.initIngredientHolders();
+
         this.bell = this.add
             .sprite(
                 this.kitchen.service.x,

@@ -45,10 +45,8 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
 
     setTimer() {
         this.timer.setAlpha(1).anims.play(
-            {
-                key: "countdown-timer",
-                duration: this.duration, // [tofix] this does not do anything, default duration is always used
-            },
+            `${this.name}-timer`,
+
             true
         );
     }

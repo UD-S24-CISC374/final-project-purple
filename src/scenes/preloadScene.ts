@@ -34,11 +34,6 @@ export default class PreloadScene extends Phaser.Scene {
 
     create() {
         this.anims.create({
-            key: "countdown-timer",
-            frames: "timer",
-            repeat: 0,
-        });
-        this.anims.create({
             key: "ring-bell",
             frames: "bell",
             duration: 300,

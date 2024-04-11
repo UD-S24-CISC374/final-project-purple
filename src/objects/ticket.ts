@@ -37,7 +37,8 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         this.details = scene.add
             .text(x, y + 120, `Arrived ${this.arrivalTime.toFixed(2)}s ago.`)
             .setAlpha(0)
-            .setOrigin(0.5, 1);
+            .setOrigin(0.5, 1)
+            .setDepth(999);
 
         this.requirements = requirements;
 
