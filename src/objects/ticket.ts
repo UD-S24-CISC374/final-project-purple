@@ -19,7 +19,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         super(scene, x, y, "ticket");
         this.holder = holder;
         this.setScale(0.5)
-            .setDepth(0)
+            .setDepth(1)
             .setInteractive({ draggable: true })
             .setName(dishName)
             // attach input events
@@ -52,14 +52,12 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
 
     dragStart() {
         // when the user starts dragging
-        this.setScale(0.6);
-        this.depth = 2;
+        this.setScale(0.6).setDepth(3);
     }
 
     dragEnd() {
         // when the user releases the ticket
-        this.setScale(0.5);
-        this.depth = 0;
+        this.setScale(0.5).setDepth(1);
         // snap back to holder
         this.setPosition(
             this.holder.x,
