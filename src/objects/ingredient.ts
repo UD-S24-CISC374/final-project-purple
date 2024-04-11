@@ -2,12 +2,12 @@ import Phaser from "phaser";
 import Station from "./station";
 import Service from "./stations/service";
 
-enum IngredientState {
-    BAKED,
-    PREPPED,
-    WASHED,
-    COOKED,
-    RAW,
+export enum IngredientState {
+    BAKED = "Baked",
+    PREPPED = "Prepped",
+    WASHED = "Washed",
+    COOKED = "Cooked",
+    RAW = "Raw",
 }
 
 const stationState: Record<string, IngredientState> = {
@@ -19,18 +19,16 @@ const stationState: Record<string, IngredientState> = {
 
 export default class Ingredient extends Phaser.GameObjects.Sprite {
     station: Station | null;
-    name: string;
     state: IngredientState = IngredientState.RAW;
 
     constructor(
         scene: Phaser.Scene,
         x: number,
         y: number,
-        image: string,
-        name: string
+        name: string,
+        image: string
     ) {
         super(scene, x, y, image);
-        this.name = name;
         this.setScale(0.2)
             .setDepth(2)
             .setInteractive({ draggable: true })

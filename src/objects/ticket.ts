@@ -1,20 +1,19 @@
 import Phaser from "phaser";
 import CurrentOrder from "./currentOrder";
 import TicketHolder from "./ticketHolder";
-import Ingredient from "./ingredient";
 
 export default class Ticket extends Phaser.GameObjects.Sprite {
     arrivalTime: number;
     details: Phaser.GameObjects.Text;
     holder: TicketHolder | CurrentOrder;
-    ingredients: Ingredient[];
+    requirements: Set<string>;
 
     constructor(
         scene: Phaser.Scene,
         x: number,
         y: number,
-        ingredients: number[],
-        holder: TicketHolder | CurrentOrder
+        holder: TicketHolder | CurrentOrder,
+        requirements: Set<string>
     ) {
         super(scene, x, y, "ticket");
         this.holder = holder;
@@ -38,6 +37,8 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             .text(x, y + 120, `Arrived ${this.arrivalTime.toFixed(2)}s ago.`)
             .setAlpha(0)
             .setOrigin(0.5, 1);
+
+        this.requirements = requirements;
 
         scene.events.on("update", this.update, this);
         scene.add.existing(this);

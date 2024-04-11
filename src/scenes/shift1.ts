@@ -10,7 +10,7 @@ import Oven from "../objects/stations/oven";
 import Sink from "../objects/stations/sink";
 import Service from "../objects/stations/service";
 import Plating from "../objects/plating";
-import Ingredient from "../objects/ingredient";
+import Ingredient, { IngredientState } from "../objects/ingredient";
 import Fridge from "../objects/fridge";
 
 // FIRST COME FIRST SERVED
@@ -61,12 +61,19 @@ export default class Shift1 extends Phaser.Scene {
             );
         }
 
+        // Initialize holders and first 3 tickets
         this.ticketHolders.map((holder) => {
-            holder.ticket = new Ticket(this, holder.x, 134, [1, 2], holder);
+            holder.ticket = new Ticket(
+                this,
+                holder.x,
+                134,
+                holder,
+                new Set([`milk${IngredientState.COOKED}`])
+            );
             this.tickets.push(holder.ticket);
         });
-
         this.currentOrder = new CurrentOrder(this, 900, 110, 240, 240);
+
         this.initStations();
         this.setNextTicket();
 
@@ -75,7 +82,7 @@ export default class Shift1 extends Phaser.Scene {
             this.cameras.main.centerX,
             this.cameras.main.centerY,
             "milk",
-            "Milk"
+            "milk"
         );
         this.initIngredientHolders();
         this.bell = this.add
@@ -87,10 +94,35 @@ export default class Shift1 extends Phaser.Scene {
 
     submitDish() {
         this.bell.anims.play("ring-bell", true);
-        //compareDishToTicket()
-        //compareTicketToAlgorithm()
-        //give feedback
-        //delete dish
+        if (this.currentOrder.ticket && this.service.dish) {
+            this.compareDishToTicket();
+            //compareTicketToAlgorithm()
+            //give feedback
+
+            // cleanup
+            this.currentOrder.ticket.destroy();
+            this.currentOrder.ticket = null;
+            this.service.dish.destroy();
+            this.service.dish = null;
+        }
+    }
+
+    compareDishToTicket() {
+        console.log(this.currentOrder.ticket?.requirements);
+        console.log(
+            this.service.dish?.ingredients.map(
+                (ingrd) => ingrd.name + ingrd.state
+            )
+        );
+        const res =
+            this.service.dish?.ingredients.every((ingrd) =>
+                this.currentOrder.ticket?.requirements.has(
+                    ingrd.name + ingrd.state
+                )
+            ) &&
+            this.service.dish.ingredients.length ===
+                this.currentOrder.ticket?.requirements.size;
+        res ? console.log("RIGHT") : console.log("WRONG");
     }
 
     initIngredientHolders() {

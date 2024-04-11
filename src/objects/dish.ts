@@ -41,6 +41,7 @@ export default class Dish extends Phaser.GameObjects.Sprite {
 
     dragLeave(dish: Dish, target: Service) {
         if (target instanceof Service) {
+            target.dish = null;
             this.setScale(4);
         }
     }
