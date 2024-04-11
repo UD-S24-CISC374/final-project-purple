@@ -10,5 +10,7 @@ export default class Stove extends Station {
         height: number
     ) {
         super(scene, x, y, width, height);
+        this.setName("stove");
+        this.duration = 10000;
     }
 }

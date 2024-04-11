@@ -9,7 +9,8 @@ import Prep from "../objects/stations/prep";
 import Oven from "../objects/stations/oven";
 import Sink from "../objects/stations/sink";
 import Service from "../objects/stations/service";
-import Plating from "../objects/stations/plating";
+import Plating from "../objects/plating";
+import Ingredient from "../objects/ingredient";
 import Fridge from "../objects/fridge";
 import Pantry from "../objects/pantry";
 
@@ -21,13 +22,18 @@ export default class Shift1 extends Phaser.Scene {
     gui: ShiftGUI;
     nextTicket: Ticket;
     stoves: Stove[] = new Array<Stove>(2);
-    ovens: Oven[] = [];
+    ovens: Oven[] = new Array<Oven>(4);
     preps: Prep[] = new Array<Prep>(5);
     sinks: Sink[] = new Array<Sink>(2);
     service: Service;
     plating: Plating;
+    milk: Ingredient;
+    butter: Ingredient;
+    chicken: Ingredient;
+    carrot: Ingredient;
     fridge: Fridge;
     pantry: Pantry;
+    bell: Phaser.GameObjects.Sprite;
 
     constructor() {
         super({ key: "Shift1" });
@@ -40,6 +46,7 @@ export default class Shift1 extends Phaser.Scene {
 
     create() {
         const version = CONFIG.version;
+
         this.add.image(
             this.cameras.main.centerX,
             this.cameras.main.centerY,
@@ -58,6 +65,7 @@ export default class Shift1 extends Phaser.Scene {
                 new TicketHolder(this, 80 + 60 * i * 3, 75, 150, 320)
             );
         }
+
         this.ticketHolders.map((holder) => {
             holder.ticket = new Ticket(this, holder.x, 134, [1, 2], holder);
             this.tickets.push(holder.ticket);
@@ -67,8 +75,53 @@ export default class Shift1 extends Phaser.Scene {
         this.initStations();
         this.setNextTicket();
 
-        //const milk = new Ingredient(this, this.cameras.main.centerX, this.cameras.main.centerY, "milk", "milk")
+        //adding in ingredient sprite
+        this.milk = new Ingredient(
+            this,
+            this.cameras.main.centerX,
+            this.cameras.main.centerY,
+            "milk",
+            "Milk"
+        );
+
+        this.butter = new Ingredient(
+            this,
+            this.cameras.main.centerX,
+            this.cameras.main.centerY,
+            "butter",
+            "Butter"
+        );
+
+        this.chicken = new Ingredient(
+            this,
+            this.cameras.main.centerX,
+            this.cameras.main.centerY,
+            "chicken",
+            "chicken"
+        );
+
+        this.carrot = new Ingredient(
+            this,
+            this.cameras.main.centerX,
+            this.cameras.main.centerY,
+            "carrot",
+            "Carrot"
+        );
+
         this.initIngredientHolders();
+        this.bell = this.add
+            .sprite(this.service.x, this.service.y - 120, "bell")
+            .setScale(4)
+            .setInteractive()
+            .on("pointerdown", this.submitDish, this);
+    }
+
+    submitDish() {
+        this.bell.anims.play("ring-bell", true);
+        //compareDishToTicket()
+        //compareTicketToAlgorithm()
+        //give feedback
+        //delete dish
     }
 
     initIngredientHolders() {
@@ -77,10 +130,11 @@ export default class Shift1 extends Phaser.Scene {
             this.cameras.main.x + 10,
             this.cameras.main.height - 385
         );
+
         this.pantry = new Pantry(
             this,
             this.cameras.main.x + 10,
-            this.cameras.main.height - 150
+            this.cameras.main.height - 130
         );
     }
 
@@ -202,14 +256,5 @@ export default class Shift1 extends Phaser.Scene {
         console.log(this.nextTicket);
     }
 
-    update() {
-        if (
-            this.currentOrder.ticket &&
-            this.currentOrder.ticket === this.nextTicket
-        ) {
-            console.log("RIGHT");
-        } else if (this.currentOrder.ticket) {
-            console.log("WRONG");
-        }
-    }
+    update() {}
 }
