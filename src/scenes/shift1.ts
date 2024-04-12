@@ -27,10 +27,6 @@ export default class Shift1 extends Phaser.Scene {
     sinks: Sink[] = new Array<Sink>(2);
     service: Service;
     plating: Plating;
-    milk: Ingredient;
-    butter: Ingredient;
-    chicken: Ingredient;
-    carrot: Ingredient;
     fridge: Fridge;
     pantry: Pantry;
     bell: Phaser.GameObjects.Sprite;
@@ -74,39 +70,6 @@ export default class Shift1 extends Phaser.Scene {
         this.currentOrder = new CurrentOrder(this, 900, 110, 240, 240);
         this.initStations();
         this.setNextTicket();
-
-        //adding in ingredient sprite
-        this.milk = new Ingredient(
-            this,
-            this.cameras.main.centerX,
-            this.cameras.main.centerY,
-            "milk",
-            "Milk"
-        );
-
-        this.butter = new Ingredient(
-            this,
-            this.cameras.main.centerX,
-            this.cameras.main.centerY,
-            "butter",
-            "Butter"
-        );
-
-        this.chicken = new Ingredient(
-            this,
-            this.cameras.main.centerX,
-            this.cameras.main.centerY,
-            "chicken",
-            "chicken"
-        );
-
-        this.carrot = new Ingredient(
-            this,
-            this.cameras.main.centerX,
-            this.cameras.main.centerY,
-            "carrot",
-            "Carrot"
-        );
 
         this.initIngredientHolders();
         this.bell = this.add
