@@ -7,6 +7,8 @@ import Service from "../objects/stations/service";
 import Plating from "../objects/plating";
 import TicketHolder from "./ticketHolder";
 import CurrentOrder from "./currentOrder";
+import Fridge from "../objects/fridge";
+import Pantry from "../objects/pantry";
 
 // FOR HOLDING ALL STATIONS AS ONE KITCHEN OBJECT
 export default class Kitchen {
@@ -16,6 +18,8 @@ export default class Kitchen {
     sinks: Sink[] = new Array<Sink>(2);
     service: Service;
     plating: Plating;
+    fridge: Fridge;
+    pantry: Pantry;
 
     ticketHolders: TicketHolder[] = [];
     currentOrder: CurrentOrder;
@@ -92,8 +96,21 @@ export default class Kitchen {
         this.currentOrder = new CurrentOrder(scene, 900, 110, 240, 240);
     }
 
+    initIngredientHolders(scene: Phaser.Scene) {
+        this.fridge = new Fridge(
+            scene,
+            scene.cameras.main.x + 10,
+            scene.cameras.main.height - 385
+        );
+
+        this.pantry = new Pantry(
+            scene,
+            scene.cameras.main.x + 10,
+            scene.cameras.main.height - 130
+        );
+    }
+
     initStations(scene: Phaser.Scene) {
-        // will probably abstract this to a kitchen object and make them public fields
         this.service = new Service(
             scene,
             scene.cameras.main.centerX + 16,

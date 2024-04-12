@@ -3,7 +3,6 @@ import { CONFIG } from "../config";
 import Ticket from "../objects/ticket";
 import ShiftGUI from "./shiftGUI";
 import { IngredientState } from "../objects/ingredient";
-import Fridge from "../objects/fridge";
 import Kitchen from "../objects/kitchen";
 
 // FIRST COME FIRST SERVED
@@ -11,7 +10,6 @@ export default class Shift1 extends Phaser.Scene {
     tickets: Ticket[] = [];
     gui: ShiftGUI;
     nextTicket: Ticket;
-    fridge: Fridge;
     bell: Phaser.GameObjects.Sprite;
     kitchen: Kitchen;
 
@@ -49,8 +47,6 @@ export default class Shift1 extends Phaser.Scene {
         });
 
         this.setNextTicket();
-
-        this.initIngredientHolders();
 
         this.bell = this.add
             .sprite(
@@ -116,14 +112,6 @@ export default class Shift1 extends Phaser.Scene {
 
     compareTicketToAlgorithm() {
         return this.kitchen.currentOrder.ticket === this.nextTicket;
-    }
-
-    initIngredientHolders() {
-        this.fridge = new Fridge(
-            this,
-            this.cameras.main.x + 10,
-            this.cameras.main.height - 385
-        );
     }
 
     setNextTicket() {
