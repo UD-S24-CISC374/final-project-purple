@@ -10,13 +10,11 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
 
     constructor(
         scene: Phaser.Scene,
-        x: number,
-        y: number,
         holder: TicketHolder | CurrentOrder,
         dishName: string,
         requirements: Set<string>
     ) {
-        super(scene, x, y, "ticket");
+        super(scene, holder.x, 134, "ticket");
         this.holder = holder;
         this.setScale(0.5)
             .setDepth(1)
@@ -35,7 +33,11 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         this.arrivalTime = Phaser.Math.FloatBetween(0, 30);
 
         this.details = scene.add
-            .text(x, y + 120, `Arrived ${this.arrivalTime.toFixed(2)}s ago.`)
+            .text(
+                this.x,
+                this.y + 120,
+                `Arrived ${this.arrivalTime.toFixed(2)}s ago.`
+            )
             .setAlpha(0)
             .setOrigin(0.5, 1)
             .setDepth(999);

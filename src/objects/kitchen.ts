@@ -9,9 +9,12 @@ import TicketHolder from "./ticketHolder";
 import CurrentOrder from "./currentOrder";
 import Fridge from "../objects/fridge";
 import Pantry from "../objects/pantry";
+import Dish from "./dish";
+import { IngredientState } from "./ingredient";
+import Ticket from "./ticket";
 
 // FOR HOLDING ALL STATIONS AS ONE KITCHEN OBJECT
-export default class Kitchen {
+export default class Kitchen extends Phaser.GameObjects.Image {
     stoves: Stove[] = new Array<Stove>(2);
     ovens: Oven[] = new Array<Oven>(4);
     preps: Prep[] = new Array<Prep>(5);
@@ -28,16 +31,20 @@ export default class Kitchen {
     scheduleRes: Phaser.GameObjects.Text;
 
     constructor(scene: Phaser.Scene) {
-        scene.add.image(
+        super(
+            scene,
             scene.cameras.main.centerX,
             scene.cameras.main.centerY,
             "kitchen"
         );
+        scene.add.existing(this);
+
         this.dishRes = scene.add
             .text(scene.cameras.main.centerX, scene.cameras.main.centerY, "")
             .setDepth(999)
             .setOrigin(0.5)
             .setAlpha(0);
+
         this.scheduleRes = scene.add
             .text(
                 scene.cameras.main.centerX,
@@ -49,6 +56,52 @@ export default class Kitchen {
             .setAlpha(0);
         this.initHolders(scene);
         this.initStations(scene);
+    }
+
+    submitDish(
+        cmpFn1: (dish: Dish, ticket: Ticket) => boolean,
+        cmpFn2: (ticket: Ticket, tickets: Ticket[]) => (boolean | Ticket)[],
+        tickets: Ticket[]
+    ) {
+        if (this.service.dish && this.currentOrder.ticket) {
+            const dishRes = cmpFn1(this.service.dish, this.currentOrder.ticket);
+            const [scheduleRes, nxtTicket] = cmpFn2(
+                this.currentOrder.ticket,
+                tickets
+            );
+            //give feedback
+
+            // cleanup
+            const emptyHolderIdx = this.ticketHolders.findIndex(
+                (th) => th.ticket === null
+            );
+
+            this.ticketHolders[emptyHolderIdx].ticket = tickets[
+                emptyHolderIdx
+            ] = new Ticket(
+                this.scene,
+                this.ticketHolders[emptyHolderIdx],
+                "Buttered Carrots",
+                new Set<string>([
+                    `${IngredientState.PREPPED} carrot`,
+                    `${IngredientState.RAW} butter`,
+                ])
+            );
+
+            this.showResult(
+                dishRes!, // if condition implies this will always exist
+                scheduleRes as boolean,
+                (nxtTicket as Ticket).name,
+                (nxtTicket as Ticket).arrivalTime
+            );
+
+            this.currentOrder.hideRecipe();
+            this.currentOrder.ticket.destroy();
+            this.currentOrder.ticket = null;
+
+            this.service.dish.destroy();
+            this.service.dish = null;
+        }
     }
 
     showResult(

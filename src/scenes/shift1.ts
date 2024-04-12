@@ -4,12 +4,13 @@ import Ticket from "../objects/ticket";
 import ShiftGUI from "./shiftGUI";
 import { IngredientState } from "../objects/ingredient";
 import Kitchen from "../objects/kitchen";
+import Dish from "../objects/dish";
 
 // FIRST COME FIRST SERVED
 export default class Shift1 extends Phaser.Scene {
     tickets: Ticket[] = [];
     gui: ShiftGUI;
-    nextTicket: Ticket;
+    nxtTicket: Ticket;
     bell: Phaser.GameObjects.Sprite;
     kitchen: Kitchen;
 
@@ -37,17 +38,13 @@ export default class Shift1 extends Phaser.Scene {
         this.kitchen.ticketHolders.map((holder) => {
             holder.ticket = new Ticket(
                 this,
-                holder.x,
-                134,
                 holder,
                 "Boiled Milk",
                 new Set([`${IngredientState.COOKED} milk`])
             );
             this.tickets.push(holder.ticket);
         });
-
-        this.setNextTicket();
-
+        console.log(this.tickets);
         this.bell = this.add
             .sprite(
                 this.kitchen.service.x,
@@ -56,69 +53,34 @@ export default class Shift1 extends Phaser.Scene {
             )
             .setScale(4)
             .setInteractive()
-            .on("pointerdown", this.submitDish, this);
+            .on(
+                "pointerdown",
+                () => {
+                    this.bell.anims.play("ring-bell", true);
+                    this.kitchen.submitDish(
+                        this.compareDishToTicket,
+                        this.compareTicketToAlgorithm,
+                        this.tickets
+                    );
+                },
+                this
+            );
     }
 
-    submitDish() {
-        this.bell.anims.play("ring-bell", true);
-        if (this.kitchen.currentOrder.ticket && this.kitchen.service.dish) {
-            const dishRes = this.compareDishToTicket();
-            const scheduleRes = this.compareTicketToAlgorithm();
-            //give feedback
-
-            // cleanup
-            const oldTicketLoc = this.kitchen.ticketHolders.findIndex(
-                (th) => th.ticket === null
-            );
-
-            this.kitchen.ticketHolders[oldTicketLoc].ticket = this.tickets[
-                oldTicketLoc
-            ] = new Ticket(
-                this,
-                this.kitchen.ticketHolders[oldTicketLoc].x,
-                134,
-                this.kitchen.ticketHolders[oldTicketLoc],
-                "bruh",
-                new Set<string>(["bruh"])
-            );
-
-            this.setNextTicket();
-            this.kitchen.showResult(
-                dishRes!,
-                scheduleRes,
-                this.nextTicket.name,
-                this.nextTicket.arrivalTime
-            );
-
-            this.kitchen.currentOrder.hideRecipe();
-            this.kitchen.currentOrder.ticket.destroy();
-            this.kitchen.currentOrder.ticket = null;
-            this.kitchen.service.dish.destroy();
-            this.kitchen.service.dish = null;
-        }
-    }
-
-    compareDishToTicket() {
+    compareDishToTicket(dish: Dish, ticket: Ticket) {
         const res =
-            this.kitchen.service.dish?.ingredients.every((ingrd) =>
-                this.kitchen.currentOrder.ticket?.requirements.has(
-                    `${ingrd.state} ${ingrd.name}`
-                )
-            ) &&
-            this.kitchen.service.dish.ingredients.length ===
-                this.kitchen.currentOrder.ticket?.requirements.size;
+            dish.ingredients.every((ingrd) =>
+                ticket.requirements.has(`${ingrd.state} ${ingrd.name}`)
+            ) && dish.ingredients.length === ticket.requirements.size;
         return res;
     }
 
-    compareTicketToAlgorithm() {
-        return this.kitchen.currentOrder.ticket === this.nextTicket;
-    }
-
-    setNextTicket() {
-        this.nextTicket = this.tickets.reduce(
+    compareTicketToAlgorithm(ticket: Ticket, tickets: Ticket[]) {
+        const nxtTicket = tickets.reduce(
             (first, curr): Ticket =>
                 curr.arrivalTime < first.arrivalTime ? curr : first,
-            this.tickets[0]
+            tickets[0]
         );
+        return [ticket === nxtTicket, nxtTicket];
     }
 }
