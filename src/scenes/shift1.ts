@@ -66,11 +66,28 @@ export default class Shift1 extends Phaser.Scene {
     submitDish() {
         this.bell.anims.play("ring-bell", true);
         if (this.kitchen.currentOrder.ticket && this.kitchen.service.dish) {
-            this.compareDishToTicket();
-            this.compareTicketToAlgorithm();
+            const dishRes = this.compareDishToTicket();
+            const scheduleRes = this.compareTicketToAlgorithm();
+            this.kitchen.showResult(
+                dishRes!,
+                scheduleRes,
+                this.nextTicket.name,
+                this.nextTicket.arrivalTime
+            );
             //give feedback
 
             // cleanup
+            const oldTicketLoc = this.kitchen.ticketHolders.findIndex(
+                (th) => th.ticket === null
+            );
+            this.kitchen.ticketHolders[oldTicketLoc].ticket = new Ticket(
+                this,
+                this.kitchen.ticketHolders[oldTicketLoc].x,
+                134,
+                this.kitchen.ticketHolders[oldTicketLoc],
+                "bruh",
+                new Set<string>(["bruh"])
+            );
             this.kitchen.currentOrder.ticket.destroy();
             this.kitchen.currentOrder.ticket = null;
             this.kitchen.service.dish.destroy();
@@ -87,19 +104,15 @@ export default class Shift1 extends Phaser.Scene {
             ) &&
             this.kitchen.service.dish.ingredients.length ===
                 this.kitchen.currentOrder.ticket?.requirements.size;
-        res ? console.log("RIGHT") : console.log("WRONG");
+        return res;
     }
 
     compareTicketToAlgorithm() {
         if (this.kitchen.currentOrder.ticket === this.nextTicket) {
-            console.log("masterfully scheduled");
             this.setNextTicket();
+            return true;
         } else {
-            console.log(
-                `poorly scheduled, the right one was the ${
-                    this.nextTicket.name
-                }, which arrived ${this.nextTicket.arrivalTime.toFixed(2)}s ago`
-            );
+            return false;
         }
     }
 

@@ -20,15 +20,67 @@ export default class Kitchen {
     ticketHolders: TicketHolder[] = [];
     currentOrder: CurrentOrder;
 
+    dishRes: Phaser.GameObjects.Text;
+    scheduleRes: Phaser.GameObjects.Text;
+
     constructor(scene: Phaser.Scene) {
         scene.add.image(
             scene.cameras.main.centerX,
             scene.cameras.main.centerY,
             "kitchen"
         );
-
+        this.dishRes = scene.add
+            .text(scene.cameras.main.centerX, scene.cameras.main.centerY, "")
+            .setDepth(999)
+            .setOrigin(0.5)
+            .setAlpha(0);
+        this.scheduleRes = scene.add
+            .text(
+                scene.cameras.main.centerX,
+                scene.cameras.main.centerY + 50,
+                ""
+            )
+            .setDepth(999)
+            .setOrigin(0.5)
+            .setAlpha(0);
         this.initHolders(scene);
         this.initStations(scene);
+    }
+
+    showResult(
+        dishRes: boolean,
+        scheduleRes: boolean,
+        nextTicketName: string,
+        nextTicketTime: number
+    ) {
+        dishRes
+            ? this.dishRes
+                  .setText(`Great ${this.currentOrder.ticket?.name} chef!`)
+                  .setColor("green")
+            : this.dishRes
+                  .setText(
+                      `You call that ${this.currentOrder.ticket?.name}? You donut!!!`
+                  )
+                  .setColor("red");
+        scheduleRes
+            ? this.scheduleRes
+                  .setText(`You scheduled it correctly.`)
+                  .setColor("green")
+            : this.scheduleRes
+                  .setText(
+                      `Poorly scheduled, the right one was the ${nextTicketName}, which arrived ${nextTicketTime.toFixed(
+                          2
+                      )}s ago.`
+                  )
+                  .setColor("red");
+
+        this.dishRes.setAlpha(1);
+        this.scheduleRes.setAlpha(1);
+
+        this.currentOrder.scene.time.delayedCall(3000, () => {
+            this.dishRes.setAlpha(0);
+            this.scheduleRes.setAlpha(0);
+        });
     }
 
     initHolders(scene: Phaser.Scene) {
