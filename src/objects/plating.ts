@@ -11,7 +11,6 @@ export default class Plating extends Phaser.GameObjects.Zone {
     ) {
         super(scene, x, y, width, height);
         this.setInteractive().on("pointerdown", this.createDish, this);
-        scene.add.rectangle(x, y, width, height, 0xff0000).setAlpha(0.4);
         scene.add.existing(this);
     }
 
