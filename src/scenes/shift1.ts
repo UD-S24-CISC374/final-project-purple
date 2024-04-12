@@ -68,19 +68,16 @@ export default class Shift1 extends Phaser.Scene {
         if (this.kitchen.currentOrder.ticket && this.kitchen.service.dish) {
             const dishRes = this.compareDishToTicket();
             const scheduleRes = this.compareTicketToAlgorithm();
-            this.kitchen.showResult(
-                dishRes!,
-                scheduleRes,
-                this.nextTicket.name,
-                this.nextTicket.arrivalTime
-            );
             //give feedback
 
             // cleanup
             const oldTicketLoc = this.kitchen.ticketHolders.findIndex(
                 (th) => th.ticket === null
             );
-            this.kitchen.ticketHolders[oldTicketLoc].ticket = new Ticket(
+
+            this.kitchen.ticketHolders[oldTicketLoc].ticket = this.tickets[
+                oldTicketLoc
+            ] = new Ticket(
                 this,
                 this.kitchen.ticketHolders[oldTicketLoc].x,
                 134,
@@ -88,6 +85,16 @@ export default class Shift1 extends Phaser.Scene {
                 "bruh",
                 new Set<string>(["bruh"])
             );
+
+            this.setNextTicket();
+            this.kitchen.showResult(
+                dishRes!,
+                scheduleRes,
+                this.nextTicket.name,
+                this.nextTicket.arrivalTime
+            );
+
+            this.kitchen.currentOrder.hideRecipe();
             this.kitchen.currentOrder.ticket.destroy();
             this.kitchen.currentOrder.ticket = null;
             this.kitchen.service.dish.destroy();
@@ -108,12 +115,7 @@ export default class Shift1 extends Phaser.Scene {
     }
 
     compareTicketToAlgorithm() {
-        if (this.kitchen.currentOrder.ticket === this.nextTicket) {
-            this.setNextTicket();
-            return true;
-        } else {
-            return false;
-        }
+        return this.kitchen.currentOrder.ticket === this.nextTicket;
     }
 
     initIngredientHolders() {
