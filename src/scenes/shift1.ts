@@ -44,7 +44,7 @@ export default class Shift1 extends Phaser.Scene {
             );
             this.tickets.push(holder.ticket);
         });
-        console.log(this.tickets);
+
         this.bell = this.add
             .sprite(
                 this.kitchen.service.x,

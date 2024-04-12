@@ -54,8 +54,10 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             .setDepth(999)
             .setOrigin(0.5)
             .setAlpha(0);
-        this.initHolders(scene);
-        this.initStations(scene);
+
+        this.initHolders();
+        this.initIngredientHolders();
+        this.initStations();
     }
 
     submitDish(
@@ -140,132 +142,132 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         });
     }
 
-    initHolders(scene: Phaser.Scene) {
+    initHolders() {
         for (let i = 0; i < 3; i++) {
             this.ticketHolders.push(
-                new TicketHolder(scene, 80 + 60 * i * 3, 75, 150, 320)
+                new TicketHolder(this.scene, 80 + 60 * i * 3, 75, 150, 320)
             );
         }
-        this.currentOrder = new CurrentOrder(scene, 900, 110, 240, 240);
+        this.currentOrder = new CurrentOrder(this.scene, 900, 110, 240, 240);
     }
 
-    initIngredientHolders(scene: Phaser.Scene) {
+    initIngredientHolders() {
         this.fridge = new Fridge(
-            scene,
-            scene.cameras.main.x + 10,
-            scene.cameras.main.height - 385
+            this.scene,
+            this.scene.cameras.main.x + 10,
+            this.scene.cameras.main.height - 385
         );
 
         this.pantry = new Pantry(
-            scene,
-            scene.cameras.main.x + 10,
-            scene.cameras.main.height - 130
+            this.scene,
+            this.scene.cameras.main.x + 10,
+            this.scene.cameras.main.height - 130
         );
     }
 
-    initStations(scene: Phaser.Scene) {
+    initStations() {
         this.service = new Service(
-            scene,
-            scene.cameras.main.centerX + 16,
+            this.scene,
+            this.scene.cameras.main.centerX + 16,
             190,
             200,
             100
         );
         this.plating = new Plating(
-            scene,
-            scene.cameras.main.centerX + 20,
-            scene.cameras.main.centerY + 120,
+            this.scene,
+            this.scene.cameras.main.centerX + 20,
+            this.scene.cameras.main.centerY + 120,
             190,
             120
         );
         this.stoves[0] = new Stove(
-            scene,
-            scene.cameras.main.centerX + 204,
-            scene.cameras.main.height - 30,
+            this.scene,
+            this.scene.cameras.main.centerX + 204,
+            this.scene.cameras.main.height - 30,
             100,
             120
         );
         this.stoves[1] = new Stove(
-            scene,
-            scene.cameras.main.width - 295,
-            scene.cameras.main.height - 30,
+            this.scene,
+            this.scene.cameras.main.width - 295,
+            this.scene.cameras.main.height - 30,
             100,
             120
         );
         this.preps[0] = new Prep(
-            scene,
-            scene.cameras.main.centerX - 192,
-            scene.cameras.main.centerY - 30,
+            this.scene,
+            this.scene.cameras.main.centerX - 192,
+            this.scene.cameras.main.centerY - 30,
             90,
             110
         );
         this.preps[1] = new Prep(
-            scene,
-            scene.cameras.main.centerX - 192,
-            scene.cameras.main.centerY + 120,
+            this.scene,
+            this.scene.cameras.main.centerX - 192,
+            this.scene.cameras.main.centerY + 120,
             90,
             110
         );
         this.preps[2] = new Prep(
-            scene,
-            scene.cameras.main.centerX + 222,
-            scene.cameras.main.centerY - 38,
+            this.scene,
+            this.scene.cameras.main.centerX + 222,
+            this.scene.cameras.main.centerY - 38,
             110,
             90
         );
         this.preps[3] = new Prep(
-            scene,
-            scene.cameras.main.centerX + 233,
-            scene.cameras.main.centerY + 120,
+            this.scene,
+            this.scene.cameras.main.centerX + 233,
+            this.scene.cameras.main.centerY + 120,
             90,
             110
         );
         this.preps[4] = new Prep(
-            scene,
-            scene.cameras.main.centerX - 13,
-            scene.cameras.main.centerY - 38,
+            this.scene,
+            this.scene.cameras.main.centerX - 13,
+            this.scene.cameras.main.centerY - 38,
             110,
             90
         );
         this.sinks[0] = new Sink(
-            scene,
-            scene.cameras.main.width - 45,
-            scene.cameras.main.centerY - 40,
+            this.scene,
+            this.scene.cameras.main.width - 45,
+            this.scene.cameras.main.centerY - 40,
             90,
             140
         );
         this.sinks[1] = new Sink(
-            scene,
-            scene.cameras.main.width - 45,
-            scene.cameras.main.height - 150,
+            this.scene,
+            this.scene.cameras.main.width - 45,
+            this.scene.cameras.main.height - 150,
             90,
             140
         );
         this.ovens[0] = new Oven(
-            scene,
+            this.scene,
             175,
-            scene.cameras.main.height - 35,
+            this.scene.cameras.main.height - 35,
             110,
             75
         );
         this.ovens[1] = new Oven(
-            scene,
+            this.scene,
             293,
-            scene.cameras.main.height - 35,
+            this.scene.cameras.main.height - 35,
             120,
             75
         );
         this.ovens[2] = new Oven(
-            scene,
+            this.scene,
             418,
-            scene.cameras.main.height - 35,
+            this.scene.cameras.main.height - 35,
             120,
             75
         );
         this.ovens[3] = new Oven(
-            scene,
-            scene.cameras.main.centerX - 100,
-            scene.cameras.main.height - 35,
+            this.scene,
+            this.scene.cameras.main.centerX - 100,
+            this.scene.cameras.main.height - 35,
             110,
             75
         );
