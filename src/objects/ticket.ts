@@ -1,27 +1,25 @@
 import Phaser from "phaser";
 import CurrentOrder from "./currentOrder";
 import TicketHolder from "./ticketHolder";
-import Ingredient from "./ingredient";
 
 export default class Ticket extends Phaser.GameObjects.Sprite {
     arrivalTime: number;
     details: Phaser.GameObjects.Text;
     holder: TicketHolder | CurrentOrder;
-    ingredients: Ingredient[];
+    requirements: Set<string>;
 
     constructor(
         scene: Phaser.Scene,
-        x: number,
-        y: number,
-        ingredients: number[],
-        holder: TicketHolder | CurrentOrder
+        holder: TicketHolder | CurrentOrder,
+        dishName: string,
+        requirements: Set<string>
     ) {
-        super(scene, x, y, "ticket");
+        super(scene, holder.x, 134, "ticket");
         this.holder = holder;
         this.setScale(0.5)
-            .setDepth(0)
+            .setDepth(1)
             .setInteractive({ draggable: true })
-            .setName("tricket")
+            .setName(dishName)
             // attach input events
             .on("pointerover", this.showDetails)
             .on("pointerout", this.hideDetails)
@@ -35,9 +33,16 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         this.arrivalTime = Phaser.Math.FloatBetween(0, 30);
 
         this.details = scene.add
-            .text(x, y + 120, `Arrived ${this.arrivalTime.toFixed(2)}s ago.`)
+            .text(
+                this.x,
+                this.y + 120,
+                `Arrived ${this.arrivalTime.toFixed(2)}s ago.`
+            )
             .setAlpha(0)
-            .setOrigin(0.5, 1);
+            .setOrigin(0.5, 1)
+            .setDepth(999);
+
+        this.requirements = requirements;
 
         scene.events.on("update", this.update, this);
         scene.add.existing(this);
@@ -50,15 +55,16 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
 
     dragStart() {
         // when the user starts dragging
-        this.setScale(0.6);
-        this.depth = 2;
+        this.setScale(0.6).setDepth(3);
+        if (this.holder instanceof CurrentOrder) this.holder.hideRecipe();
     }
 
     dragEnd() {
         // when the user releases the ticket
-        this.setScale(0.5);
-        this.depth = 0;
+        this.setScale(0.5).setDepth(1);
         // snap back to holder
+        if (this.holder instanceof CurrentOrder) this.holder.showRecipe();
+
         this.setPosition(
             this.holder.x,
             this.holder.y + (this.holder instanceof TicketHolder ? 60 : 0)
@@ -68,9 +74,8 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     dragEnter(ticket: Ticket, target: TicketHolder | CurrentOrder) {
         // make ticket bigger when above a droppable area
         if (
-            (target instanceof TicketHolder ||
-                target instanceof CurrentOrder) &&
-            !target.ticket
+            !target.ticket &&
+            (target instanceof TicketHolder || target instanceof CurrentOrder)
         )
             this.setScale(0.7);
     }
@@ -83,9 +88,8 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
 
     drop(ticket: Ticket, target: TicketHolder | CurrentOrder) {
         if (
-            (target instanceof TicketHolder ||
-                target instanceof CurrentOrder) &&
-            !target.ticket
+            !target.ticket &&
+            (target instanceof TicketHolder || target instanceof CurrentOrder)
         ) {
             this.holder.ticket = null; // set prev holder to empty
             this.holder = target; // assign new holder

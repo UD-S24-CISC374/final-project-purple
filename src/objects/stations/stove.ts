@@ -12,5 +12,11 @@ export default class Stove extends Station {
         super(scene, x, y, width, height);
         this.setName("stove");
         this.duration = 10000;
+        this.timer.anims.create({
+            key: `${this.name}-timer`,
+            frames: "timer",
+            duration: this.duration,
+            repeat: 0,
+        });
     }
 }

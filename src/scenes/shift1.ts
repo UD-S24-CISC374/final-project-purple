@@ -1,34 +1,18 @@
 import Phaser from "phaser";
 import { CONFIG } from "../config";
 import Ticket from "../objects/ticket";
-import TicketHolder from "../objects/ticketHolder";
-import CurrentOrder from "../objects/currentOrder";
 import ShiftGUI from "./shiftGUI";
-import Stove from "../objects/stations/stove";
-import Prep from "../objects/stations/prep";
-import Oven from "../objects/stations/oven";
-import Sink from "../objects/stations/sink";
-import Service from "../objects/stations/service";
-import Plating from "../objects/plating";
-import Fridge from "../objects/fridge";
-import Pantry from "../objects/pantry";
+import { IngredientState } from "../objects/ingredient";
+import Kitchen from "../objects/kitchen";
+import Dish from "../objects/dish";
 
 // FIRST COME FIRST SERVED
 export default class Shift1 extends Phaser.Scene {
     tickets: Ticket[] = [];
-    ticketHolders: TicketHolder[] = [];
-    currentOrder: CurrentOrder;
     gui: ShiftGUI;
-    nextTicket: Ticket;
-    stoves: Stove[] = new Array<Stove>(2);
-    ovens: Oven[] = new Array<Oven>(4);
-    preps: Prep[] = new Array<Prep>(5);
-    sinks: Sink[] = new Array<Sink>(2);
-    service: Service;
-    plating: Plating;
-    fridge: Fridge;
-    pantry: Pantry;
+    nxtTicket: Ticket;
     bell: Phaser.GameObjects.Sprite;
+    kitchen: Kitchen;
 
     constructor() {
         super({ key: "Shift1" });
@@ -41,12 +25,7 @@ export default class Shift1 extends Phaser.Scene {
 
     create() {
         const version = CONFIG.version;
-
-        this.add.image(
-            this.cameras.main.centerX,
-            this.cameras.main.centerY,
-            "kitchen"
-        );
+        this.kitchen = new Kitchen(this);
 
         this.add
             .text(this.cameras.main.width - 15, 15, version, {
@@ -55,168 +34,53 @@ export default class Shift1 extends Phaser.Scene {
             })
             .setOrigin(1, 0);
 
-        for (let i = 0; i < 3; i++) {
-            this.ticketHolders.push(
-                new TicketHolder(this, 80 + 60 * i * 3, 75, 150, 320)
+        // Initialize  first 3 tickets
+        this.kitchen.ticketHolders.map((holder) => {
+            holder.ticket = new Ticket(
+                this,
+                holder,
+                "Boiled Milk",
+                new Set([`${IngredientState.COOKED} milk`])
             );
-        }
-
-        this.ticketHolders.map((holder) => {
-            holder.ticket = new Ticket(this, holder.x, 134, [1, 2], holder);
             this.tickets.push(holder.ticket);
         });
 
-        this.currentOrder = new CurrentOrder(this, 900, 110, 240, 240);
-        this.initStations();
-        this.setNextTicket();
-
-        this.initIngredientHolders();
         this.bell = this.add
-            .sprite(this.service.x, this.service.y - 120, "bell")
+            .sprite(
+                this.kitchen.service.x,
+                this.kitchen.service.y - 120,
+                "bell"
+            )
             .setScale(4)
             .setInteractive()
-            .on("pointerdown", this.submitDish, this);
+            .on(
+                "pointerdown",
+                () => {
+                    this.bell.anims.play("ring-bell", true);
+                    this.kitchen.submitDish(
+                        this.compareDishToTicket,
+                        this.compareTicketToAlgorithm,
+                        this.tickets
+                    );
+                },
+                this
+            );
     }
 
-    submitDish() {
-        this.bell.anims.play("ring-bell", true);
-        //compareDishToTicket()
-        //compareTicketToAlgorithm()
-        //give feedback
-        //delete dish
+    compareDishToTicket(dish: Dish, ticket: Ticket) {
+        const res =
+            dish.ingredients.every((ingrd) =>
+                ticket.requirements.has(`${ingrd.state} ${ingrd.name}`)
+            ) && dish.ingredients.length === ticket.requirements.size;
+        return res;
     }
 
-    initIngredientHolders() {
-        this.fridge = new Fridge(
-            this,
-            this.cameras.main.x + 10,
-            this.cameras.main.height - 385
-        );
-
-        this.pantry = new Pantry(
-            this,
-            this.cameras.main.x + 10,
-            this.cameras.main.height - 130
-        );
-    }
-
-    initStations() {
-        // will probably abstract this to a kitchen object and make them public fields
-        this.service = new Service(
-            this,
-            this.cameras.main.centerX + 16,
-            190,
-            200,
-            100
-        );
-        this.plating = new Plating(
-            this,
-            this.cameras.main.centerX + 20,
-            this.cameras.main.centerY + 120,
-            190,
-            120
-        );
-        this.stoves[0] = new Stove(
-            this,
-            this.cameras.main.centerX + 204,
-            this.cameras.main.height - 30,
-            100,
-            120
-        );
-        this.stoves[1] = new Stove(
-            this,
-            this.cameras.main.width - 295,
-            this.cameras.main.height - 30,
-            100,
-            120
-        );
-        this.preps[0] = new Prep(
-            this,
-            this.cameras.main.centerX - 192,
-            this.cameras.main.centerY - 30,
-            90,
-            110
-        );
-        this.preps[1] = new Prep(
-            this,
-            this.cameras.main.centerX - 192,
-            this.cameras.main.centerY + 120,
-            90,
-            110
-        );
-        this.preps[2] = new Prep(
-            this,
-            this.cameras.main.centerX + 222,
-            this.cameras.main.centerY - 38,
-            110,
-            90
-        );
-        this.preps[3] = new Prep(
-            this,
-            this.cameras.main.centerX + 233,
-            this.cameras.main.centerY + 120,
-            90,
-            110
-        );
-        this.preps[4] = new Prep(
-            this,
-            this.cameras.main.centerX - 13,
-            this.cameras.main.centerY - 38,
-            110,
-            90
-        );
-        this.sinks[0] = new Sink(
-            this,
-            this.cameras.main.width - 45,
-            this.cameras.main.centerY - 40,
-            90,
-            140
-        );
-        this.sinks[1] = new Sink(
-            this,
-            this.cameras.main.width - 45,
-            this.cameras.main.height - 150,
-            90,
-            140
-        );
-        this.ovens[0] = new Oven(
-            this,
-            175,
-            this.cameras.main.height - 35,
-            110,
-            75
-        );
-        this.ovens[1] = new Oven(
-            this,
-            293,
-            this.cameras.main.height - 35,
-            120,
-            75
-        );
-        this.ovens[2] = new Oven(
-            this,
-            418,
-            this.cameras.main.height - 35,
-            120,
-            75
-        );
-        this.ovens[3] = new Oven(
-            this,
-            this.cameras.main.centerX - 100,
-            this.cameras.main.height - 35,
-            110,
-            75
-        );
-    }
-
-    setNextTicket() {
-        this.nextTicket = this.tickets.reduce(
+    compareTicketToAlgorithm(ticket: Ticket, tickets: Ticket[]) {
+        const nxtTicket = tickets.reduce(
             (first, curr): Ticket =>
                 curr.arrivalTime < first.arrivalTime ? curr : first,
-            this.tickets[0]
+            tickets[0]
         );
-        console.log(this.nextTicket);
+        return [ticket === nxtTicket, nxtTicket];
     }
-
-    update() {}
 }

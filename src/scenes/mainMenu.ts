@@ -22,12 +22,24 @@ export default class MainMenu extends Phaser.Scene {
             })
             .setOrigin(0.5, 1);
 
-        const careerMode = this.add.image(200, 400, "career");
-        careerMode
+        const careerButton = this.add.image(200, 400, "career");
+        careerButton
             .setInteractive()
-            .on("pointerdown", () => this.scene.start("Shift1"))
-            .on("pointerover", () => careerMode.setScale(1.1))
-            .on("pointerout", () => careerMode.setScale(1));
+            .on("pointerdown", () => this.scene.start("CareerMenu"))
+            .on("pointerover", () => careerButton.setScale(1.1))
+            .on("pointerout", () => careerButton.setScale(1));
+
+        const tutorialButton = this.add.image(
+            this.cameras.main.centerX,
+            400,
+            "tutorial"
+        );
+
+        tutorialButton
+            .setInteractive()
+            .on("pointerdown", () => this.scene.start("TutorialMenu"))
+            .on("pointerover", () => tutorialButton.setScale(1.1))
+            .on("pointerout", () => tutorialButton.setScale(1));
 
         const exitButton = this.add.image(
             this.cameras.main.width - 200,

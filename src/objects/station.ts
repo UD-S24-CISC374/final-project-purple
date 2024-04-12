@@ -27,7 +27,7 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
 
         this.shield = scene.add
             .rectangle(x, y, width + 10, height + 10, 0x0ff000)
-            .setAlpha(0.4)
+            .setAlpha(0)
             .setDepth(0)
             .setInteractive();
     }
@@ -44,13 +44,7 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
     }
 
     setTimer() {
-        this.timer.setAlpha(1).anims.play(
-            {
-                key: "countdown-timer",
-                duration: this.duration, // [tofix] this does not do anything, default duration is always used
-            },
-            true
-        );
+        this.timer.setAlpha(1).anims.play(`${this.name}-timer`, true);
     }
 
     setOccupied(newStatus: boolean) {
