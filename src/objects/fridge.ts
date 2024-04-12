@@ -14,7 +14,7 @@ export default class Fridge extends Phaser.GameObjects.Zone {
         scene.add.zone(x, y, 155, 200);
         scene.add.existing(this);
         this.sprites[0] = scene.add
-            .sprite(160, 380, "milk")
+            .sprite(171, 375, "milk")
             .setInteractive()
             .setVisible(false)
             .setScale(0.2, 0.2)
