@@ -12,6 +12,7 @@ import Service from "../objects/stations/service";
 import Plating from "../objects/plating";
 import Ingredient from "../objects/ingredient";
 import Fridge from "../objects/fridge";
+import Pantry from "../objects/pantry";
 
 // FIRST COME FIRST SERVED
 export default class Shift1 extends Phaser.Scene {
@@ -27,7 +28,11 @@ export default class Shift1 extends Phaser.Scene {
     service: Service;
     plating: Plating;
     milk: Ingredient;
+    butter: Ingredient;
+    chicken: Ingredient;
+    carrot: Ingredient;
     fridge: Fridge;
+    pantry: Pantry;
     bell: Phaser.GameObjects.Sprite;
 
     constructor() {
@@ -70,6 +75,7 @@ export default class Shift1 extends Phaser.Scene {
         this.initStations();
         this.setNextTicket();
 
+        //adding in ingredient sprite
         this.milk = new Ingredient(
             this,
             this.cameras.main.centerX,
@@ -77,6 +83,31 @@ export default class Shift1 extends Phaser.Scene {
             "milk",
             "Milk"
         );
+
+        this.butter = new Ingredient(
+            this,
+            this.cameras.main.centerX,
+            this.cameras.main.centerY,
+            "butter",
+            "Butter"
+        );
+
+        this.chicken = new Ingredient(
+            this,
+            this.cameras.main.centerX,
+            this.cameras.main.centerY,
+            "chicken",
+            "chicken"
+        );
+
+        this.carrot = new Ingredient(
+            this,
+            this.cameras.main.centerX,
+            this.cameras.main.centerY,
+            "carrot",
+            "Carrot"
+        );
+
         this.initIngredientHolders();
         this.bell = this.add
             .sprite(this.service.x, this.service.y - 120, "bell")
@@ -98,6 +129,12 @@ export default class Shift1 extends Phaser.Scene {
             this,
             this.cameras.main.x + 10,
             this.cameras.main.height - 385
+        );
+
+        this.pantry = new Pantry(
+            this,
+            this.cameras.main.x + 10,
+            this.cameras.main.height - 130
         );
     }
 
