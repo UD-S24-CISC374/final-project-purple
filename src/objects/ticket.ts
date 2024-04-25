@@ -33,7 +33,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         this.details = scene.add
             .text(
                 this.x,
-                this.y + 120,
+                this.y + 200,
                 `Arrived ${this.arrivalTime.toFixed(2)}s ago.`
             )
             .setAlpha(0)
@@ -54,6 +54,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     dragStart() {
         // when the user starts dragging
         this.setScale(0.6).setDepth(3);
+        this.details.setAlpha(0);
         if (this.holder instanceof CurrentOrder) this.holder.hideRecipe();
     }
 
@@ -103,20 +104,25 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
 
     showDetails() {
         this.details.setAlpha(1);
-        /* we'll add tweens later
+        this.setDepth(3);
         this.scene.tweens.add({
-            targets: [this.details],
-            alpha: { from: 0, to: 1 },
-            duration: 300,
+            targets: [this],
+            scale: { from: 0.5, to: 0.6 },
+            duration: 100,
         });
-        */
     }
 
     hideDetails() {
         this.details.setAlpha(0);
+        this.setDepth(1);
+        this.scene.tweens.add({
+            targets: [this],
+            scale: { from: 0.6, to: 0.5 },
+            duration: 100,
+        });
     }
 
     update() {
-        this.details.setPosition(this.x, this.y + 100);
+        this.details.setPosition(this.x, this.y + 120);
     }
 }
