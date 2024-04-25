@@ -27,6 +27,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
     ticketHolders: TicketHolder[] = [];
     currentOrder: CurrentOrder;
 
+    resImg: Phaser.GameObjects.Image;
     dishRes: Phaser.GameObjects.Text;
     scheduleRes: Phaser.GameObjects.Text;
 
@@ -40,20 +41,38 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         scene.add.existing(this);
 
         this.dishRes = scene.add
-            .text(scene.cameras.main.centerX, scene.cameras.main.centerY, "")
+            .text(
+                scene.cameras.main.centerX,
+                scene.cameras.main.centerY + 320,
+                "Right Dish",
+                { backgroundColor: "black" }
+            )
             .setDepth(999)
             .setOrigin(0.5)
-            .setAlpha(0);
+            .setAlpha(0)
+            .setScale(2);
 
         this.scheduleRes = scene.add
             .text(
                 scene.cameras.main.centerX,
-                scene.cameras.main.centerY + 50,
-                ""
+                scene.cameras.main.centerY + 270,
+                "Right Schedule",
+                { backgroundColor: "black" }
             )
             .setDepth(999)
             .setOrigin(0.5)
-            .setAlpha(0);
+            .setAlpha(0)
+            .setScale(2);
+
+        this.resImg = scene.add
+            .image(
+                scene.cameras.main.centerX + 25,
+                scene.cameras.main.centerY,
+                "wrong-dish"
+            )
+            .setAlpha(0)
+            .setDepth(999)
+            .setScale(0.5);
 
         this.initHolders();
         this.initIngredientHolders();
@@ -85,7 +104,6 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             this.showResult(
                 dishRes!, // if condition implies this will always exist
                 scheduleRes as boolean,
-                (nxtTicket as Ticket).name,
                 (nxtTicket as Ticket).arrivalTime
             );
 
@@ -135,39 +153,45 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         );
     }
 
-    showResult(
-        dishRes: boolean,
-        scheduleRes: boolean,
-        nextTicketName: string,
-        nextTicketTime: number
-    ) {
+    showResult(dishRes: boolean, scheduleRes: boolean, nextTicketTime: number) {
         dishRes
-            ? this.dishRes
-                  .setText(`Great ${this.currentOrder.ticket?.name} chef!`)
-                  .setColor("green")
-            : this.dishRes
-                  .setText(
-                      `You call that ${this.currentOrder.ticket?.name}? You donut!!!`
-                  )
-                  .setColor("red");
+            ? this.dishRes.setText(`Great work, chef!`).setColor("green")
+            : this.dishRes.setText(`Wrong Ingredients`).setColor("red");
         scheduleRes
-            ? this.scheduleRes
-                  .setText(`You scheduled it correctly.`)
-                  .setColor("green")
+            ? this.scheduleRes.setText(`Correctly Scheduled`).setColor("green")
             : this.scheduleRes
                   .setText(
-                      `Poorly scheduled, the right one was the ${nextTicketName}, which arrived ${nextTicketTime.toFixed(
+                      `Poorly scheduled, the right one arrived ${nextTicketTime.toFixed(
                           2
-                      )}s ago.`
+                      )}s ago`
                   )
                   .setColor("red");
 
-        this.dishRes.setAlpha(1);
-        this.scheduleRes.setAlpha(1);
+        this.scene.tweens.add({
+            targets: [this.dishRes],
+            alpha: { from: 0, to: 1 },
+            scale: { from: 0, to: 2 },
+            duration: 200,
+        });
 
-        this.currentOrder.scene.time.delayedCall(3000, () => {
+        this.scene.tweens.add({
+            targets: [this.scheduleRes],
+            alpha: { from: 0, to: 1 },
+            scale: { from: 0, to: 2 },
+            duration: 200,
+        });
+
+        this.scene.tweens.add({
+            targets: [this.resImg],
+            alpha: { from: 0, to: 1 },
+            scale: { from: 0, to: 0.5 },
+            duration: 200,
+        });
+
+        this.currentOrder.scene.time.delayedCall(6000, () => {
             this.dishRes.setAlpha(0);
             this.scheduleRes.setAlpha(0);
+            this.resImg.setAlpha(0);
         });
     }
 

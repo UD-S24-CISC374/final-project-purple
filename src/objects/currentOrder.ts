@@ -6,6 +6,7 @@ export default class CurrentOrder extends Phaser.GameObjects.Zone {
     title: Phaser.GameObjects.Text;
     recipeTitle: Phaser.GameObjects.Text;
     recipeContents: Phaser.GameObjects.Text;
+    container: Phaser.GameObjects.Rectangle;
 
     constructor(
         scene: Phaser.Scene,
@@ -16,17 +17,20 @@ export default class CurrentOrder extends Phaser.GameObjects.Zone {
     ) {
         super(scene, x, y, width, height);
         this.setDropZone();
-        this.title = scene.add.text(x, y - 90, "ORDER").setOrigin(0.5);
+        this.title = scene.add
+            .text(x, y - 100, "ORDER")
+            .setOrigin(0.5)
+            .setDepth(2);
         this.recipeTitle = scene.add.text(x + 100, y - 60, `RECIPE`);
         this.recipeContents = scene.add
             .text(x + 110, y - 40, "- CONTENT")
             .setAlpha(0);
+        this.container = scene.add.rectangle(x, y, width - 90, height - 50, 23);
         scene.add.existing(this);
     }
 
     showRecipe() {
         if (this.ticket) {
-            this.title.setText(this.ticket.name);
             let contents = "";
             for (let req of this.ticket.requirements) {
                 contents += `- ${req}\n`;

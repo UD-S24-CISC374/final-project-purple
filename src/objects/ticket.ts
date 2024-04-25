@@ -38,7 +38,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             )
             .setAlpha(0)
             .setOrigin(0.5, 1)
-            .setDepth(999);
+            .setDepth(10);
 
         this.requirements = requirements;
 

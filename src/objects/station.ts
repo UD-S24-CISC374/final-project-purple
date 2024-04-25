@@ -6,6 +6,7 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
     occupied: boolean;
     timer: Phaser.GameObjects.Sprite;
     shield: Phaser.GameObjects.Rectangle; // shield to block player from dragging out in-progress ingredient
+    highlight: Phaser.GameObjects.Rectangle;
 
     constructor(
         scene: Phaser.Scene,
@@ -15,8 +16,10 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
         height: number
     ) {
         super(scene, x, y, width, height);
-        this.setDropZone();
-        //scene.add.rectangle(x, y, width, height, 0xff0000).setAlpha(0.4); // debug drop zone identifier
+        this.setDropZone()
+            .on("pointerover", this.highlightStation)
+            .on("pointerout", this.unhighlightStation);
+
         scene.add.existing(this);
 
         this.timer = scene.add
@@ -30,6 +33,12 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
             .setAlpha(0)
             .setDepth(0)
             .setInteractive();
+
+        // debug drop zone identifier
+        this.highlight = scene.add
+            .rectangle(x, y, width, height, 1)
+            .setStrokeStyle(5, 4, 90)
+            .setAlpha(0);
     }
 
     cook(ingrd: Ingredient) {
@@ -49,5 +58,13 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
 
     setOccupied(newStatus: boolean) {
         this.occupied = newStatus;
+    }
+
+    highlightStation() {
+        this.highlight.setAlpha(0.3);
+    }
+
+    unhighlightStation() {
+        this.highlight.setAlpha(0);
     }
 }

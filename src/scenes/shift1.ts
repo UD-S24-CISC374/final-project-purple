@@ -74,10 +74,11 @@ export default class Shift1 extends Phaser.Scene {
         return res;
     }
 
+    // First come first served
     compareTicketToAlgorithm(ticket: Ticket, tickets: Ticket[]) {
         const nxtTicket = tickets.reduce(
             (first, curr): Ticket =>
-                curr.arrivalTime < first.arrivalTime ? curr : first,
+                curr.arrivalTime > first.arrivalTime ? curr : first,
             tickets[0]
         );
         return [ticket === nxtTicket, nxtTicket];
