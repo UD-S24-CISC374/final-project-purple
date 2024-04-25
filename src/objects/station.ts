@@ -1,12 +1,16 @@
 import Phaser from "phaser";
 import Ingredient from "./ingredient";
 
+const GREEN = 0x67eb34;
+const RED = 0xeb4334;
+
 export default abstract class Station extends Phaser.GameObjects.Zone {
     duration: number;
     occupied: boolean;
     timer: Phaser.GameObjects.Sprite;
     shield: Phaser.GameObjects.Rectangle; // shield to block player from dragging out in-progress ingredient
     highlight: Phaser.GameObjects.Rectangle;
+    namePopup: Phaser.GameObjects.Text;
 
     constructor(
         scene: Phaser.Scene,
@@ -29,19 +33,21 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
             .setDepth(3);
 
         this.shield = scene.add
-            .rectangle(x, y, width + 10, height + 10, 0x0ff000)
+            .rectangle(x, y, width + 10, height + 10)
             .setAlpha(0)
             .setDepth(0)
             .setInteractive();
 
         // debug drop zone identifier
         this.highlight = scene.add
-            .rectangle(x, y, width, height, 1)
-            .setStrokeStyle(5, 4, 90)
+            .rectangle(x, y, width, height, GREEN)
             .setAlpha(0);
+
+        this.namePopup = scene.add.text(x, y, "").setDepth(3).setOrigin(0.5);
     }
 
     cook(ingrd: Ingredient) {
+        this.highlight.fillColor = RED;
         this.setTimer();
         this.shield.setDepth(ingrd.depth + 1); // don't let player remove while cooking
         // each station provides its own time (might switch to ingredient wise)
@@ -49,6 +55,7 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
             ingrd.updateState(this.name); // set to new state
             this.timer.setAlpha(0); // remove timer
             this.shield.setDepth(ingrd.depth - 1);
+            this.highlight.fillColor = GREEN;
         });
     }
 
@@ -61,10 +68,20 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
     }
 
     highlightStation() {
-        this.highlight.setAlpha(0.3);
+        this.namePopup.setText(this.name.toUpperCase());
+        this.scene.add.tween({
+            targets: [this.highlight],
+            alpha: { from: 0, to: 0.3 },
+            duration: 200,
+        });
     }
 
     unhighlightStation() {
-        this.highlight.setAlpha(0);
+        this.namePopup.setText("");
+        this.scene.add.tween({
+            targets: [this.highlight],
+            alpha: { from: 0.3, to: 0 },
+            duration: 200,
+        });
     }
 }

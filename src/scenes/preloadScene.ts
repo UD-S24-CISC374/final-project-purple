@@ -37,6 +37,7 @@ export default class PreloadScene extends Phaser.Scene {
             frameHeight: 64,
         });
         this.load.image("wrong-dish", "assets/img/wrong-dish.png");
+        this.load.image("order-box", "assets/img/order-box.png");
     }
 
     create() {

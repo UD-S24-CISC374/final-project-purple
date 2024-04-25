@@ -2,7 +2,6 @@ import Phaser from "phaser";
 import { CONFIG } from "../config";
 import Ticket from "../objects/ticket";
 import ShiftGUI from "./shiftGUI";
-import { IngredientState } from "../objects/ingredient";
 import Kitchen from "../objects/kitchen";
 import Dish from "../objects/dish";
 
@@ -35,12 +34,8 @@ export default class Shift1 extends Phaser.Scene {
             .setOrigin(1, 0);
 
         // Initialize  first 3 tickets
-        this.kitchen.ticketHolders.map((holder) => {
-            holder.ticket = new Ticket(
-                this,
-                holder,
-                new Set([`${IngredientState.COOKED} milk`])
-            );
+        this.kitchen.ticketHolders.map((holder, idx) => {
+            holder.ticket = this.kitchen.generateRandomTicket(idx);
             this.tickets.push(holder.ticket);
         });
 
