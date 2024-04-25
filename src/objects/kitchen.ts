@@ -10,7 +10,7 @@ import CurrentOrder from "./currentOrder";
 import Fridge from "../objects/fridge";
 import Pantry from "../objects/pantry";
 import Dish from "./dish";
-import { IngredientState } from "./ingredient";
+import { INGREDIENTS, IngredientState } from "./ingredient";
 import Ticket from "./ticket";
 
 // FOR HOLDING ALL STATIONS AS ONE KITCHEN OBJECT
@@ -80,15 +80,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
 
             this.ticketHolders[emptyHolderIdx].ticket = tickets[
                 emptyHolderIdx
-            ] = new Ticket(
-                this.scene,
-                this.ticketHolders[emptyHolderIdx],
-                "Buttered Carrots",
-                new Set<string>([
-                    `${IngredientState.PREPPED} carrot`,
-                    `${IngredientState.RAW} butter`,
-                ])
-            );
+            ] = this.generateRandomTicket(emptyHolderIdx);
 
             this.showResult(
                 dishRes!, // if condition implies this will always exist
@@ -104,6 +96,43 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             this.service.dish.destroy();
             this.service.dish = null;
         }
+    }
+
+    generateRandomTicket(idx: number) {
+        const numIngrds = Phaser.Math.Between(1, 5);
+        const ingredients = new Array<string>(numIngrds);
+
+        for (let i = 0; i < numIngrds; i++) {
+            let state = "";
+
+            switch (Phaser.Math.Between(0, 4)) {
+                case 0:
+                    state = IngredientState.BAKED;
+                    break;
+                case 1:
+                    state = IngredientState.COOKED;
+                    break;
+                case 2:
+                    state = IngredientState.PREPPED;
+                    break;
+                case 3:
+                    state = IngredientState.RAW;
+                    break;
+                case 4:
+                    state = IngredientState.WASHED;
+                    break;
+            }
+
+            ingredients[i] = `${state} ${
+                INGREDIENTS[Phaser.Math.Between(0, INGREDIENTS.length - 1)]
+            }`;
+        }
+
+        return new Ticket(
+            this.scene,
+            this.ticketHolders[idx],
+            new Set<string>(ingredients)
+        );
     }
 
     showResult(

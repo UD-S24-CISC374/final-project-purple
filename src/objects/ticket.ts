@@ -11,7 +11,6 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     constructor(
         scene: Phaser.Scene,
         holder: TicketHolder | CurrentOrder,
-        dishName: string,
         requirements: Set<string>
     ) {
         super(scene, holder.x, 134, "ticket");
@@ -19,7 +18,6 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         this.setScale(0.5)
             .setDepth(1)
             .setInteractive({ draggable: true })
-            .setName(dishName)
             // attach input events
             .on("pointerover", this.showDetails)
             .on("pointerout", this.hideDetails)

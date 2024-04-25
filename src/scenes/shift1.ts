@@ -39,7 +39,6 @@ export default class Shift1 extends Phaser.Scene {
             holder.ticket = new Ticket(
                 this,
                 holder,
-                "Boiled Milk",
                 new Set([`${IngredientState.COOKED} milk`])
             );
             this.tickets.push(holder.ticket);

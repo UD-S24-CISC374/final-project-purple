@@ -10,6 +10,8 @@ export enum IngredientState {
     RAW = "Raw",
 }
 
+export const INGREDIENTS = ["milk", "butter", "chicken", "carrot"];
+
 const stationState: Record<string, IngredientState> = {
     oven: IngredientState.BAKED,
     prep: IngredientState.PREPPED,
