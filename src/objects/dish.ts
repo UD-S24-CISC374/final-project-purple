@@ -49,7 +49,9 @@ export default class Dish extends Phaser.GameObjects.Sprite {
     drop(dish: Dish, target: Service) {
         if (target instanceof Service && !target.dish) {
             this.setPosition(target.x, target.y);
-            target.dish = this;
+            target.setDish(this);
+        } else if (target.dish === this) {
+            this.setPosition(target.x, target.y);
         } else {
             this.destroy();
         }
