@@ -46,7 +46,7 @@ export default class Shift1 extends Phaser.Scene {
                 "bell"
             )
             .setScale(4)
-            .setInteractive()
+            .setInteractive({ cursor: "pointer" })
             .on(
                 "pointerdown",
                 () => {

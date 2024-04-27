@@ -8,7 +8,7 @@ export default class Dish extends Phaser.GameObjects.Sprite {
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, "dish");
-        this.setInteractive({ draggable: true })
+        this.setInteractive({ draggable: true, cursor: "pointer" })
             .setScale(3)
             .on("drag", this.drag, this)
             .on("dragstart", this.dragStart, this)
@@ -18,7 +18,12 @@ export default class Dish extends Phaser.GameObjects.Sprite {
             .on("drop", this.drop, this)
             .on("pointerover", this.setDisplay, this)
             .on("pointerout", () => this.display.setAlpha(0), this);
-        this.display = scene.add.text(x + 35, y - 20, "").setAlpha(0);
+        this.display = scene.add
+            .text(x + 35, y - 20, "", {
+                backgroundColor: "dodgerblue",
+                padding: { top: 2 },
+            })
+            .setAlpha(0);
     }
 
     dragStart() {
@@ -58,9 +63,14 @@ export default class Dish extends Phaser.GameObjects.Sprite {
     }
 
     setDisplay() {
+        const len = this.ingredients.length;
         const contents: string = this.ingredients.reduce(
-            (str: string, ingrd: Ingredient) =>
-                str + ingrd.state + " " + ingrd.name + "\n",
+            (str: string, ingrd: Ingredient, i) =>
+                str +
+                ingrd.state +
+                " " +
+                ingrd.name +
+                (i !== len - 1 ? "\n" : ""),
             ""
         );
         this.display

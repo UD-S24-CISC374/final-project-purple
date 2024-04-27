@@ -33,7 +33,7 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
         super(scene, x, y, image);
         this.setScale(0.2)
             .setDepth(2)
-            .setInteractive({ draggable: true })
+            .setInteractive({ draggable: true, cursor: "pointer" })
             .setName(name)
             .on("drag", this.drag)
             .on("dragstart", this.dragStart)

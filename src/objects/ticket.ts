@@ -17,7 +17,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         this.holder = holder;
         this.setScale(0.5)
             .setDepth(1)
-            .setInteractive({ draggable: true })
+            .setInteractive({ draggable: true, cursor: "pointer" })
             // attach input events
             .on("pointerover", this.showDetails)
             .on("pointerout", this.hideDetails)
@@ -34,7 +34,8 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             .text(
                 this.x,
                 this.y + 200,
-                `Arrived ${this.arrivalTime.toFixed(2)}s ago.`
+                `Arrived ${this.arrivalTime.toFixed(2)}s ago.`,
+                { backgroundColor: "tomato", padding: { top: 5, left: 5 } }
             )
             .setAlpha(0)
             .setOrigin(0.5, 1)
