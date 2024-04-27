@@ -46,7 +46,7 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     }
 
     dragStart() {
-        this.setScale(0.3);
+        this.setScale(0.3).setDepth(3);
     }
 
     dragEnter(ingrd: Ingredient, target: Station) {
@@ -67,7 +67,7 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     }
 
     dragEnd() {
-        this.setScale(0.2);
+        this.setScale(0.2).setDepth(1);
     }
 
     drop(ingrd: Ingredient, target: Station | Service) {
@@ -77,7 +77,6 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
             this.station?.setOccupied(false);
             this.destroy();
         } else if (!target.occupied && target instanceof Station) {
-            console.log(target);
             target.occupied = true;
             this.station = target;
             this.station.cook(this);
@@ -89,5 +88,18 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
 
     updateState(station: string) {
         this.state = stationState[station];
+    }
+
+    updateTint(station: string) {
+        switch (station) {
+            case "sink":
+                this.setTint(0xff6347);
+                break;
+            case "stove":
+                this.setTint(0x343424);
+                break;
+            default:
+                break;
+        }
     }
 }
