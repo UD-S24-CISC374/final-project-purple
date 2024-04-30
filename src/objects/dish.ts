@@ -16,14 +16,38 @@ export default class Dish extends Phaser.GameObjects.Sprite {
             .on("dragenter", this.dragEnter, this)
             .on("dragleave", this.dragLeave, this)
             .on("drop", this.drop, this)
-            .on("pointerover", this.setDisplay, this)
-            .on("pointerout", () => this.display.setAlpha(0), this);
+            .on(
+                "pointerover",
+                () => {
+                    this.setDisplay();
+                    scene.tweens.add({
+                        targets: [this],
+                        scale: { from: 3, to: 4 },
+                        duration: 100,
+                    });
+                },
+                this
+            )
+            .on(
+                "pointerout",
+                () => {
+                    this.display.setAlpha(0);
+                    scene.tweens.add({
+                        targets: [this],
+                        scale: { from: 4, to: 3 },
+                        duration: 100,
+                    });
+                },
+                this
+            );
         this.display = scene.add
-            .text(x + 35, y - 20, "", {
+            .text(x + 35, y - 30, "", {
                 backgroundColor: "dodgerblue",
                 padding: { top: 2 },
             })
             .setAlpha(0);
+
+        scene.events.on("update", this.update, this);
     }
 
     dragStart() {
@@ -73,9 +97,10 @@ export default class Dish extends Phaser.GameObjects.Sprite {
                 (i !== len - 1 ? "\n" : ""),
             ""
         );
-        this.display
-            .setText(contents)
-            .setAlpha(1)
-            .setPosition(this.x + 35, this.y - 30);
+        this.display.setText(contents).setAlpha(1);
+    }
+
+    update() {
+        this.display.setPosition(this.x + 35, this.y - 30);
     }
 }

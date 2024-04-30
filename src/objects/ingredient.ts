@@ -40,7 +40,23 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
             .on("drop", this.drop)
             .on("dragenter", this.dragEnter)
             .on("dragleave", this.dragLeave)
-            .on("dragend", this.dragEnd);
+            .on("dragend", this.dragEnd)
+            .on("pointerover", () => {
+                if (!this.station)
+                    scene.tweens.add({
+                        targets: [this],
+                        scale: { from: 0.2, to: 0.3 },
+                        duration: 100,
+                    });
+            })
+            .on("pointerout", () => {
+                if (!this.station)
+                    scene.tweens.add({
+                        targets: [this],
+                        scale: { from: 0.3, to: 0.2 },
+                        duration: 100,
+                    });
+            });
         scene.events.on("update", this.update, this);
         scene.add.existing(this);
     }
