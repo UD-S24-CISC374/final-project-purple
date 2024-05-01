@@ -36,7 +36,7 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
             .rectangle(x, y, width, height, GREEN)
             .setAlpha(0);
 
-        this.namePopup = scene.add.text(x, y, "").setDepth(3).setOrigin(0.5);
+        this.namePopup = scene.add.text(x, y, "").setDepth(2).setOrigin(0.5);
     }
 
     cook(ingrd: Ingredient) {
