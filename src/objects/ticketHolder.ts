@@ -18,6 +18,7 @@ export default class TicketHolder extends Phaser.GameObjects.Zone {
             .sprite(x, y, "ticket-holder")
             .setScale(4)
             .setDepth(2);
+        this.scene.add.rectangle(x, y + 60, width - 30, height - 160, 0x817faa);
         scene.add.existing(this);
     }
 }

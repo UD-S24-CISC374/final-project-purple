@@ -13,7 +13,7 @@ export default class Service extends Station {
         height: number
     ) {
         super(scene, x, y, width, height);
-        this.shield.destroy();
+        this.setName("service");
         this.timer.destroy();
     }
 

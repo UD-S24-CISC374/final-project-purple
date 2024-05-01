@@ -10,6 +10,8 @@ export enum IngredientState {
     RAW = "Raw",
 }
 
+export const INGREDIENTS = ["milk", "butter", "chicken", "carrot"];
+
 const stationState: Record<string, IngredientState> = {
     oven: IngredientState.BAKED,
     prep: IngredientState.PREPPED,
@@ -20,6 +22,7 @@ const stationState: Record<string, IngredientState> = {
 export default class Ingredient extends Phaser.GameObjects.Sprite {
     station: Station | null;
     state: IngredientState = IngredientState.RAW;
+    statusIcon: Phaser.GameObjects.Sprite;
 
     constructor(
         scene: Phaser.Scene,
@@ -31,24 +34,48 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
         super(scene, x, y, image);
         this.setScale(0.2)
             .setDepth(2)
-            .setInteractive({ draggable: true })
+            .setInteractive({ draggable: true, cursor: "pointer" })
             .setName(name)
             .on("drag", this.drag)
             .on("dragstart", this.dragStart)
             .on("drop", this.drop)
             .on("dragenter", this.dragEnter)
             .on("dragleave", this.dragLeave)
-            .on("dragend", this.dragEnd);
+            .on("dragend", this.dragEnd)
+            .on("pointerover", () => {
+                scene.tweens.add({
+                    targets: [this],
+                    scale: { from: 0.2, to: 0.3 },
+                    duration: 100,
+                });
+            })
+            .on("pointerout", () => {
+                scene.tweens.add({
+                    targets: [this],
+                    scale: { from: 0.3, to: 0.2 },
+                    duration: 100,
+                });
+            });
+
+        this.statusIcon = scene.add
+            .sprite(x, y, "sink-status")
+            .setAlpha(0)
+            .setDepth(this.depth + 1)
+            .setOrigin(0.5, 1);
         scene.events.on("update", this.update, this);
         scene.add.existing(this);
     }
 
     dragStart() {
-        this.setScale(0.3);
+        this.setScale(0.3).setDepth(3);
     }
 
     dragEnter(ingrd: Ingredient, target: Station) {
-        if (target instanceof Station) this.setScale(0.4);
+        if (
+            (target instanceof Service && target.dish) ||
+            (target instanceof Station && !(target instanceof Service))
+        )
+            this.setScale(0.4);
     }
 
     dragLeave() {
@@ -65,27 +92,53 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     }
 
     dragEnd() {
-        this.setScale(0.2);
+        this.setScale(0.2).setDepth(2);
     }
 
     drop(ingrd: Ingredient, target: Station | Service) {
         if (target instanceof Service) {
-            target.dish?.ingredients.push({ ...this });
-            target.dish?.play("fill-dish", true);
-            this.station?.setOccupied(false);
-            this.destroy();
+            if (target.dish) {
+                target.dish.ingredients.push({ ...this });
+                target.dish.play("fill-dish", true);
+                this.statusIcon.destroy();
+                this.destroy();
+            }
         } else if (!target.occupied && target instanceof Station) {
-            console.log(target);
             target.occupied = true;
             this.station = target;
             this.station.cook(this);
             this.setPosition(target.x, target.y);
-        } else {
-            this.dragEnd();
         }
     }
 
     updateState(station: string) {
         this.state = stationState[station];
+        this.statusIcon.setTexture(`${station}-status`).setAlpha(1);
+    }
+
+    updateTint(station: string) {
+        switch (station) {
+            case "sink":
+                this.setTint(0x9cebff);
+                break;
+            case "stove":
+                this.setTint(0xff6200);
+                break;
+            case "oven":
+                this.setTint(0x4a1500);
+                break;
+            case "prep":
+                this.setTint(0x6ffc7b);
+                break;
+            default:
+                break;
+        }
+    }
+
+    update() {
+        this.statusIcon
+            .setPosition(this.x - 25, this.y - 30)
+            .setScale(this.scale * 9)
+            .setDepth(this.depth + 1);
     }
 }

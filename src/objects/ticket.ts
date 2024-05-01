@@ -11,15 +11,13 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     constructor(
         scene: Phaser.Scene,
         holder: TicketHolder | CurrentOrder,
-        dishName: string,
         requirements: Set<string>
     ) {
         super(scene, holder.x, 134, "ticket");
         this.holder = holder;
         this.setScale(0.5)
-            .setDepth(1)
-            .setInteractive({ draggable: true })
-            .setName(dishName)
+            .setDepth(2)
+            .setInteractive({ draggable: true, cursor: "pointer" })
             // attach input events
             .on("pointerover", this.showDetails)
             .on("pointerout", this.hideDetails)
@@ -35,14 +33,23 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         this.details = scene.add
             .text(
                 this.x,
-                this.y + 120,
-                `Arrived ${this.arrivalTime.toFixed(2)}s ago.`
+                this.y + 200,
+                `Arrived ${this.arrivalTime.toFixed(2)}s ago.`,
+                { backgroundColor: "tomato", padding: { top: 5, left: 5 } }
             )
             .setAlpha(0)
             .setOrigin(0.5, 1)
-            .setDepth(999);
+            .setDepth(10);
 
         this.requirements = requirements;
+
+        this.scene.add.tween({
+            targets: [this],
+            y: { from: 0, to: this.y },
+            scale: { from: 0.6, to: this.scale },
+            duration: 400,
+        });
+        this.scene.time.delayedCall(400, () => this.setDepth(1));
 
         scene.events.on("update", this.update, this);
         scene.add.existing(this);
@@ -56,6 +63,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     dragStart() {
         // when the user starts dragging
         this.setScale(0.6).setDepth(3);
+        this.details.setAlpha(0);
         if (this.holder instanceof CurrentOrder) this.holder.hideRecipe();
     }
 
@@ -105,20 +113,25 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
 
     showDetails() {
         this.details.setAlpha(1);
-        /* we'll add tweens later
+        this.setDepth(3);
         this.scene.tweens.add({
-            targets: [this.details],
-            alpha: { from: 0, to: 1 },
-            duration: 300,
+            targets: [this],
+            scale: { from: 0.5, to: 0.6 },
+            duration: 100,
         });
-        */
     }
 
     hideDetails() {
         this.details.setAlpha(0);
+        this.setDepth(1);
+        this.scene.tweens.add({
+            targets: [this],
+            scale: { from: 0.6, to: 0.5 },
+            duration: 100,
+        });
     }
 
     update() {
-        this.details.setPosition(this.x, this.y + 100);
+        this.details.setPosition(this.x, this.y + 120);
     }
 }

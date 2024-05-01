@@ -2,7 +2,6 @@ import Phaser from "phaser";
 import { CONFIG } from "../config";
 import Ticket from "../objects/ticket";
 import ShiftGUI from "./shiftGUI";
-import { IngredientState } from "../objects/ingredient";
 import Kitchen from "../objects/kitchen";
 import Dish from "../objects/dish";
 
@@ -35,13 +34,8 @@ export default class Shift1 extends Phaser.Scene {
             .setOrigin(1, 0);
 
         // Initialize  first 3 tickets
-        this.kitchen.ticketHolders.map((holder) => {
-            holder.ticket = new Ticket(
-                this,
-                holder,
-                "Boiled Milk",
-                new Set([`${IngredientState.COOKED} milk`])
-            );
+        this.kitchen.ticketHolders.map((holder, idx) => {
+            holder.ticket = this.kitchen.generateRandomTicket(idx);
             this.tickets.push(holder.ticket);
         });
 
@@ -52,7 +46,7 @@ export default class Shift1 extends Phaser.Scene {
                 "bell"
             )
             .setScale(4)
-            .setInteractive()
+            .setInteractive({ cursor: "pointer" })
             .on(
                 "pointerdown",
                 () => {
@@ -75,10 +69,11 @@ export default class Shift1 extends Phaser.Scene {
         return res;
     }
 
+    // First come first served
     compareTicketToAlgorithm(ticket: Ticket, tickets: Ticket[]) {
         const nxtTicket = tickets.reduce(
             (first, curr): Ticket =>
-                curr.arrivalTime < first.arrivalTime ? curr : first,
+                curr.arrivalTime > first.arrivalTime ? curr : first,
             tickets[0]
         );
         return [ticket === nxtTicket, nxtTicket];

@@ -10,7 +10,7 @@ import CurrentOrder from "./currentOrder";
 import Fridge from "../objects/fridge";
 import Pantry from "../objects/pantry";
 import Dish from "./dish";
-import { IngredientState } from "./ingredient";
+import { INGREDIENTS, IngredientState } from "./ingredient";
 import Ticket from "./ticket";
 
 // FOR HOLDING ALL STATIONS AS ONE KITCHEN OBJECT
@@ -27,6 +27,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
     ticketHolders: TicketHolder[] = [];
     currentOrder: CurrentOrder;
 
+    resImg: Phaser.GameObjects.Image;
     dishRes: Phaser.GameObjects.Text;
     scheduleRes: Phaser.GameObjects.Text;
 
@@ -40,20 +41,37 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         scene.add.existing(this);
 
         this.dishRes = scene.add
-            .text(scene.cameras.main.centerX, scene.cameras.main.centerY, "")
+            .text(
+                scene.cameras.main.centerX,
+                scene.cameras.main.centerY + 330,
+                "Right Dish",
+                { backgroundColor: "black" }
+            )
             .setDepth(999)
             .setOrigin(0.5)
-            .setAlpha(0);
+            .setAlpha(0)
+            .setScale(2);
 
         this.scheduleRes = scene.add
             .text(
                 scene.cameras.main.centerX,
-                scene.cameras.main.centerY + 50,
-                ""
+                scene.cameras.main.centerY + 280,
+                "Right Schedule",
+                { backgroundColor: "black" }
             )
             .setDepth(999)
             .setOrigin(0.5)
-            .setAlpha(0);
+            .setAlpha(0)
+            .setScale(2);
+
+        this.resImg = scene.add
+            .image(
+                scene.cameras.main.centerX + 25,
+                scene.cameras.main.centerY,
+                "wrong-dish"
+            )
+            .setAlpha(0)
+            .setDepth(999);
 
         this.initHolders();
         this.initIngredientHolders();
@@ -80,65 +98,106 @@ export default class Kitchen extends Phaser.GameObjects.Image {
 
             this.ticketHolders[emptyHolderIdx].ticket = tickets[
                 emptyHolderIdx
-            ] = new Ticket(
-                this.scene,
-                this.ticketHolders[emptyHolderIdx],
-                "Buttered Carrots",
-                new Set<string>([
-                    `${IngredientState.PREPPED} carrot`,
-                    `${IngredientState.RAW} butter`,
-                ])
-            );
+            ] = this.generateRandomTicket(emptyHolderIdx);
 
             this.showResult(
                 dishRes!, // if condition implies this will always exist
                 scheduleRes as boolean,
-                (nxtTicket as Ticket).name,
                 (nxtTicket as Ticket).arrivalTime
             );
 
             this.currentOrder.hideRecipe();
+            this.currentOrder.ticket.details.destroy();
             this.currentOrder.ticket.destroy();
             this.currentOrder.ticket = null;
 
+            this.service.dish.display.setAlpha(0);
+            this.service.dish.display.destroy();
             this.service.dish.destroy();
             this.service.dish = null;
         }
     }
 
-    showResult(
-        dishRes: boolean,
-        scheduleRes: boolean,
-        nextTicketName: string,
-        nextTicketTime: number
-    ) {
+    generateRandomTicket(idx: number) {
+        const numIngrds = Phaser.Math.Between(1, 5);
+        const ingredients = new Array<string>(numIngrds);
+
+        for (let i = 0; i < numIngrds; i++) {
+            let state = "";
+
+            switch (Phaser.Math.Between(0, 4)) {
+                case 0:
+                    state = IngredientState.BAKED;
+                    break;
+                case 1:
+                    state = IngredientState.COOKED;
+                    break;
+                case 2:
+                    state = IngredientState.PREPPED;
+                    break;
+                case 3:
+                    state = IngredientState.RAW;
+                    break;
+                case 4:
+                    state = IngredientState.WASHED;
+                    break;
+            }
+
+            ingredients[i] = `${state} ${
+                INGREDIENTS[Phaser.Math.Between(0, INGREDIENTS.length - 1)]
+            }`;
+        }
+
+        return new Ticket(
+            this.scene,
+            this.ticketHolders[idx],
+            new Set<string>(ingredients)
+        );
+    }
+
+    showResult(dishRes: boolean, scheduleRes: boolean, nextTicketTime: number) {
+        this.resImg.setTexture(
+            dishRes && scheduleRes ? "right-dish" : "wrong-dish"
+        );
+
         dishRes
-            ? this.dishRes
-                  .setText(`Great ${this.currentOrder.ticket?.name} chef!`)
-                  .setColor("green")
-            : this.dishRes
-                  .setText(
-                      `You call that ${this.currentOrder.ticket?.name}? You donut!!!`
-                  )
-                  .setColor("red");
+            ? this.dishRes.setText(`Correct Ingredients`).setColor("green")
+            : this.dishRes.setText(`Wrong Ingredients`).setColor("red");
         scheduleRes
-            ? this.scheduleRes
-                  .setText(`You scheduled it correctly.`)
-                  .setColor("green")
+            ? this.scheduleRes.setText(`Correctly Scheduled`).setColor("green")
             : this.scheduleRes
                   .setText(
-                      `Poorly scheduled, the right one was the ${nextTicketName}, which arrived ${nextTicketTime.toFixed(
+                      `Poorly scheduled, the right one arrived ${nextTicketTime.toFixed(
                           2
-                      )}s ago.`
+                      )}s ago`
                   )
                   .setColor("red");
 
-        this.dishRes.setAlpha(1);
-        this.scheduleRes.setAlpha(1);
+        this.scene.tweens.add({
+            targets: [this.dishRes],
+            alpha: { from: 0, to: 1 },
+            scale: { from: 0, to: 2 },
+            duration: 200,
+        });
 
-        this.currentOrder.scene.time.delayedCall(3000, () => {
+        this.scene.tweens.add({
+            targets: [this.scheduleRes],
+            alpha: { from: 0, to: 1 },
+            scale: { from: 0, to: 2 },
+            duration: 200,
+        });
+
+        this.scene.tweens.add({
+            targets: [this.resImg],
+            alpha: { from: 0, to: 1 },
+            scale: { from: 0, to: 5 },
+            duration: 200,
+        });
+
+        this.currentOrder.scene.time.delayedCall(6000, () => {
             this.dishRes.setAlpha(0);
             this.scheduleRes.setAlpha(0);
+            this.resImg.setAlpha(0);
         });
     }
 

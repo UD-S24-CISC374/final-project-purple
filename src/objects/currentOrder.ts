@@ -3,9 +3,9 @@ import Ticket from "./ticket";
 
 export default class CurrentOrder extends Phaser.GameObjects.Zone {
     public ticket: Ticket | null;
-    title: Phaser.GameObjects.Text;
     recipeTitle: Phaser.GameObjects.Text;
     recipeContents: Phaser.GameObjects.Text;
+    orderContainer: Phaser.GameObjects.Image;
 
     constructor(
         scene: Phaser.Scene,
@@ -16,27 +16,29 @@ export default class CurrentOrder extends Phaser.GameObjects.Zone {
     ) {
         super(scene, x, y, width, height);
         this.setDropZone();
-        this.title = scene.add.text(x, y - 90, "ORDER").setOrigin(0.5);
-        this.recipeTitle = scene.add.text(x + 100, y - 60, `RECIPE`);
+        this.recipeTitle = scene.add
+            .text(x + 100, y - 60, "RECIPE")
+            .setAlpha(0);
         this.recipeContents = scene.add
             .text(x + 110, y - 40, "- CONTENT")
             .setAlpha(0);
+        this.orderContainer = scene.add.image(x, y, "order-box").setScale(0.5);
         scene.add.existing(this);
     }
 
     showRecipe() {
         if (this.ticket) {
-            this.title.setText(this.ticket.name);
             let contents = "";
             for (let req of this.ticket.requirements) {
                 contents += `- ${req}\n`;
             }
             this.recipeContents.setText(contents).setAlpha(1);
+            this.recipeTitle.setAlpha(1);
         }
     }
 
     hideRecipe() {
-        this.title.setText("ORDER");
         this.recipeContents.setAlpha(0);
+        this.recipeTitle.setAlpha(0);
     }
 }
