@@ -43,7 +43,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         this.dishRes = scene.add
             .text(
                 scene.cameras.main.centerX,
-                scene.cameras.main.centerY + 320,
+                scene.cameras.main.centerY + 330,
                 "Right Dish",
                 { backgroundColor: "black" }
             )
@@ -55,7 +55,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         this.scheduleRes = scene.add
             .text(
                 scene.cameras.main.centerX,
-                scene.cameras.main.centerY + 270,
+                scene.cameras.main.centerY + 280,
                 "Right Schedule",
                 { backgroundColor: "black" }
             )
@@ -71,8 +71,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
                 "wrong-dish"
             )
             .setAlpha(0)
-            .setDepth(999)
-            .setScale(0.5);
+            .setDepth(999);
 
         this.initHolders();
         this.initIngredientHolders();
@@ -157,8 +156,12 @@ export default class Kitchen extends Phaser.GameObjects.Image {
     }
 
     showResult(dishRes: boolean, scheduleRes: boolean, nextTicketTime: number) {
+        this.resImg.setTexture(
+            dishRes && scheduleRes ? "right-dish" : "wrong-dish"
+        );
+
         dishRes
-            ? this.dishRes.setText(`Great work, chef!`).setColor("green")
+            ? this.dishRes.setText(`Correct Ingredients`).setColor("green")
             : this.dishRes.setText(`Wrong Ingredients`).setColor("red");
         scheduleRes
             ? this.scheduleRes.setText(`Correctly Scheduled`).setColor("green")
@@ -187,7 +190,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         this.scene.tweens.add({
             targets: [this.resImg],
             alpha: { from: 0, to: 1 },
-            scale: { from: 0, to: 0.5 },
+            scale: { from: 0, to: 5 },
             duration: 200,
         });
 
