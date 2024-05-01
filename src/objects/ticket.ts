@@ -15,6 +15,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     ) {
         super(scene, holder.x, 134, "ticket");
         this.holder = holder;
+        this.holder.ticket = this;
         this.setScale(0.5)
             .setDepth(2)
             .setInteractive({ draggable: true, cursor: "pointer" })

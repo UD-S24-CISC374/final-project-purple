@@ -9,10 +9,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("kitchen", "assets/img/kitchen.png");
         this.load.image("ticket", "assets/img/ticket.png");
         this.load.image("ticket-holder", "assets/img/ticket-holder.png");
-        this.load.image("career", "assets/gui/career.png");
-        this.load.image("tutorial", "assets/img/tutorial.png");
-        this.load.image("shift1", "assets/img/shift1.png");
-        this.load.image("exit", "assets/gui/exit.png");
+
         this.load.image("milk", "assets/img/milk.png");
         this.load.spritesheet("timer", "assets/img/timer.png", {
             frameWidth: 15,
@@ -43,6 +40,13 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("stove-status", "assets/img/stove-status.png");
         this.load.image("prep-status", "assets/img/prep-status.png");
         this.load.image("sink-status", "assets/img/sink-status.png");
+
+        // GUI Stuff
+        this.load.image("play-button", "assets/gui/play-button.png");
+        this.load.image("career", "assets/gui/career.png");
+        this.load.image("tutorial", "assets/gui/tutorial.png");
+        this.load.image("exit", "assets/gui/exit.png");
+        this.load.image("textbox", "assets/gui/textbox.png");
     }
 
     create() {
@@ -58,6 +62,6 @@ export default class PreloadScene extends Phaser.Scene {
             frameRate: 20,
             repeat: 0,
         });
-        this.scene.start("MainMenu");
+        this.scene.start("Tutorial");
     }
 }

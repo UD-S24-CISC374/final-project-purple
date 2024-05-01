@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { CONFIG } from "../config";
+import MenuButton from "../objects/menuButton";
 
 export default class CareerMenu extends Phaser.Scene {
     constructor() {
@@ -22,38 +23,14 @@ export default class CareerMenu extends Phaser.Scene {
             })
             .setOrigin(0.5, 1);
 
-        const fcfsButton = this.add.image(200, 400, "shift1");
-        const blurb = this.add
-            .text(
-                400,
-                350,
-                "Complete tickets in the order\nin which they arrive.",
-                { color: "black" }
-            )
-            .setAlpha(0);
-        fcfsButton
-            .setInteractive()
-            .on("pointerdown", () => this.scene.start("Shift1"))
-            .on("pointerover", () => {
-                fcfsButton.setScale(1.1);
-                blurb.setAlpha(1);
-            })
-            .on("pointerout", () => {
-                fcfsButton.setScale(1);
-                blurb.setAlpha(0);
-            });
+        new MenuButton(this, 200, 400, "play-button", "Shift1");
 
-        const backButton = this.add.image(
+        new MenuButton(
+            this,
             this.cameras.main.width - 200,
             400,
-            "exit"
+            "exit",
+            "MainMenu"
         );
-        backButton
-            .setInteractive()
-            .on("pointerdown", () => {
-                this.scene.start("MainMenu");
-            })
-            .on("pointerover", () => backButton.setScale(1.1))
-            .on("pointerout", () => backButton.setScale(1));
     }
 }

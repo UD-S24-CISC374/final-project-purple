@@ -5,13 +5,14 @@ import MainMenu from "./scenes/mainMenu";
 import ShiftGUI from "./scenes/shiftGUI";
 import TutorialMenu from "./scenes/tutorialMenu";
 import CareerMenu from "./scenes/careerMenu";
+import Tutorial from "./scenes/tutorial";
 
 const DEFAULT_WIDTH = 1280;
 const DEFAULT_HEIGHT = 720;
 
 export const CONFIG = {
     title: "Schedulsine",
-    version: "alpha",
+    version: "beta",
     type: Phaser.AUTO,
     backgroundColor: "#ffffff",
     scale: {
@@ -21,7 +22,15 @@ export const CONFIG = {
         width: DEFAULT_WIDTH,
         height: DEFAULT_HEIGHT,
     },
-    scene: [PreloadScene, MainMenu, TutorialMenu, CareerMenu, Shift1, ShiftGUI],
+    scene: [
+        PreloadScene,
+        MainMenu,
+        TutorialMenu,
+        CareerMenu,
+        Tutorial,
+        Shift1,
+        ShiftGUI,
+    ],
     physics: {
         default: "arcade",
         arcade: {

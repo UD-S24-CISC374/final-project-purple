@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { CONFIG } from "../config";
+import MenuButton from "../objects/menuButton";
 
 export default class MainMenu extends Phaser.Scene {
     constructor() {
@@ -22,36 +23,16 @@ export default class MainMenu extends Phaser.Scene {
             })
             .setOrigin(0.5, 1);
 
-        const careerButton = this.add.image(200, 400, "career");
-        careerButton
-            .setInteractive()
-            .on("pointerdown", () => this.scene.start("CareerMenu"))
-            .on("pointerover", () => careerButton.setScale(1.1))
-            .on("pointerout", () => careerButton.setScale(1));
+        new MenuButton(this, 200, 400, "career", "CareerMenu");
 
-        const tutorialButton = this.add.image(
+        new MenuButton(
+            this,
             this.cameras.main.centerX,
             400,
-            "tutorial"
+            "tutorial",
+            "TutorialMenu"
         );
 
-        tutorialButton
-            .setInteractive()
-            .on("pointerdown", () => this.scene.start("TutorialMenu"))
-            .on("pointerover", () => tutorialButton.setScale(1.1))
-            .on("pointerout", () => tutorialButton.setScale(1));
-
-        const exitButton = this.add.image(
-            this.cameras.main.width - 200,
-            400,
-            "exit"
-        );
-        exitButton
-            .setInteractive()
-            .on("pointerdown", () => {
-                window.close();
-            })
-            .on("pointerover", () => exitButton.setScale(1.1))
-            .on("pointerout", () => exitButton.setScale(1));
+        new MenuButton(this, this.cameras.main.width - 200, 400, "exit", "");
     }
 }
