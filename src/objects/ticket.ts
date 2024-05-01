@@ -16,7 +16,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         super(scene, holder.x, 134, "ticket");
         this.holder = holder;
         this.setScale(0.5)
-            .setDepth(1)
+            .setDepth(2)
             .setInteractive({ draggable: true, cursor: "pointer" })
             // attach input events
             .on("pointerover", this.showDetails)
@@ -42,6 +42,14 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             .setDepth(10);
 
         this.requirements = requirements;
+
+        this.scene.add.tween({
+            targets: [this],
+            y: { from: 0, to: this.y },
+            scale: { from: 0.6, to: this.scale },
+            duration: 400,
+        });
+        this.scene.time.delayedCall(400, () => this.setDepth(1));
 
         scene.events.on("update", this.update, this);
         scene.add.existing(this);

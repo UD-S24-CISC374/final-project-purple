@@ -8,7 +8,6 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
     duration: number;
     occupied: boolean;
     timer: Phaser.GameObjects.Sprite;
-    shield: Phaser.GameObjects.Rectangle; // shield to block player from dragging out in-progress ingredient
     highlight: Phaser.GameObjects.Rectangle;
     namePopup: Phaser.GameObjects.Text;
 
@@ -30,13 +29,7 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
             .sprite(x, y - 30, "timer")
             .setScale(5)
             .setAlpha(0)
-            .setDepth(3);
-
-        this.shield = scene.add
-            .rectangle(x, y, width + 10, height + 10)
-            .setAlpha(0)
-            .setDepth(0)
-            .setInteractive();
+            .setDepth(4);
 
         // debug drop zone identifier
         this.highlight = scene.add
@@ -49,13 +42,13 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
     cook(ingrd: Ingredient) {
         this.highlight.fillColor = RED;
         this.setTimer();
-        this.shield.setDepth(ingrd.depth + 1); // don't let player remove while cooking
+        ingrd.setScale(0.2).disableInteractive();
         // each station provides its own time (might switch to ingredient wise)
         this.scene.time.delayedCall(this.duration, () => {
             ingrd.updateState(this.name); // set to new state
             ingrd.updateTint(this.name); // sets tint to reflect cooking status
+            ingrd.setInteractive({ draggable: true, cursor: "pointer" });
             this.timer.setAlpha(0); // remove timer
-            this.shield.setDepth(ingrd.depth - 1);
             this.highlight.fillColor = GREEN;
         });
     }

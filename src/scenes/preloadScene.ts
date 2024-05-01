@@ -38,6 +38,10 @@ export default class PreloadScene extends Phaser.Scene {
         });
         this.load.image("wrong-dish", "assets/img/wrong-dish.png");
         this.load.image("order-box", "assets/img/order-box.png");
+        this.load.image("oven-status", "assets/img/oven-status.png");
+        this.load.image("stove-status", "assets/img/stove-status.png");
+        this.load.image("prep-status", "assets/img/prep-status.png");
+        this.load.image("sink-status", "assets/img/sink-status.png");
     }
 
     create() {

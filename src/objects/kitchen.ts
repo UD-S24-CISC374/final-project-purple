@@ -108,10 +108,12 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             );
 
             this.currentOrder.hideRecipe();
+            this.currentOrder.ticket.details.destroy();
             this.currentOrder.ticket.destroy();
             this.currentOrder.ticket = null;
 
             this.service.dish.display.setAlpha(0);
+            this.service.dish.display.destroy();
             this.service.dish.destroy();
             this.service.dish = null;
         }

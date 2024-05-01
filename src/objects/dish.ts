@@ -81,8 +81,6 @@ export default class Dish extends Phaser.GameObjects.Sprite {
             target.setDish(this);
         } else if (target.dish === this) {
             this.setPosition(target.x, target.y);
-        } else {
-            this.destroy();
         }
     }
 
