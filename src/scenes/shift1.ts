@@ -4,6 +4,30 @@ import Ticket from "../objects/ticket";
 import ShiftGUI from "./shiftGUI";
 import Kitchen from "../objects/kitchen";
 import Dish from "../objects/dish";
+import DialogBox from "../objects/dialogBox";
+
+const DIALOG1: Record<number, { text: string; face: number }> = {
+    0: {
+        text: "Welcome to your first shift pigeon.",
+        face: 2,
+    },
+    1: {
+        text: "The boss wants us to schedule tickets [FIRST COME FIRST SERVE] tonight.",
+        face: 0,
+    },
+    2: {
+        text: "I hope you completed the tutorial, because this is the real thing!",
+        face: 1,
+    },
+    3: {
+        text: "Anyways, first come first serve is exactly what is sounds like. Complete the tickets that come in first.",
+        face: 0,
+    },
+    4: {
+        text: "It's so simple even a donut like you should be able to figure it out. Good luck!",
+        face: 2,
+    },
+};
 
 // FIRST COME FIRST SERVED
 export default class Shift1 extends Phaser.Scene {
@@ -12,6 +36,7 @@ export default class Shift1 extends Phaser.Scene {
     nxtTicket: Ticket;
     bell: Phaser.GameObjects.Sprite;
     kitchen: Kitchen;
+    dialog: DialogBox | null;
 
     constructor() {
         super({ key: "Shift1" });
@@ -35,8 +60,10 @@ export default class Shift1 extends Phaser.Scene {
 
         // Initialize  first 3 tickets
         this.kitchen.ticketHolders.map((holder, idx) => {
-            holder.ticket = this.kitchen.generateRandomTicket(idx);
-            this.tickets.push(holder.ticket);
+            this.time.delayedCall(Phaser.Math.Between(1000, 5000), () => {
+                holder.ticket = this.kitchen.generateRandomTicket(idx);
+                this.tickets.push(holder.ticket);
+            });
         });
 
         this.bell = this.add
@@ -59,6 +86,20 @@ export default class Shift1 extends Phaser.Scene {
                 },
                 this
             );
+
+        this.dialog = new DialogBox(
+            this,
+            this.cameras.main.centerX - 20,
+            this.cameras.main.height - 110
+        );
+        this.dialog.setDialog(DIALOG1);
+    }
+
+    update() {
+        if (this.dialog && this.dialog.fin) {
+            this.dialog.hide();
+            this.dialog = null;
+        }
     }
 
     compareDishToTicket(dish: Dish, ticket: Ticket) {

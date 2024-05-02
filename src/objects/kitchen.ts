@@ -23,6 +23,9 @@ export default class Kitchen extends Phaser.GameObjects.Image {
     plating: Plating;
     fridge: Fridge;
     pantry: Pantry;
+    avgTaT: number;
+    avgRT: number;
+    ticketsCompleted: number;
 
     ticketHolders: TicketHolder[] = [];
     currentOrder: CurrentOrder;
@@ -95,26 +98,45 @@ export default class Kitchen extends Phaser.GameObjects.Image {
                 (th) => th.ticket === null
             );
 
-            this.ticketHolders[emptyHolderIdx].ticket = tickets[
-                emptyHolderIdx
-            ] = this.generateRandomTicket(emptyHolderIdx);
+            this.scene.time.delayedCall(Phaser.Math.Between(500, 6000), () => {
+                this.ticketHolders[emptyHolderIdx].ticket = tickets[
+                    emptyHolderIdx
+                ] = this.generateRandomTicket(emptyHolderIdx);
+            });
 
             this.showResult(
                 dishRes!, // if condition implies this will always exist
                 scheduleRes as boolean,
-                (nxtTicket as Ticket).arrivalTime
+                (nxtTicket as Ticket).elapsedTime
             );
 
-            this.currentOrder.hideRecipe();
-            this.currentOrder.ticket.details.destroy();
-            this.currentOrder.ticket.destroy();
-            this.currentOrder.ticket = null;
-
-            this.service.dish.display.setAlpha(0);
-            this.service.dish.display.destroy();
-            this.service.dish.destroy();
-            this.service.dish = null;
+            this.updateMetrics();
+            this.cleanOrder();
         }
+    }
+
+    updateMetrics() {
+        this.currentOrder.ticket?.setTurnaroundTime();
+
+        this.ticketsCompleted++;
+
+        // compute moving averages
+        this.avgRT +=
+            this.currentOrder.ticket!.responseTime / this.ticketsCompleted;
+        this.avgTaT +=
+            this.currentOrder.ticket!.turnaroundTime / this.ticketsCompleted;
+    }
+
+    cleanOrder() {
+        this.currentOrder.hideRecipe();
+        this.currentOrder.ticket?.details.destroy();
+        this.currentOrder.ticket?.destroy();
+        this.currentOrder.ticket = null;
+
+        this.service.dish?.display.setAlpha(0);
+        this.service.dish?.display.destroy();
+        this.service.dish?.destroy();
+        this.service.dish = null;
     }
 
     generateRandomTicket(idx: number) {
@@ -193,7 +215,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             duration: 200,
         });
 
-        this.currentOrder.scene.time.delayedCall(6000, () => {
+        this.currentOrder.scene.time.delayedCall(5000, () => {
             this.dishRes.setAlpha(0);
             this.scheduleRes.setAlpha(0);
             this.resImg.setAlpha(0);

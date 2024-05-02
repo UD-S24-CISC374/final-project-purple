@@ -66,6 +66,6 @@ export default class PreloadScene extends Phaser.Scene {
             frameRate: 20,
             repeat: 0,
         });
-        this.scene.start("Tutorial");
+        this.scene.start("Shift1");
     }
 }
