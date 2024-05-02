@@ -30,13 +30,14 @@ const DIALOG1: Record<number, { text: string; face: number }> = {
 
 // FIRST COME FIRST SERVED
 export default class Shift1 extends Phaser.Scene {
-    tickets: Ticket[] = [];
+    tickets: Ticket[];
     gui: ShiftGUI;
     nxtTicket: Ticket;
     bell: Phaser.GameObjects.Sprite;
     kitchen: Kitchen;
     dialog: DialogBox | null;
     timer: Phaser.GameObjects.Text;
+    length: number = 160000; // length of the shift
 
     constructor() {
         super({ key: "Shift1" });
@@ -49,7 +50,7 @@ export default class Shift1 extends Phaser.Scene {
 
     create() {
         this.kitchen = new Kitchen(this);
-
+        this.tickets = [];
         this.timer = this.add
             .text(this.cameras.main.width - 15, 15, "", {
                 color: "#000000",
@@ -102,9 +103,9 @@ export default class Shift1 extends Phaser.Scene {
         }
 
         this.timer.setText(
-            ((160000 - (time - this.time.startTime)) / 1000).toFixed(0)
+            ((this.length - (time - this.time.startTime)) / 1000).toFixed(0)
         );
-        if (time - this.time.startTime > 160000)
+        if (time - this.time.startTime > this.length)
             // 2.5 minutes
             this.kitchen.finishShift("first come first served");
     }
