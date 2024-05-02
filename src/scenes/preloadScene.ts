@@ -48,6 +48,7 @@ export default class PreloadScene extends Phaser.Scene {
         //Audios
 
         this.load.audio("sink", ["assets/audios/sinkNoise.mp3"]);
+        this.load.audio("prep", ["assets/audios/chopping.mp3"]);
 
         // GUI Stuff
         this.load.image("play-button", "assets/gui/play-button.png");
