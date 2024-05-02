@@ -1,9 +1,10 @@
 import Phaser from "phaser";
 import Ingredient from "./ingredient";
 
-export default class Fridge extends Phaser.GameObjects.Zone {
+export default class Pantry extends Phaser.GameObjects.Zone {
     public inside: Phaser.GameObjects.Image;
     sprites: Phaser.GameObjects.Sprite[] = [];
+    ingredients = [{ name: "carrot", x: 171, y: 375 }];
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 150, 270);
@@ -12,8 +13,7 @@ export default class Fridge extends Phaser.GameObjects.Zone {
         scene.add.zone(x, y, 155, 200);
         scene.add.existing(this);
 
-        const ingredients = [{ name: "carrot", x: 171, y: 375 }];
-        ingredients.forEach((ingredient) => {
+        this.ingredients.forEach((ingredient) => {
             const sprite = scene.add
                 .sprite(ingredient.x, ingredient.y, ingredient.name)
                 .setInteractive()
@@ -31,10 +31,14 @@ export default class Fridge extends Phaser.GameObjects.Zone {
             this.sprites.push(sprite);
 
             scene.input.setDraggable(sprite);
-            sprite.on("drag", (dragX: number, dragY: number) => {
-                sprite.x = dragX;
-                sprite.y = dragY;
-            });
+            sprite
+                .on("drag", (dragX: number, dragY: number) => {
+                    sprite.x = dragX;
+                    sprite.y = dragY;
+                })
+                .on("dragend", () => {
+                    this.resetIngredients(); // Reset positions after dragging
+                });
         });
     }
 
@@ -66,5 +70,11 @@ export default class Fridge extends Phaser.GameObjects.Zone {
     openPantry() {
         this.inside.setAlpha(1);
         this.sprites.forEach((sprite) => sprite.setVisible(true));
+    }
+    resetIngredients() {
+        this.sprites.forEach((sprite, index) => {
+            sprite.x = this.ingredients[index].x;
+            sprite.y = this.ingredients[index].y;
+        });
     }
 }
