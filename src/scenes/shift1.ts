@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import { CONFIG } from "../config";
 import Ticket from "../objects/ticket";
 import ShiftGUI from "./shiftGUI";
 import Kitchen from "../objects/kitchen";
@@ -37,6 +36,7 @@ export default class Shift1 extends Phaser.Scene {
     bell: Phaser.GameObjects.Sprite;
     kitchen: Kitchen;
     dialog: DialogBox | null;
+    timer: Phaser.GameObjects.Text;
 
     constructor() {
         super({ key: "Shift1" });
@@ -48,11 +48,10 @@ export default class Shift1 extends Phaser.Scene {
     }
 
     create() {
-        const version = CONFIG.version;
         this.kitchen = new Kitchen(this);
 
-        this.add
-            .text(this.cameras.main.width - 15, 15, version, {
+        this.timer = this.add
+            .text(this.cameras.main.width - 15, 15, "", {
                 color: "#000000",
                 fontSize: "24px",
             })
@@ -102,6 +101,9 @@ export default class Shift1 extends Phaser.Scene {
             this.dialog = null;
         }
 
+        this.timer.setText(
+            ((160000 - (time - this.time.startTime)) / 1000).toFixed(0)
+        );
         if (time - this.time.startTime > 160000)
             // 2.5 minutes
             this.kitchen.finishShift("first come first served");
