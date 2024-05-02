@@ -43,7 +43,6 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
         this.highlight.fillColor = RED;
         this.setTimer();
         ingrd.setScale(0.2).disableInteractive();
-
         // each station provides its own time (might switch to ingredient wise)
         this.scene.time.delayedCall(this.duration, () => {
             ingrd.updateState(this.name); // set to new state
