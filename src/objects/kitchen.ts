@@ -89,7 +89,6 @@ export default class Kitchen extends Phaser.GameObjects.Image {
                 this.currentOrder.ticket,
                 tickets
             );
-            //give feedback
 
             // cleanup
             const emptyHolderIdx = this.ticketHolders.findIndex(
