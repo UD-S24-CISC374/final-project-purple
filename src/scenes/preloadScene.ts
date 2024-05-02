@@ -45,6 +45,12 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("prep-status", "assets/img/prep-status.png");
         this.load.image("sink-status", "assets/img/sink-status.png");
 
+        //Audios
+
+        this.load.audio("sink", ["assets/audios/sinkNoise.mp3"]);
+        this.load.audio("prep", ["assets/audios/chopping.mp3"]);
+        this.load.audio("menuAudio", ["assets/audios/menuAudio.mp3"]);
+
         // GUI Stuff
         this.load.image("play-button", "assets/gui/play-button.png");
         this.load.image("career", "assets/gui/career.png");
