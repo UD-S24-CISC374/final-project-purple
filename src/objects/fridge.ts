@@ -42,7 +42,7 @@ export default class Fridge extends Phaser.GameObjects.Zone {
                     sprite.y = dragY;
                 })
                 .on("dragend", () => {
-                    this.resetIngredients(); // Reset positions after dragging
+                    this.resetIngredients();
                 });
         });
     }
