@@ -111,7 +111,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
 
             tickets.splice(tickIdx, 1);
 
-            this.scene.time.delayedCall(Phaser.Math.Between(500, 6000), () => {
+            this.scene.time.delayedCall(Phaser.Math.Between(500, 2000), () => {
                 const newTick = this.generateRandomTicket(emptyHolderIdx);
                 this.ticketHolders[emptyHolderIdx].ticket = newTick;
                 tickets.push(newTick);
