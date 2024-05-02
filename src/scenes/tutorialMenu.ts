@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { CONFIG } from "../config";
+import MenuButton from "../objects/menuButton";
 
 export default class TutorialMenu extends Phaser.Scene {
     constructor() {
@@ -16,37 +17,32 @@ export default class TutorialMenu extends Phaser.Scene {
             .setOrigin(1, 0);
 
         this.add
-            .text(this.cameras.main.centerX, 200, "SCHEDULSINE", {
+            .text(this.cameras.main.centerX, 200, "TUTORIAL", {
                 color: "#54d6d2",
                 fontSize: "100px",
             })
             .setOrigin(0.5, 1);
 
-        this.add.text(100, 200, "How to play:", {
-            color: "black",
-            fontSize: "30px",
-        });
-        this.add.text(
-            160,
-            235,
-            "- drag the appropriate ticket to the `ORDER` \n\t\tzone based on the scheduling algorithm\n- click on the table of plates to spawn a dish\n- drag the empty dish to the service station\n\t\t(beneath bell)\n- click on the fridge or pantry \n\t\t(left-hand side of kitchen)\n- click on an ingredient to spawn it\n- drag the ingredient to the appropriate station\n\t\t(as specified under the ticket's recipe)\n- once finished, drag ingredient to dish on service\n- click bell to serve the dish\n- profit",
-            {
-                color: "black",
-                fontSize: "24px",
-            }
-        );
+        this.add
+            .text(
+                this.cameras.main.centerX,
+                this.cameras.main.centerY,
+                "Learn the ropes!",
+                {
+                    color: "black",
+                    fontSize: "24px",
+                }
+            )
+            .setOrigin(0.5);
 
-        const backButton = this.add.image(
+        new MenuButton(this, 200, 400, "play-button", "Tutorial");
+
+        new MenuButton(
+            this,
             this.cameras.main.width - 200,
             400,
-            "exit"
+            "exit",
+            "MainMenu"
         );
-        backButton
-            .setInteractive()
-            .on("pointerdown", () => {
-                this.scene.start("MainMenu");
-            })
-            .on("pointerover", () => backButton.setScale(1.1))
-            .on("pointerout", () => backButton.setScale(1));
     }
 }
