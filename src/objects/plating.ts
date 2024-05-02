@@ -10,7 +10,11 @@ export default class Plating extends Phaser.GameObjects.Zone {
         height: number
     ) {
         super(scene, x, y, width, height);
-        this.setInteractive().on("pointerdown", this.createDish, this);
+        this.setInteractive({ cursor: "pointer" }).on(
+            "pointerdown",
+            this.createDish,
+            this
+        );
         scene.add.existing(this);
     }
 
