@@ -23,9 +23,9 @@ export default class Kitchen extends Phaser.GameObjects.Image {
     plating: Plating;
     fridge: Fridge;
     pantry: Pantry;
-    avgTaT: number;
-    avgRT: number;
-    ticketsCompleted: number;
+    avgTaT: number = 0;
+    avgRT: number = 0;
+    ticketsCompleted: number = 0;
 
     ticketHolders: TicketHolder[] = [];
     currentOrder: CurrentOrder;
@@ -74,7 +74,13 @@ export default class Kitchen extends Phaser.GameObjects.Image {
                 "wrong-dish"
             )
             .setAlpha(0)
-            .setDepth(999);
+            .setDepth(999)
+            .setInteractive()
+            .on("pointerdown", () => {
+                this.resImg.setAlpha(0);
+                this.dishRes.setAlpha(0);
+                this.scheduleRes.setAlpha(0);
+            });
 
         this.initHolders();
         this.initIngredientHolders();
@@ -98,10 +104,17 @@ export default class Kitchen extends Phaser.GameObjects.Image {
                 (th) => th.ticket === null
             );
 
+            const tickIdx = tickets.findIndex(
+                (tick) =>
+                    tick.arrivalTime === this.currentOrder.ticket?.arrivalTime
+            );
+
+            tickets.splice(tickIdx, 1);
+
             this.scene.time.delayedCall(Phaser.Math.Between(500, 6000), () => {
-                this.ticketHolders[emptyHolderIdx].ticket = tickets[
-                    emptyHolderIdx
-                ] = this.generateRandomTicket(emptyHolderIdx);
+                const newTick = this.generateRandomTicket(emptyHolderIdx);
+                this.ticketHolders[emptyHolderIdx].ticket = newTick;
+                tickets.push(newTick);
             });
 
             this.showResult(
@@ -113,6 +126,16 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             this.updateMetrics();
             this.cleanOrder();
         }
+    }
+
+    finishShift(algoName: string) {
+        this.scene.scene.stop("ShiftGUI");
+        this.scene.scene.start("MetricReport", {
+            algorithm: algoName,
+            ticketsCompleted: this.ticketsCompleted,
+            avgTaT: this.avgTaT,
+            avgRT: this.avgRT,
+        });
     }
 
     updateMetrics() {
@@ -215,10 +238,28 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             duration: 200,
         });
 
-        this.currentOrder.scene.time.delayedCall(5000, () => {
-            this.dishRes.setAlpha(0);
-            this.scheduleRes.setAlpha(0);
-            this.resImg.setAlpha(0);
+        this.scene.tweens.add({
+            targets: [this.dishRes],
+            scale: { from: 2, to: 2.3 },
+            duration: 700,
+            yoyo: true,
+            repeat: -1,
+        });
+
+        this.scene.tweens.add({
+            targets: [this.scheduleRes],
+            scale: { from: 2, to: 2.3 },
+            duration: 700,
+            yoyo: true,
+            repeat: -1,
+        });
+
+        this.scene.tweens.add({
+            targets: [this.resImg],
+            scale: { from: 5, to: 5.3 },
+            duration: 700,
+            yoyo: true,
+            repeat: -1,
         });
     }
 

@@ -10,6 +10,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     arrivalTime: number; // in sec
     elapsedTime: number = 0;
     responseTime: number = 0;
+    sc: Phaser.Scene;
 
     constructor(
         scene: Phaser.Scene,
@@ -31,9 +32,8 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             .on("dragenter", this.dragEnter)
             .on("dragleave", this.dragLeave)
             .on("drop", this.drop);
-
-        this.arrivalTime = scene.time.now / 1000;
-
+        this.sc = scene;
+        this.arrivalTime = (scene.time.now - scene.time.startTime) / 1000;
         this.details = scene.add
             .text(
                 this.x,
@@ -138,15 +138,20 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     }
 
     setTurnaroundTime() {
-        this.turnaroundTime = this.scene.time.now / 1000 - this.arrivalTime;
+        this.turnaroundTime =
+            (this.sc.time.now - this.sc.time.startTime) / 1000 -
+            this.arrivalTime;
     }
 
     setResponseTime() {
-        this.responseTime = this.scene.time.now / 1000 - this.arrivalTime;
+        this.responseTime =
+            (this.sc.time.now - this.sc.time.startTime) / 1000 -
+            this.arrivalTime;
     }
 
     update(time: number) {
         this.details.setPosition(this.x, this.y + 120);
-        this.elapsedTime = time / 1000 - this.arrivalTime;
+        this.elapsedTime =
+            (time - this.sc.time.startTime) / 1000 - this.arrivalTime;
     }
 }

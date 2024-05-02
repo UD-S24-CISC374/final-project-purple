@@ -60,7 +60,7 @@ export default class Shift1 extends Phaser.Scene {
 
         // Initialize  first 3 tickets
         this.kitchen.ticketHolders.map((holder, idx) => {
-            this.time.delayedCall(Phaser.Math.Between(1000, 5000), () => {
+            this.time.delayedCall(Phaser.Math.Between(3000, 10000), () => {
                 holder.ticket = this.kitchen.generateRandomTicket(idx);
                 this.tickets.push(holder.ticket);
             });
@@ -83,6 +83,7 @@ export default class Shift1 extends Phaser.Scene {
                         this.compareTicketToAlgorithm,
                         this.tickets
                     );
+                    console.log(this.tickets);
                 },
                 this
             );
@@ -95,11 +96,15 @@ export default class Shift1 extends Phaser.Scene {
         this.dialog.setDialog(DIALOG1);
     }
 
-    update() {
+    update(time: number) {
         if (this.dialog && this.dialog.fin) {
             this.dialog.hide();
             this.dialog = null;
         }
+
+        if (time - this.time.startTime > 160000)
+            // 2.5 minutes
+            this.kitchen.finishShift("first come first served");
     }
 
     compareDishToTicket(dish: Dish, ticket: Ticket) {
@@ -114,7 +119,7 @@ export default class Shift1 extends Phaser.Scene {
     compareTicketToAlgorithm(ticket: Ticket, tickets: Ticket[]) {
         const nxtTicket = tickets.reduce(
             (first, curr): Ticket =>
-                curr.arrivalTime > first.arrivalTime ? curr : first,
+                curr.arrivalTime < first.arrivalTime ? curr : first,
             tickets[0]
         );
         return [ticket === nxtTicket, nxtTicket];
