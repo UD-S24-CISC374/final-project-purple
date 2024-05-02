@@ -13,7 +13,11 @@ export default class MenuButton extends Phaser.GameObjects.Sprite {
         this.setScale(10)
             .setInteractive()
             .on("pointerdown", () => {
-                nextSceneKey ? scene.scene.start(nextSceneKey) : window.close();
+                if (nextSceneKey) {
+                    scene.scene.start(nextSceneKey);
+                } else {
+                    window.close();
+                }
             })
             .on("pointerover", () =>
                 scene.add.tween({
