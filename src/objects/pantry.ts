@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import Ingredient from "./ingredient";
 
-export default class Pantry extends Phaser.GameObjects.Zone {
+export default class Fridge extends Phaser.GameObjects.Zone {
     public inside: Phaser.GameObjects.Image;
     sprites: Phaser.GameObjects.Sprite[] = [];
 
@@ -12,13 +12,19 @@ export default class Pantry extends Phaser.GameObjects.Zone {
         scene.add.zone(x, y, 155, 200);
         scene.add.existing(this);
 
-        const ingredients = [{ name: "carrot", x: 160, y: 380 }];
+        const ingredients = [{ name: "carrot", x: 171, y: 375 }];
         ingredients.forEach((ingredient) => {
             const sprite = scene.add
                 .sprite(ingredient.x, ingredient.y, ingredient.name)
                 .setInteractive()
                 .setVisible(false)
                 .setScale(0.2, 0.2)
+                .on("pointerover", () => {
+                    sprite.setScale(0.3, 0.24);
+                })
+                .on("pointerout", () => {
+                    sprite.setScale(0.2, 0.2);
+                })
                 .on("pointerdown", (pointer: { x: number; y: number }) => {
                     this.spawnIngredient(ingredient.name, pointer.x, pointer.y);
                 });

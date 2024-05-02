@@ -23,6 +23,12 @@ export default class Fridge extends Phaser.GameObjects.Zone {
                 .setInteractive()
                 .setVisible(false)
                 .setScale(0.2, 0.2)
+                .on("pointerover", () => {
+                    sprite.setScale(0.3, 0.24);
+                })
+                .on("pointerout", () => {
+                    sprite.setScale(0.2, 0.2);
+                })
                 .on("pointerdown", (pointer: { x: number; y: number }) => {
                     this.spawnIngredient(ingredient.name, pointer.x, pointer.y);
                 });
