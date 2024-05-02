@@ -4,6 +4,12 @@ import Ingredient from "./ingredient";
 export default class Fridge extends Phaser.GameObjects.Zone {
     public inside: Phaser.GameObjects.Image;
     sprites: Phaser.GameObjects.Sprite[] = [];
+    ingredients = [
+        // Now a class property
+        { name: "milk", x: 171, y: 375 },
+        { name: "butter", x: 328, y: 380 },
+        { name: "chicken", x: 250, y: 520 },
+    ];
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 150, 270);
@@ -12,12 +18,7 @@ export default class Fridge extends Phaser.GameObjects.Zone {
         scene.add.zone(x, y, 155, 200);
         scene.add.existing(this);
 
-        const ingredients = [
-            { name: "milk", x: 171, y: 375 },
-            { name: "butter", x: 328, y: 380 },
-            { name: "chicken", x: 250, y: 520 },
-        ];
-        ingredients.forEach((ingredient) => {
+        this.ingredients.forEach((ingredient) => {
             const sprite = scene.add
                 .sprite(ingredient.x, ingredient.y, ingredient.name)
                 .setInteractive()
@@ -35,10 +36,14 @@ export default class Fridge extends Phaser.GameObjects.Zone {
             this.sprites.push(sprite);
 
             scene.input.setDraggable(sprite);
-            sprite.on("drag", (dragX: number, dragY: number) => {
-                sprite.x = dragX;
-                sprite.y = dragY;
-            });
+            sprite
+                .on("drag", (dragX: number, dragY: number) => {
+                    sprite.x = dragX;
+                    sprite.y = dragY;
+                })
+                .on("dragend", () => {
+                    this.resetIngredients(); // Reset positions after dragging
+                });
         });
     }
 
@@ -70,5 +75,11 @@ export default class Fridge extends Phaser.GameObjects.Zone {
     openFridge() {
         this.inside.setAlpha(1);
         this.sprites.forEach((sprite) => sprite.setVisible(true));
+    }
+    resetIngredients() {
+        this.sprites.forEach((sprite, index) => {
+            sprite.x = this.ingredients[index].x;
+            sprite.y = this.ingredients[index].y;
+        });
     }
 }
