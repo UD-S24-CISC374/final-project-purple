@@ -58,6 +58,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("tutorial", "assets/gui/tutorial.png");
         this.load.image("exit", "assets/gui/exit.png");
         this.load.image("textbox", "assets/gui/textbox.png");
+        this.load.image("continue", "assets/img/continue.png");
+        this.load.image("new", "assets/img/new.png");
     }
 
     create() {
@@ -73,6 +75,6 @@ export default class PreloadScene extends Phaser.Scene {
             frameRate: 20,
             repeat: 0,
         });
-        this.scene.start("Shift1");
+        this.scene.start("MainMenu");
     }
 }

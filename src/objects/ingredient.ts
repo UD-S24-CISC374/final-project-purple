@@ -58,8 +58,10 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
                     scale: { from: 0.3, to: 0.2 },
                     duration: 100,
                 });
-            });
+            })
+            .on("destroy", this.subtractCost);
 
+        console.log(scene.registry.get("user"));
         this.cost = cost;
         this.statusIcon = scene.add
             .sprite(x, y, "sink-status")
@@ -140,6 +142,10 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
             default:
                 break;
         }
+    }
+
+    subtractCost() {
+        console.log(this.cost);
     }
 
     update() {

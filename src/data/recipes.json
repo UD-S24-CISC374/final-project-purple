@@ -1,9 +1,0 @@
-{
-    "dishes": [
-        {
-            "name": "Risotto",
-            "ingredients": [{ "name": "milk", "state": "boiled" }],
-            "price": 45
-        }
-    ]
-}
