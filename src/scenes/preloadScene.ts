@@ -51,6 +51,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.audio("prep", ["assets/audios/chopping.mp3"]);
         this.load.audio("menuAudio", ["assets/audios/menuAudio.mp3"]);
         this.load.audio("stove", ["assets/audios/cooking.mp3"]);
+        this.load.audio("oven", ["assets/audios/baking.mp3"]);
 
         // GUI Stuff
         this.load.image("play-button", "assets/gui/play-button.png");
