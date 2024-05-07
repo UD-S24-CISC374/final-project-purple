@@ -44,7 +44,7 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
         this.setTimer();
         ingrd.setScale(0.2).disableInteractive();
         const music = this.scene.sound.add(this.name, { volume: 1 });
-        music.play(), music.setVolume(1);
+        music.play(), music.setVolume(3);
         this.scene.time.delayedCall(this.duration, () => {
             music.stop();
         });
