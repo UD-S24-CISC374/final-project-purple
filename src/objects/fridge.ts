@@ -6,9 +6,9 @@ export default class Fridge extends Phaser.GameObjects.Zone {
     sprites: Phaser.GameObjects.Sprite[] = [];
     ingredients = [
         // Now a class property
-        { name: "milk", x: 171, y: 375 },
-        { name: "butter", x: 328, y: 380 },
-        { name: "chicken", x: 250, y: 520 },
+        { name: "milk", x: 171, y: 375, cost: 1 },
+        { name: "butter", x: 328, y: 380, cost: 0.25 },
+        { name: "chicken", x: 250, y: 520, cost: 3 },
     ];
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
@@ -31,7 +31,12 @@ export default class Fridge extends Phaser.GameObjects.Zone {
                     sprite.setScale(0.2, 0.2);
                 })
                 .on("pointerdown", (pointer: { x: number; y: number }) => {
-                    this.spawnIngredient(ingredient.name, pointer.x, pointer.y);
+                    this.spawnIngredient(
+                        ingredient.name,
+                        pointer.x,
+                        pointer.y,
+                        ingredient.cost
+                    );
                 });
             this.sprites.push(sprite);
 
@@ -47,13 +52,14 @@ export default class Fridge extends Phaser.GameObjects.Zone {
         });
     }
 
-    spawnIngredient(ingrdName: string, x: number, y: number) {
+    spawnIngredient(ingrdName: string, x: number, y: number, cost: number) {
         const ingredient = new Ingredient(
             this.scene,
             x,
             y,
             ingrdName,
-            ingrdName
+            ingrdName,
+            cost
         );
         this.closeFridge();
         return ingredient;

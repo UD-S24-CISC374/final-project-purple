@@ -6,10 +6,11 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     details: Phaser.GameObjects.Text;
     holder: TicketHolder | CurrentOrder;
     requirements: Set<string>;
-    turnaroundTime: number; // in sec
-    arrivalTime: number; // in sec
+    turnaroundTime: number = 0; // in sec
+    arrivalTime: number = 0; // in sec
     elapsedTime: number = 0;
     responseTime: number = 0;
+    cookTime: number = 0;
     sc: Phaser.Scene;
 
     constructor(
@@ -46,6 +47,18 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             .setDepth(10);
 
         this.requirements = requirements;
+
+        // requirements.forEach((ingrd) => {
+        //     switch (ingrd.split(" ")[0]) {
+        //         case :
+        //             break;
+
+        //         default:
+        //             break;
+        //     }
+
+        // }
+        // );
 
         this.scene.add.tween({
             targets: [this],

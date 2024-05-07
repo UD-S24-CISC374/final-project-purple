@@ -4,7 +4,7 @@ import Ingredient from "./ingredient";
 export default class Pantry extends Phaser.GameObjects.Zone {
     public inside: Phaser.GameObjects.Image;
     sprites: Phaser.GameObjects.Sprite[] = [];
-    ingredients = [{ name: "carrot", x: 171, y: 375 }];
+    ingredients = [{ name: "carrot", x: 171, y: 375, cost: 0.1 }];
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 150, 270);
@@ -26,7 +26,12 @@ export default class Pantry extends Phaser.GameObjects.Zone {
                     sprite.setScale(0.2, 0.2);
                 })
                 .on("pointerdown", (pointer: { x: number; y: number }) => {
-                    this.spawnIngredient(ingredient.name, pointer.x, pointer.y);
+                    this.spawnIngredient(
+                        ingredient.name,
+                        pointer.x,
+                        pointer.y,
+                        ingredient.cost
+                    );
                 });
             this.sprites.push(sprite);
 
@@ -42,13 +47,14 @@ export default class Pantry extends Phaser.GameObjects.Zone {
         });
     }
 
-    spawnIngredient(ingrdName: string, x: number, y: number) {
+    spawnIngredient(ingrdName: string, x: number, y: number, cost: number) {
         const ingredient = new Ingredient(
             this.scene,
             x,
             y,
             ingrdName,
-            ingrdName
+            ingrdName,
+            cost
         );
         this.closePantry();
         return ingredient;

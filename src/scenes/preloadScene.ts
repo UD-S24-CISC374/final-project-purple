@@ -44,6 +44,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("stove-status", "assets/img/stove-status.png");
         this.load.image("prep-status", "assets/img/prep-status.png");
         this.load.image("sink-status", "assets/img/sink-status.png");
+        this.load.image("trash", "assets/img/trash.png");
 
         //Audios
 
@@ -72,6 +73,6 @@ export default class PreloadScene extends Phaser.Scene {
             frameRate: 20,
             repeat: 0,
         });
-        this.scene.start("MainMenu");
+        this.scene.start("Shift1");
     }
 }

@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Station from "./station";
 import Service from "./stations/service";
+import Trash from "./trash";
 
 export enum IngredientState {
     BAKED = "Baked",
@@ -23,13 +24,15 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     station: Station | null;
     state: IngredientState = IngredientState.RAW;
     statusIcon: Phaser.GameObjects.Sprite;
+    cost: number = 0;
 
     constructor(
         scene: Phaser.Scene,
         x: number,
         y: number,
         name: string,
-        image: string
+        image: string,
+        cost: number
     ) {
         super(scene, x, y, image);
         this.setScale(0.2)
@@ -57,6 +60,7 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
                 });
             });
 
+        this.cost = cost;
         this.statusIcon = scene.add
             .sprite(x, y, "sink-status")
             .setAlpha(0)
@@ -73,7 +77,8 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     dragEnter(ingrd: Ingredient, target: Station) {
         if (
             (target instanceof Service && target.dish) ||
-            (target instanceof Station && !(target instanceof Service))
+            (target instanceof Station && !(target instanceof Service)) ||
+            target instanceof Trash
         )
             this.setScale(0.4);
     }
@@ -108,6 +113,8 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
             this.station = target;
             this.station.cook(this);
             this.setPosition(target.x, target.y);
+        } else if (target instanceof Trash) {
+            this.destroy();
         }
     }
 

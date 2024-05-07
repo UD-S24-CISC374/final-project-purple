@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Service from "./stations/service";
 import Ingredient from "./ingredient";
+import Trash from "./trash";
 
 export default class Dish extends Phaser.GameObjects.Sprite {
     ingredients: Ingredient[] = [];
@@ -62,8 +63,8 @@ export default class Dish extends Phaser.GameObjects.Sprite {
         this.setPosition(dragX, dragY);
     }
 
-    dragEnter(dish: Dish, target: Service) {
-        if (target instanceof Service) {
+    dragEnter(dish: Dish, target: Phaser.GameObjects.Zone) {
+        if (target instanceof Service || target instanceof Trash) {
             this.setScale(5);
         }
     }
@@ -81,6 +82,8 @@ export default class Dish extends Phaser.GameObjects.Sprite {
             target.setDish(this);
         } else if (target.dish === this) {
             this.setPosition(target.x, target.y);
+        } else if (target instanceof Trash) {
+            this.destroy();
         }
     }
 
@@ -96,6 +99,10 @@ export default class Dish extends Phaser.GameObjects.Sprite {
             ""
         );
         this.display.setText(contents).setAlpha(1);
+    }
+
+    getCost() {
+        return this.ingredients.reduce((cost, ingrd) => ingrd.cost + cost, 0);
     }
 
     update() {

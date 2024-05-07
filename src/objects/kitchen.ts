@@ -12,6 +12,7 @@ import Pantry from "../objects/pantry";
 import Dish from "./dish";
 import { INGREDIENTS, IngredientState } from "./ingredient";
 import Ticket from "./ticket";
+import Trash from "./trash";
 
 // FOR HOLDING ALL STATIONS AS ONE KITCHEN OBJECT
 export default class Kitchen extends Phaser.GameObjects.Image {
@@ -23,6 +24,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
     plating: Plating;
     fridge: Fridge;
     pantry: Pantry;
+    trash: Trash;
     avgTaT: number = 0;
     avgRT: number = 0;
     ticketsCompleted: number = 0;
@@ -85,6 +87,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         this.initHolders();
         this.initIngredientHolders();
         this.initStations();
+        this.trash = new Trash(scene, scene.cameras.main.width - 210, 280);
     }
 
     submitDish(
@@ -93,6 +96,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         tickets: Ticket[]
     ) {
         if (this.service.dish && this.currentOrder.ticket) {
+            console.log(this.service.dish.getCost());
             const dishRes = cmpFn1(this.service.dish, this.currentOrder.ticket);
             const [scheduleRes, nxtTicket] = cmpFn2(
                 this.currentOrder.ticket,
