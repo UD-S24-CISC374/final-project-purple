@@ -40,7 +40,10 @@ export default class Dish extends Phaser.GameObjects.Sprite {
                     });
                 },
                 this
-            );
+            )
+            .on("destroy", () => {
+                this.display.destroy();
+            });
         this.display = scene.add
             .text(x + 35, y - 30, "", {
                 backgroundColor: "dodgerblue",

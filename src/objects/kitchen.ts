@@ -13,6 +13,7 @@ import Dish from "./dish";
 import { INGREDIENTS, IngredientState } from "./ingredient";
 import Ticket from "./ticket";
 import Trash from "./trash";
+import Metrics from "./metrics";
 
 // FOR HOLDING ALL STATIONS AS ONE KITCHEN OBJECT
 export default class Kitchen extends Phaser.GameObjects.Image {
@@ -25,9 +26,8 @@ export default class Kitchen extends Phaser.GameObjects.Image {
     fridge: Fridge;
     pantry: Pantry;
     trash: Trash;
-    avgTaT: number = 0;
-    avgRT: number = 0;
-    ticketsCompleted: number = 0;
+
+    metrics: Metrics;
 
     ticketHolders: TicketHolder[] = [];
     currentOrder: CurrentOrder;
@@ -88,6 +88,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         this.initIngredientHolders();
         this.initStations();
         this.trash = new Trash(scene, scene.cameras.main.width - 210, 280);
+        this.metrics = new Metrics();
     }
 
     submitDish(
@@ -96,7 +97,6 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         tickets: Ticket[]
     ) {
         if (this.service.dish && this.currentOrder.ticket) {
-            console.log(this.service.dish.getCost());
             const dishRes = cmpFn1(this.service.dish, this.currentOrder.ticket);
             const [scheduleRes, nxtTicket] = cmpFn2(
                 this.currentOrder.ticket,
@@ -127,31 +127,40 @@ export default class Kitchen extends Phaser.GameObjects.Image {
                 (nxtTicket as Ticket).elapsedTime
             );
 
-            this.updateMetrics();
+            this.updateMetrics(scheduleRes as boolean, dishRes);
+            this.updateProfit(
+                this.service.dish,
+                scheduleRes as boolean,
+                dishRes
+            );
             this.cleanOrder();
         }
     }
 
     finishShift(algoName: string) {
+        this.metrics.algo = algoName;
         this.scene.scene.stop("ShiftGUI");
-        this.scene.scene.start("MetricReport", {
-            algorithm: algoName,
-            ticketsCompleted: this.ticketsCompleted,
-            avgTaT: this.avgTaT,
-            avgRT: this.avgRT,
-        });
+        this.scene.scene.start("MetricReport", this.metrics);
     }
 
-    updateMetrics() {
+    updateMetrics(scheduleRes: boolean, dishRes: boolean) {
         this.currentOrder.ticket?.setTurnaroundTime();
 
-        this.ticketsCompleted++;
-
+        this.metrics.ticketsCompleted++;
+        this.metrics.correctSchedules += scheduleRes ? 1 : 0;
+        this.metrics.correctDishes += dishRes ? 1 : 0;
         // compute moving averages
-        this.avgRT +=
-            this.currentOrder.ticket!.responseTime / this.ticketsCompleted;
-        this.avgTaT +=
-            this.currentOrder.ticket!.turnaroundTime / this.ticketsCompleted;
+        this.metrics.updateAvgerages(this.currentOrder.ticket!);
+    }
+
+    updateProfit(dish: Dish, scheduleRes: boolean, dishRes: boolean) {
+        let profit = dish.getCost() + (dish.ingredients.length > 2 ? 20 : 10);
+        profit += scheduleRes ? profit * 0.2 : 0;
+        if (dishRes) {
+            const updatedUser = { ...this.scene.registry.get("user") };
+            updatedUser.profit += profit;
+            this.scene.registry.set("user", updatedUser);
+        }
     }
 
     cleanOrder() {

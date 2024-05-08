@@ -60,7 +60,10 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
                     duration: 100,
                 });
             })
-            .on("destroy", this.subtractCost);
+            .on("destroy", () => {
+                this.subtractCost();
+                this.statusIcon.destroy();
+            });
         this.cost = cost;
         this.statusIcon = scene.add
             .sprite(x, y, "sink-status")

@@ -37,7 +37,7 @@ export default class Shift1 extends Phaser.Scene {
     kitchen: Kitchen;
     dialog: DialogBox | null;
     timer: Phaser.GameObjects.Text;
-    length: number = 160000; // length of the shift
+    length: number = 16000; // length of the shift
 
     constructor() {
         super({ key: "Shift1" });
