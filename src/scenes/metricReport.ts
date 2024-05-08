@@ -9,6 +9,14 @@ export default class MetricReport extends Phaser.Scene {
     }
 
     create(sceneData: Metrics) {
+        const userShift = this.registry.get("user").shift;
+        let accuracy =
+            parseFloat(
+                (
+                    sceneData.correctSchedules / sceneData.ticketsCompleted
+                ).toFixed(3)
+            ) * 100;
+        accuracy = isNaN(accuracy) ? 0 : accuracy;
         this.report = this.add
             .text(
                 this.cameras.main.centerX,
@@ -18,29 +26,29 @@ export default class MetricReport extends Phaser.Scene {
             Orders made correctly: ${sceneData.correctDishes}\n
             Orders scheduled correctly: ${sceneData.correctSchedules}\n
 
-            Scheduling accuracy: ${
-                parseFloat(
-                    (
-                        sceneData.correctSchedules / sceneData.ticketsCompleted
-                    ).toFixed(3)
-                ) * 100
-            }%\n
+            Scheduling accuracy: ${accuracy}%\n
             Average turnaround time: ${sceneData.avgTaT.toFixed(2)}s\n
             Average response time: ${sceneData.avgRT.toFixed(2)}s`,
                 { color: "black" }
             )
             .setOrigin(0.5);
+        this.nextButton(userShift, accuracy >= 60);
+    }
+
+    nextButton(shift: number, passed: boolean) {
         this.add
             .text(
                 this.cameras.main.centerX,
                 this.cameras.main.centerY + 300,
-                "CONTINUE",
+                passed ? "CONTINUE" : "RETRY",
                 {
                     backgroundColor: "black",
                     padding: { top: 5, bottom: 5, left: 5, right: 5 },
                 }
             )
             .setInteractive()
-            .on("pointerdown", () => this.scene.start("CareerMenu"));
+            .on("pointerdown", () =>
+                this.scene.start(`Shift${passed ? shift + 1 : shift}`)
+            );
     }
 }
