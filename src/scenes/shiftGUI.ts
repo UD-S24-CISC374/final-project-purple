@@ -16,6 +16,10 @@ export default class ShiftGUI extends Phaser.Scene {
             })
             .setInteractive()
             .on("pointerdown", () => {
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify(this.registry.get("user"))
+                );
                 this.scene.stop(sceneData.shift);
                 this.scene.start("MainMenu");
             });
