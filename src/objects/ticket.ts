@@ -11,7 +11,6 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     elapsedTime: number = 0;
     responseTime: number = 0;
     cookTime: number = 0;
-    sc: Phaser.Scene;
 
     constructor(
         scene: Phaser.Scene,
@@ -19,8 +18,6 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         requirements: Set<string>
     ) {
         super(scene, holder.x, 134, "ticket");
-        this.holder = holder;
-        this.holder.ticket = this;
         this.setScale(0.5)
             .setDepth(2)
             .setInteractive({ draggable: true, cursor: "pointer" })
@@ -33,8 +30,12 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             .on("dragenter", this.dragEnter)
             .on("dragleave", this.dragLeave)
             .on("drop", this.drop);
-        this.sc = scene;
-        this.arrivalTime = (scene.time.now - scene.time.startTime) / 1000;
+
+        this.arrivalTime = scene.time.now / 1000;
+
+        this.holder = holder;
+        this.holder.ticket = this;
+
         this.details = scene.add
             .text(
                 this.x,
@@ -66,6 +67,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             scale: { from: 0.6, to: this.scale },
             duration: 400,
         });
+
         this.scene.time.delayedCall(400, () => this.setDepth(1));
 
         scene.events.on("update", this.update, this);
@@ -123,7 +125,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
                 this.holder.x,
                 this.holder.y + (this.holder instanceof TicketHolder ? 60 : 0)
             ); // snap to new holder
-            this.setResponseTime();
+            if (target instanceof CurrentOrder) this.setResponseTime();
         } else {
             this.dragEnd(); // if holder is occupied, just end the drag event
         }
@@ -151,20 +153,15 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     }
 
     setTurnaroundTime() {
-        this.turnaroundTime =
-            (this.sc.time.now - this.sc.time.startTime) / 1000 -
-            this.arrivalTime;
+        this.turnaroundTime = this.scene.time.now / 1000 - this.arrivalTime;
     }
 
     setResponseTime() {
-        this.responseTime =
-            (this.sc.time.now - this.sc.time.startTime) / 1000 -
-            this.arrivalTime;
+        this.responseTime = this.scene.time.now / 1000 - this.arrivalTime;
     }
 
     update(time: number) {
         this.details.setPosition(this.x, this.y + 120);
-        this.elapsedTime =
-            (time - this.sc.time.startTime) / 1000 - this.arrivalTime;
+        this.elapsedTime = time / 1000 - this.arrivalTime;
     }
 }

@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import { CONFIG } from "../config";
 import Ticket from "../objects/ticket";
 import ShiftGUI from "./shiftGUI";
 import Kitchen from "../objects/kitchen";
@@ -138,18 +137,10 @@ export default class Tutorial extends Phaser.Scene {
     }
 
     create() {
-        const version = CONFIG.version;
         this.kitchen = new Kitchen(this);
+        this.tickets = [];
 
-        this.add
-            .text(this.cameras.main.width - 15, 15, version, {
-                color: "#000000",
-                fontSize: "24px",
-            })
-            .setOrigin(1, 0);
-
-        const tutTicket = this.kitchen.generateRandomTicket(2);
-        this.tickets.push(tutTicket);
+        this.tickets.push(this.kitchen.generateRandomTicket(2));
 
         this.dialogBox = new DialogBox(
             this,
