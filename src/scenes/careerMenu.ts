@@ -1,26 +1,26 @@
 import Phaser from "phaser";
 import { CONFIG } from "../config";
 import MenuButton from "../objects/menuButton";
-import UserData from "../data/userData";
+import CareerData from "../data/careerData";
 
 export default class CareerMenu extends Phaser.Scene {
-    user: UserData;
+    career: CareerData;
 
     constructor() {
         super({ key: "CareerMenu" });
     }
 
     init() {
-        let user;
-        if ((user = localStorage.getItem("user"))) {
-            this.user = JSON.parse(user);
-            console.log("retrieved user");
+        let career;
+        if ((career = localStorage.getItem("career"))) {
+            this.career = JSON.parse(career);
+            console.log("retrieved career");
         } else {
-            this.user = new UserData(1);
-            console.log("new user");
-            localStorage.setItem("user", JSON.stringify(this.user));
+            this.career = new CareerData(1);
+            console.log("new career");
+            localStorage.setItem("career", JSON.stringify(this.career));
         }
-        this.registry.set("user", this.user);
+        this.registry.set("career", this.career);
     }
 
     create() {
@@ -44,8 +44,10 @@ export default class CareerMenu extends Phaser.Scene {
                 200,
                 640,
                 `Day: ${
-                    this.user.shift
-                }\nShift: ${this.getShiftName()}\nProfit: ${this.user.profit}`,
+                    this.career.shift
+                }\nShift: ${this.getShiftName()}\nProfit: ${
+                    this.career.profit
+                }`,
                 {
                     color: "#54d6d2",
                     fontSize: "1.2rem",
@@ -53,7 +55,7 @@ export default class CareerMenu extends Phaser.Scene {
             )
             .setOrigin(0.5, 1);
 
-        new MenuButton(this, 200, 400, "continue", `Shift${this.user.shift}`);
+        new MenuButton(this, 200, 400, "continue", `Shift${this.career.shift}`);
 
         this.add
             .text(
@@ -74,9 +76,9 @@ export default class CareerMenu extends Phaser.Scene {
             "new",
             "Shift1"
         ).on("pointerdown", () => {
-            const user = new UserData(1);
-            localStorage.setItem("user", JSON.stringify(user));
-            this.registry.set("user", user);
+            const career = new CareerData(1);
+            localStorage.setItem("career", JSON.stringify(career));
+            this.registry.set("career", career);
         });
 
         new MenuButton(
@@ -89,7 +91,7 @@ export default class CareerMenu extends Phaser.Scene {
     }
 
     getShiftName() {
-        switch (this.user.shift) {
+        switch (this.career.shift) {
             case 1:
                 return "First Come First Served";
             case 2:

@@ -157,9 +157,9 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         let profit = dish.getCost() + (dish.ingredients.length > 2 ? 20 : 10);
         profit += scheduleRes ? profit * 0.2 : 0;
         if (dishRes) {
-            const updatedUser = { ...this.scene.registry.get("user") };
-            updatedUser.profit += profit;
-            this.scene.registry.set("user", updatedUser);
+            const updatedCareer = { ...this.scene.registry.get("career") };
+            updatedCareer.profit += profit;
+            this.scene.registry.set("career", updatedCareer);
         }
     }
 

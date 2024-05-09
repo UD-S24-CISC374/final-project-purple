@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import Station from "./station";
 import Service from "./stations/service";
 import Trash from "./trash";
-import UserData from "../data/userData";
+import UserData from "../data/careerData";
 
 export enum IngredientState {
     BAKED = "Baked",

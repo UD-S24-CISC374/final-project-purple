@@ -4,6 +4,7 @@ import ShiftGUI from "./shiftGUI";
 import Kitchen from "../objects/kitchen";
 import Dish from "../objects/dish";
 import DialogBox from "../objects/dialogBox";
+import ShiftTimer from "../objects/shiftTimer";
 
 const DIALOG1: Record<number, { text: string; face: number }> = {
     0: {
@@ -36,8 +37,7 @@ export default class Shift1 extends Phaser.Scene {
     bell: Phaser.GameObjects.Sprite;
     kitchen: Kitchen;
     dialog: DialogBox | null;
-    timer: Phaser.GameObjects.Text;
-    length: number = 16000; // length of the shift
+    timer: ShiftTimer;
 
     constructor() {
         super({ key: "Shift1" });
@@ -51,12 +51,13 @@ export default class Shift1 extends Phaser.Scene {
     create() {
         this.kitchen = new Kitchen(this);
         this.tickets = [];
-        this.timer = this.add
-            .text(this.cameras.main.width - 15, 15, "", {
-                color: "#000000",
-                fontSize: "24px",
-            })
-            .setOrigin(1, 0);
+
+        this.timer = new ShiftTimer(
+            this,
+            this.cameras.main.width - 15,
+            15,
+            160000
+        );
 
         // Initialize  first 3 tickets
         this.kitchen.ticketHolders.map((holder, idx) => {
@@ -102,11 +103,9 @@ export default class Shift1 extends Phaser.Scene {
             this.dialog = null;
         }
 
-        this.timer.setText(
-            ((this.length - (time - this.time.startTime)) / 1000).toFixed(0)
-        );
-        if (time - this.time.startTime > this.length)
-            // 2.5 minutes
+        this.timer.updateTimer(time, this.time.startTime);
+
+        if (time - this.time.startTime > this.timer.shiftLength)
             this.kitchen.finishShift("first come first served");
     }
 

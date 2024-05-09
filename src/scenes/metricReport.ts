@@ -9,7 +9,7 @@ export default class MetricReport extends Phaser.Scene {
     }
 
     create(sceneData: Metrics) {
-        const userShift = this.registry.get("user").shift;
+        const userShift = this.registry.get("career").shift;
         let accuracy =
             parseFloat(
                 (
