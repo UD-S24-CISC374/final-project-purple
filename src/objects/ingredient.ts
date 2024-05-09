@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Station from "./station";
 import Service from "./stations/service";
+import Fridge from "./fridge";
 
 export enum IngredientState {
     BAKED = "Baked",
@@ -23,15 +24,22 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     station: Station | null;
     state: IngredientState = IngredientState.RAW;
     statusIcon: Phaser.GameObjects.Sprite;
+    startX: number;
+    startY: number;
+    isInFridge: boolean = true;
+    fridge: Fridge;
 
     constructor(
         scene: Phaser.Scene,
         x: number,
         y: number,
         name: string,
-        image: string
+        fridge: Fridge //abstract container
     ) {
-        super(scene, x, y, image);
+        super(scene, x, y, name);
+        this.startX = x;
+        this.startY = y;
+        this.fridge = fridge;
         this.setScale(0.2)
             .setDepth(2)
             .setInteractive({ draggable: true, cursor: "pointer" })
@@ -67,6 +75,20 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     }
 
     dragStart() {
+        if (this.isInFridge) {
+            /// make new ingredient
+            const temp: Ingredient = new Ingredient(
+                this.scene,
+                this.startX,
+                this.startY,
+                this.name,
+                this.fridge
+            );
+            this.fridge.ingredientSprites.push(temp);
+            console.log(temp);
+            this.isInFridge = false;
+        }
+        console.log(this.fridge.ingredientSprites.length);
         this.setScale(0.3).setDepth(3);
     }
 

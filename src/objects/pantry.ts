@@ -43,15 +43,17 @@ export default class Pantry extends Phaser.GameObjects.Zone {
     }
 
     spawnIngredient(ingrdName: string, x: number, y: number) {
-        const ingredient = new Ingredient(
-            this.scene,
-            x,
-            y,
-            ingrdName,
-            ingrdName
-        );
-        this.closePantry();
-        return ingredient;
+        // const ingredient = new Ingredient(
+        //     this.scene,
+        //     x,
+        //     y,
+        //     ingrdName,
+        //     ingrdName,
+
+        // );
+        // this.closePantry();
+        return 0;
+        // return ingredient;
     }
 
     click() {
