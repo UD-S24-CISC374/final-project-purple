@@ -1,9 +1,25 @@
 import Phaser from "phaser";
 import MenuButton from "../objects/menuButton";
+import CareerData from "../data/careerData";
 
 export default class MainMenu extends Phaser.Scene {
+    career: CareerData;
+
     constructor() {
         super({ key: "MainMenu" });
+    }
+
+    init() {
+        let career;
+        if ((career = localStorage.getItem("career"))) {
+            this.career = JSON.parse(career);
+            console.log("retrieved career");
+        } else {
+            this.career = new CareerData(1);
+            console.log("new career");
+            localStorage.setItem("career", JSON.stringify(this.career));
+        }
+        this.registry.set("career", this.career);
     }
 
     create() {

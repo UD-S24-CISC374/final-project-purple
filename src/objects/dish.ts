@@ -6,6 +6,7 @@ import Trash from "./trash";
 export default class Dish extends Phaser.GameObjects.Sprite {
     ingredients: Ingredient[] = [];
     display: Phaser.GameObjects.Text;
+    isOnTable: boolean;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, "dish");

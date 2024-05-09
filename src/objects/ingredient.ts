@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import Station from "./station";
 import Service from "./stations/service";
 import Trash from "./trash";
-import UserData from "../data/careerData";
+import CareerData from "../data/careerData";
 
 export enum IngredientState {
     BAKED = "Baked",
@@ -147,9 +147,11 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     }
 
     subtractCost() {
-        const updatedUser: UserData = { ...this.scene.registry.get("user") };
-        updatedUser.profit -= this.cost;
-        this.scene.registry.set("user", updatedUser);
+        const updatedCareer: CareerData = {
+            ...this.scene.registry.get("career"),
+        };
+        updatedCareer.profit -= this.cost;
+        this.scene.registry.set("career", updatedCareer);
     }
 
     update() {

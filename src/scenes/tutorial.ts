@@ -4,8 +4,10 @@ import ShiftGUI from "./shiftGUI";
 import Kitchen from "../objects/kitchen";
 import Dish from "../objects/dish";
 import DialogBox from "../objects/dialogBox";
+import { Dialog } from "../objects/dialogBox";
+import CareerData from "../data/careerData";
 
-const DIALOG1: Record<number, { text: string; face: number }> = {
+const DIALOG1: Dialog = {
     0: {
         text: "Welcome to Schedulsine soldier! Silicon valley's newest Michelin Star restaurant.",
         face: 2,
@@ -18,21 +20,21 @@ const DIALOG1: Record<number, { text: string; face: number }> = {
     3: { text: "Anyways, let's see what you're made of.", face: 0 },
 };
 
-const DIALOG2: Record<number, { text: string; face: number }> = {
+const DIALOG2: Dialog = {
     0: {
         text: "To get started, you need to schedule a ticket. In any given shift, we'll have a lot of tickets, so choosing which to work on will directly impact how many we can get done in a night.",
         face: 0,
     },
 };
 
-const DIALOG3: Record<number, { text: string; face: number }> = {
+const DIALOG3: Dialog = {
     0: {
         text: "Luckily, we only have one waiting in the queue. Go ahead and drag it into the [current order] zone.",
         face: 0,
     },
 };
 
-const DIALOG4: Record<number, { text: string; face: number }> = {
+const DIALOG4: Dialog = {
     0: {
         text: "Now you can see the ingredients necessary to complete the order!",
         face: 2,
@@ -43,7 +45,7 @@ const DIALOG4: Record<number, { text: string; face: number }> = {
     },
 };
 
-const DIALOG5: Record<number, { text: string; face: number }> = {
+const DIALOG5: Dialog = {
     0: {
         text: "Here's a list of the stations and which qualifiers they apply to an ingredient.",
         face: 2,
@@ -62,14 +64,14 @@ const DIALOG5: Record<number, { text: string; face: number }> = {
     },
 };
 
-const DIALOG6: Record<number, { text: string; face: number }> = {
+const DIALOG6: Dialog = {
     0: {
         text: "First we need to grab our ingredients.",
         face: 2,
     },
 };
 
-const DIALOG7: Record<number, { text: string; face: number }> = {
+const DIALOG7: Dialog = {
     0: {
         text: "Click on the fridge or pantry, depending on the ingredient.",
         face: 0,
@@ -84,7 +86,7 @@ const DIALOG7: Record<number, { text: string; face: number }> = {
     },
 };
 
-const DIALOG8: Record<number, { text: string; face: number }> = {
+const DIALOG8: Dialog = {
     0: {
         text: "Time to cook chef!",
         face: 2,
@@ -126,6 +128,7 @@ export default class Tutorial extends Phaser.Scene {
     dialogBox: DialogBox;
     pointer: Phaser.GameObjects.Sprite;
     qualifiers: Phaser.GameObjects.Text; // going to convert to a cookbook/notebook feature which can be accessed anytime ingame
+    oldCareerData: CareerData;
 
     constructor() {
         super({ key: "Tutorial" });
@@ -134,6 +137,7 @@ export default class Tutorial extends Phaser.Scene {
     init() {
         this.scene.launch("ShiftGUI", { shift: this.scene.key });
         this.gui = this.scene.get("ShiftGUI") as ShiftGUI;
+        this.oldCareerData = this.registry.get("career");
     }
 
     create() {

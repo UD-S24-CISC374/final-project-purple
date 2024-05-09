@@ -1,10 +1,12 @@
 import Phaser from "phaser";
 
+export type Dialog = Record<number, { text: string; face: number }>;
+
 export default class DialogBox extends Phaser.GameObjects.Sprite {
     private text: Phaser.GameObjects.Text;
     manager: Phaser.GameObjects.Sprite;
     private click: Phaser.GameObjects.Text;
-    private dialog: Record<number, { text: string; face: number }>;
+    private dialog: Dialog;
     private dialogPtr: number = 0;
     fin: boolean = false;
 
@@ -48,7 +50,7 @@ export default class DialogBox extends Phaser.GameObjects.Sprite {
         this.manager.setFrame(frame);
     }
 
-    setDialog(dialog: Record<number, { text: string; face: number }>) {
+    setDialog(dialog: Dialog) {
         this.dialogPtr = 0;
         this.fin = false;
         this.dialog = dialog;

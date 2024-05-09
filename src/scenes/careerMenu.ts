@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import { CONFIG } from "../config";
 import MenuButton from "../objects/menuButton";
 import CareerData from "../data/careerData";
 
@@ -10,27 +9,8 @@ export default class CareerMenu extends Phaser.Scene {
         super({ key: "CareerMenu" });
     }
 
-    init() {
-        let career;
-        if ((career = localStorage.getItem("career"))) {
-            this.career = JSON.parse(career);
-            console.log("retrieved career");
-        } else {
-            this.career = new CareerData(1);
-            console.log("new career");
-            localStorage.setItem("career", JSON.stringify(this.career));
-        }
-        this.registry.set("career", this.career);
-    }
-
     create() {
-        const version = CONFIG.version;
-        this.add
-            .text(this.cameras.main.width - 15, 15, version, {
-                color: "#000000",
-                fontSize: "24px",
-            })
-            .setOrigin(1, 0);
+        this.career = this.registry.get("career");
 
         this.add
             .text(this.cameras.main.centerX, 200, "CAREER", {
