@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import Metrics from "../objects/metrics";
+import CareerData from "../data/careerData";
 
 export default class MetricReport extends Phaser.Scene {
     report: Phaser.GameObjects.Text;
@@ -47,8 +48,10 @@ export default class MetricReport extends Phaser.Scene {
                 }
             )
             .setInteractive()
-            .on("pointerdown", () =>
-                this.scene.start(`Shift${passed ? shift + 1 : shift}`)
-            );
+            .on("pointerdown", () => {
+                const nextShift = passed ? shift + 1 : shift;
+                this.scene.start(`Shift${nextShift}`);
+                CareerData.setShift(this, nextShift);
+            });
     }
 }

@@ -8,9 +8,15 @@ export default class CareerData {
         this.shift = shift;
     }
 
-    static setProfit(sceneRef: Phaser.Scene, newProfit: number) {
+    static addProfit(sceneRef: Phaser.Scene, newProfit: number) {
         const newData = { ...sceneRef.registry.get("career") };
         newData.profit += newProfit;
+        sceneRef.registry.set("career", newData);
+    }
+
+    static setShift(sceneRef: Phaser.Scene, newShift: number) {
+        const newData = { ...sceneRef.registry.get("career") };
+        newData.shift = newShift;
         sceneRef.registry.set("career", newData);
     }
 }

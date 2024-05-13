@@ -14,6 +14,7 @@ import { INGREDIENTS, IngredientState } from "./ingredient";
 import Ticket from "./ticket";
 import Trash from "./trash";
 import Metrics from "./metrics";
+import CareerData from "../data/careerData";
 
 // FOR HOLDING ALL STATIONS AS ONE KITCHEN OBJECT
 export default class Kitchen extends Phaser.GameObjects.Image {
@@ -156,11 +157,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
     updateProfit(dish: Dish, scheduleRes: boolean, dishRes: boolean) {
         let profit = dish.getCost() + (dish.ingredients.length > 2 ? 20 : 10);
         profit += scheduleRes ? profit * 0.2 : 0;
-        if (dishRes) {
-            const updatedCareer = { ...this.scene.registry.get("career") };
-            updatedCareer.profit += profit;
-            this.scene.registry.set("career", updatedCareer);
-        }
+        if (dishRes) CareerData.addProfit(this.scene, profit);
     }
 
     cleanOrder() {
