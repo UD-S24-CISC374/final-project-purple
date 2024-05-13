@@ -5,6 +5,7 @@ import Kitchen from "../objects/kitchen";
 import Dish from "../objects/dish";
 import DialogBox from "../objects/dialogBox";
 import ShiftTimer from "../objects/shiftTimer";
+import ShowButton from "../objects/showButton";
 
 const DIALOG1: Record<number, { text: string; face: number }> = {
     0: {
@@ -20,11 +21,15 @@ const DIALOG1: Record<number, { text: string; face: number }> = {
         face: 1,
     },
     3: {
-        text: "Anyways, first come first serve is exactly what is sounds like. Complete the tickets that come in first.",
+        text: "First come first serve is exactly what it sounds like; schedule the tickets that arrive in the kitchen first.",
         face: 0,
     },
     4: {
-        text: "It's so simple even a donut like you should be able to figure it out. Good luck!",
+        text: "As long as you schedule at least 60% of your tickets this way, we should be fine.",
+        face: 0,
+    },
+    5: {
+        text: "It's so simple even a donut like you should be able to figure it out. Restaurant closes at 9PM, good luck!",
         face: 2,
     },
 };
@@ -95,6 +100,22 @@ export default class Shift1 extends Phaser.Scene {
             this.cameras.main.height - 110
         );
         this.dialog.setDialog(DIALOG1);
+
+        new ShowButton(
+            this,
+            this.cameras.main.width - 210,
+            200,
+            "OBJECTIVE",
+            "fcfs-obj"
+        );
+
+        new ShowButton(
+            this,
+            this.cameras.main.width - 90,
+            200,
+            "HELP",
+            "notes"
+        );
     }
 
     update(time: number) {
