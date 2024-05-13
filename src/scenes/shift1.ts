@@ -101,21 +101,29 @@ export default class Shift1 extends Phaser.Scene {
         );
         this.dialog.setDialog(DIALOG1);
 
+        const objSprite = this.add
+            .sprite(
+                this.cameras.main.centerX,
+                this.cameras.main.centerY,
+                "fcfs-obj"
+            )
+            .setScale(0.5);
+
         new ShowButton(
             this,
             this.cameras.main.width - 210,
             200,
             "OBJECTIVE",
-            "fcfs-obj"
+            objSprite
         );
 
-        new ShowButton(
-            this,
-            this.cameras.main.width - 90,
-            200,
-            "HELP",
+        const notes = this.add.sprite(
+            this.cameras.main.centerX,
+            this.cameras.main.centerY,
             "notes"
         );
+
+        new ShowButton(this, this.cameras.main.width - 90, 200, "HELP", notes);
     }
 
     update(time: number) {

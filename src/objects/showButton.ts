@@ -9,23 +9,15 @@ export default class ShowButton extends Phaser.GameObjects.Text {
         x: number,
         y: number,
         text: string,
-        contentKey: string
+        content: Phaser.GameObjects.Sprite
     ) {
         super(scene, x, y, text, {
             color: "black",
             backgroundColor: "#f8f0ce",
             fontSize: "24px",
         });
-
-        this.content = scene.add
-            .sprite(
-                scene.cameras.main.centerX,
-                scene.cameras.main.centerY,
-                contentKey
-            )
-            .setVisible(false)
-            .setScale(0.5)
-            .setDepth(999);
+        this.content = content;
+        this.content.setVisible(false).setDepth(999);
 
         this.closeZone = scene.add
             .zone(
@@ -37,7 +29,6 @@ export default class ShowButton extends Phaser.GameObjects.Text {
             .setInteractive()
             .setVisible(false)
             .on("pointerdown", () => {
-                console.log("here");
                 this.content.setVisible(false);
                 this.closeZone.setVisible(false);
             });

@@ -46,6 +46,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("sink-status", "assets/img/sink-status.png");
         this.load.image("trash", "assets/img/trash.png");
         this.load.image("fcfs-obj", "assets/img/fcfs-obj.png");
+        this.load.image("notes", "assets/img/notes.png");
 
         //Audios
 
