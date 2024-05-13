@@ -12,28 +12,22 @@ export default class Fridge extends Phaser.GameObjects.Zone {
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 150, 270);
-        this.setInteractive().on("pointerdown", this.click.bind(this));
+        this.setInteractive().on("pointerdown", this.click);
         this.inside = scene.add.image(250, 450, "fridge-inside").setAlpha(0);
         scene.add.zone(x, y, 155, 200);
         scene.add.existing(this);
 
-        // Instantiate each ingredient as an Ingredient object
         this.ingredients.forEach((ingredient) => {
             const ingredientSprite = new Ingredient(
                 scene,
                 ingredient.x,
                 ingredient.y,
                 ingredient.name,
-<<<<<<< HEAD
                 this,
                 null
-=======
-                ingredient.name // Assuming the image is named the same as the ingredient
->>>>>>> parent of 3913df7 (fixed fridge)
             );
-            ingredientSprite.setVisible(false); // Initially invisible
+            ingredientSprite.setVisible(false);
             this.ingredientSprites.push(ingredientSprite);
-            this.scene.input.setDraggable(ingredientSprite);
         });
     }
 
@@ -47,11 +41,15 @@ export default class Fridge extends Phaser.GameObjects.Zone {
 
     openFridge() {
         this.inside.setAlpha(1);
-        this.ingredientSprites.forEach((sprite) => sprite.setVisible(true));
+        this.ingredientSprites.forEach((sprite) => {
+            if (sprite.isInFridge) sprite.setVisible(true);
+        });
     }
 
     closeFridge() {
         this.inside.setAlpha(0);
-        this.ingredientSprites.forEach((sprite) => sprite.setVisible(true));
+        this.ingredientSprites.forEach((sprite) => {
+            if (sprite.isInFridge) sprite.setVisible(false);
+        });
     }
 }

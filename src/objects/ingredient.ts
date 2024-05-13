@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import Station from "./station";
 import Service from "./stations/service";
 import Fridge from "./fridge";
+import Pantry from "./pantry";
 
 export enum IngredientState {
     BAKED = "Baked",
@@ -28,19 +29,22 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     startY: number;
     isInFridge: boolean = true;
     isInPantry: boolean = true;
-    fridge: Fridge
+    fridge: Fridge | null;
+    pantry: Pantry | null;
 
     constructor(
         scene: Phaser.Scene,
         x: number,
         y: number,
         name: string,
-        fridge: Fridge, //abstract container
+        fridge: Fridge | null, //abstract container
+        pantry: Pantry | null
     ) {
         super(scene, x, y, name);
         this.startX = x;
         this.startY = y;
         this.fridge = fridge;
+        this.pantry = pantry;
         this.setScale(0.2)
             .setDepth(2)
             .setInteractive({ draggable: true, cursor: "pointer" })
@@ -83,13 +87,26 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
                 this.startX,
                 this.startY,
                 this.name,
-                this.fridge
+                this.fridge,
+                this.pantry // Assuming pantry is also needed based on constructor
             );
             this.fridge!.ingredientSprites.push(temp);
             console.log(temp);
             this.isInFridge = false;
+        } else if (this.isInPantry) {
+            const temp: Ingredient = new Ingredient(
+                this.scene,
+                this.startX,
+                this.startY,
+                this.name,
+                this.fridge, // Assuming fridge is also needed based on constructor
+                this.pantry
+            );
+            this.pantry!.ingredientSprites.push(temp);
+            console.log(temp);
+            this.isInPantry = false;
         }
-        console.log(this.fridge.ingredientSprites.length);
+        console.log(this.fridge!.ingredientSprites.length);
         this.setScale(0.3).setDepth(3);
     }
     dragEnter(ingrd: Ingredient, target: Station) {
