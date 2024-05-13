@@ -277,10 +277,35 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             this.scene.cameras.main.x + 10,
             this.scene.cameras.main.height - 385,
             "fridge-inside",
+            []
+        );
+        this.fridge.setIngredients([
+            new Ingredient(this.scene, 171, 375, "milk", this.fridge),
+            new Ingredient(this.scene, 328, 380, "butter", this.fridge),
+            new Ingredient(this.scene, 250, 520, "chicken", this.fridge),
+        ]);
+
+        this.pantry = new Container(
+            this.scene,
+            this.scene.cameras.main.x + 10,
+            this.scene.cameras.main.height - 130,
+            "pantry-inside",
+            []
+        );
+        this.pantry.setIngredients([
+            new Ingredient(this.scene, 171, 375, "carrot", this.pantry),
+        ]);
+    }
+    /*initIngredientHolders() {
+        this.fridge = new Container(
+            this.scene,
+            this.scene.cameras.main.x + 10,
+            this.scene.cameras.main.height - 385,
+            "fridge-inside",
             [
-                new Ingredient(this.scene, 171, 375, "milk", this.fridge),
-                new Ingredient(this.scene, 328, 380, "butter", this.fridge),
-                new Ingredient(this.scene, 250, 520, "chicken", this.fridge),
+                { name: "milk", x: 171, y: 375 },
+                { name: "butter", x: 328, y: 380 },
+                { name: "chicken", x: 250, y: 520 },
             ]
         );
 
@@ -289,9 +314,10 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             this.scene.cameras.main.x + 10,
             this.scene.cameras.main.height - 130,
             "pantry-inside",
-            [new Ingredient(this.scene, 171, 375, "carrot", this.pantry)]
+            [{ name: "carrot", x: 171, y: 375 }]
         );
     }
+    */
 
     initStations() {
         this.service = new Service(
