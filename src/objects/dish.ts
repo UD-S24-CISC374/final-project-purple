@@ -6,7 +6,7 @@ import Trash from "./trash";
 export default class Dish extends Phaser.GameObjects.Sprite {
     ingredients: Ingredient[] = [];
     display: Phaser.GameObjects.Text;
-    isOnTable: boolean;
+    isOnTable: boolean = true;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, "dish");
@@ -45,6 +45,7 @@ export default class Dish extends Phaser.GameObjects.Sprite {
             .on("destroy", () => {
                 this.display.destroy();
             });
+        //this.platingRef = plating;
         this.display = scene.add
             .text(x + 35, y - 30, "", {
                 backgroundColor: "dodgerblue",
@@ -53,13 +54,20 @@ export default class Dish extends Phaser.GameObjects.Sprite {
             .setAlpha(0);
 
         scene.events.on("update", this.update, this);
+        scene.add.existing(this);
     }
 
     dragStart() {
+        this.setDepth(this.depth + 1);
+        if (this.isOnTable) {
+            new Dish(this.scene, this.x, this.y);
+            this.isOnTable = false;
+        }
         this.setScale(4);
     }
 
     dragEnd() {
+        this.setDepth(this.depth - 1);
         this.setScale(3);
     }
 
