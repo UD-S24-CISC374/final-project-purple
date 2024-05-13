@@ -1,58 +1,57 @@
 import Phaser from "phaser";
 import Ingredient from "./ingredient";
 
-export default class StorageContainer extends Phaser.GameObjects.Zone {
+export default class Container extends Phaser.GameObjects.Zone {
     public inside: Phaser.GameObjects.Image;
+    ingredients: { name: string; x: number; y: number }[];
     ingredientSprites: Ingredient[] = [];
-    ingredients = [];
 
     constructor(
         scene: Phaser.Scene,
         x: number,
         y: number,
-        width: number,
-        height: number,
-        imageKey: string
+        image: string,
+        ingredients: { name: string; x: number; y: number }[]
     ) {
-        super(scene, x, y, width, height);
+        super(scene, x, y, 150, 270);
+        this.ingredients = ingredients;
         this.setInteractive().on("pointerdown", this.click);
-        this.inside = scene.add
-            .image(x + width / 2, y + height / 2, imageKey)
-            .setAlpha(0);
+        this.inside = scene.add.image(x, y, image).setAlpha(0);
+        scene.add.zone(x, y, 155, 200);
         scene.add.existing(this);
     }
 
     click() {
         if (this.inside.alpha > 0) {
-            this.close();
+            this.closeContainer();
         } else {
-            this.open();
+            this.openContainer();
         }
     }
 
-    open() {
+    openContainer() {
         this.inside.setAlpha(1);
+        if (this.ingredientSprites.length === 0) {
+            this.ingredients.forEach((ingredient) => {
+                const ingredientSprite = new Ingredient(
+                    this.scene,
+                    ingredient.x,
+                    ingredient.y,
+                    ingredient.name,
+                    this
+                );
+                this.ingredientSprites.push(ingredientSprite);
+            });
+        }
         this.ingredientSprites.forEach((sprite) => {
-            if (sprite.isInFridge) sprite.setVisible(true);
+            sprite.setVisible(true);
         });
     }
 
-    close() {
+    closeContainer() {
         this.inside.setAlpha(0);
         this.ingredientSprites.forEach((sprite) => {
-            if (sprite.isInFridge) sprite.setVisible(false);
+            sprite.setVisible(false);
         });
-    }
-
-    addIngredient(ingredientData: { x: number; y: number; name: string }) {
-        const ingredientSprite = new Ingredient(
-            this.scene,
-            ingredientData.x,
-            ingredientData.y,
-            ingredientData.name,
-            this
-        );
-        ingredientSprite.setVisible(false);
-        this.ingredientSprites.push(ingredientSprite);
     }
 }

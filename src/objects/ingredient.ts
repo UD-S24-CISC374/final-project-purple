@@ -1,8 +1,7 @@
 import Phaser from "phaser";
 import Station from "./station";
 import Service from "./stations/service";
-import Fridge from "./fridge";
-import Pantry from "./pantry";
+import Container from "./containers";
 
 export enum IngredientState {
     BAKED = "Baked",
@@ -27,24 +26,19 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     statusIcon: Phaser.GameObjects.Sprite;
     startX: number;
     startY: number;
-    isInFridge: boolean = true;
-    isInPantry: boolean = true;
-    fridge: Fridge | null;
-    pantry: Pantry | null;
-
+    container: Container;
+    isInContainer: boolean = true;
     constructor(
         scene: Phaser.Scene,
         x: number,
         y: number,
         name: string,
-        fridge: Fridge | null, //abstract container
-        pantry: Pantry | null
+        container: Container
     ) {
         super(scene, x, y, name);
         this.startX = x;
         this.startY = y;
-        this.fridge = fridge;
-        this.pantry = pantry;
+        this.container = container;
         this.setScale(0.2)
             .setDepth(2)
             .setInteractive({ draggable: true, cursor: "pointer" })
@@ -80,33 +74,20 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     }
 
     dragStart() {
-        if (this.isInFridge) {
+        if (this.isInContainer) {
             /// make new ingredient
             const temp: Ingredient = new Ingredient(
                 this.scene,
                 this.startX,
                 this.startY,
                 this.name,
-                this.fridge,
-                this.pantry // Assuming pantry is also needed based on constructor
+                this.container
             );
-            this.fridge!.ingredientSprites.push(temp);
+            this.container.ingredients.push(temp);
             console.log(temp);
-            this.isInFridge = false;
-        } else if (this.isInPantry) {
-            const temp: Ingredient = new Ingredient(
-                this.scene,
-                this.startX,
-                this.startY,
-                this.name,
-                this.fridge, // Assuming fridge is also needed based on constructor
-                this.pantry
-            );
-            this.pantry!.ingredientSprites.push(temp);
-            console.log(temp);
-            this.isInPantry = false;
+            this.isInContainer = false;
         }
-        console.log(this.fridge!.ingredientSprites.length);
+        console.log(this.container.ingredients.length);
         this.setScale(0.3).setDepth(3);
     }
     dragEnter(ingrd: Ingredient, target: Station) {
@@ -132,6 +113,7 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
 
     dragEnd() {
         this.setScale(0.2).setDepth(2);
+        this.setInteractive();
     }
 
     drop(ingrd: Ingredient, target: Station | Service) {
