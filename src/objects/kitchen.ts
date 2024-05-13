@@ -7,11 +7,10 @@ import Service from "../objects/stations/service";
 import Plating from "../objects/plating";
 import TicketHolder from "./ticketHolder";
 import CurrentOrder from "./currentOrder";
-import Fridge from "../objects/fridge";
-import Pantry from "../objects/pantry";
 import Dish from "./dish";
-import { INGREDIENTS, IngredientState } from "./ingredient";
+import Ingredient, { INGREDIENTS, IngredientState } from "./ingredient";
 import Ticket from "./ticket";
+import Container from "./containers";
 
 // FOR HOLDING ALL STATIONS AS ONE KITCHEN OBJECT
 export default class Kitchen extends Phaser.GameObjects.Image {
@@ -21,8 +20,8 @@ export default class Kitchen extends Phaser.GameObjects.Image {
     sinks: Sink[] = new Array<Sink>(2);
     service: Service;
     plating: Plating;
-    fridge: Fridge;
-    pantry: Pantry;
+    fridge: Container;
+    pantry: Container;
     avgTaT: number = 0;
     avgRT: number = 0;
     ticketsCompleted: number = 0;
@@ -273,18 +272,52 @@ export default class Kitchen extends Phaser.GameObjects.Image {
     }
 
     initIngredientHolders() {
-        this.fridge = new Fridge(
+        this.fridge = new Container(
             this.scene,
             this.scene.cameras.main.x + 10,
-            this.scene.cameras.main.height - 385
+            this.scene.cameras.main.height - 385,
+            "fridge-inside",
+            []
+        );
+        this.fridge.setIngredients([
+            new Ingredient(this.scene, 171, 375, "milk", this.fridge),
+            new Ingredient(this.scene, 328, 380, "butter", this.fridge),
+            new Ingredient(this.scene, 250, 520, "chicken", this.fridge),
+        ]);
+
+        this.pantry = new Container(
+            this.scene,
+            this.scene.cameras.main.x + 10,
+            this.scene.cameras.main.height - 130,
+            "pantry-inside",
+            []
+        );
+        this.pantry.setIngredients([
+            new Ingredient(this.scene, 171, 375, "carrot", this.pantry),
+        ]);
+    }
+    /*initIngredientHolders() {
+        this.fridge = new Container(
+            this.scene,
+            this.scene.cameras.main.x + 10,
+            this.scene.cameras.main.height - 385,
+            "fridge-inside",
+            [
+                { name: "milk", x: 171, y: 375 },
+                { name: "butter", x: 328, y: 380 },
+                { name: "chicken", x: 250, y: 520 },
+            ]
         );
 
-        this.pantry = new Pantry(
+        this.pantry = new Container(
             this.scene,
             this.scene.cameras.main.x + 10,
-            this.scene.cameras.main.height - 130
+            this.scene.cameras.main.height - 130,
+            "pantry-inside",
+            [{ name: "carrot", x: 171, y: 375 }]
         );
     }
+    */
 
     initStations() {
         this.service = new Service(

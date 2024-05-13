@@ -37,5 +37,9 @@ export default class MainMenu extends Phaser.Scene {
 
         const music = this.sound.add("menuAudio", { volume: 0.1 });
         music.play(), music.setVolume(0.1);
+
+        this.events.on("shutdown", () => {
+            music.stop();
+        });
     }
 }
