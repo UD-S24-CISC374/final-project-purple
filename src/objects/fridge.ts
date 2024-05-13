@@ -23,7 +23,8 @@ export default class Fridge extends Phaser.GameObjects.Zone {
                 ingredient.x,
                 ingredient.y,
                 ingredient.name,
-                this
+                this,
+                null
             );
             ingredientSprite.setVisible(false);
             this.ingredientSprites.push(ingredientSprite);
