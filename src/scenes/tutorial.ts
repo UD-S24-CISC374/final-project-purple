@@ -123,7 +123,7 @@ export default class Tutorial extends Phaser.Scene {
     nxtTicket: Ticket;
     bell: Phaser.GameObjects.Sprite;
     kitchen: Kitchen;
-    tutIdx: number = 0;
+    tutIdx: number;
     dialogBox: DialogBox;
     pointer: Phaser.GameObjects.Sprite;
     qualifiers: Phaser.GameObjects.Text; // going to convert to a cookbook/notebook feature which can be accessed anytime ingame
@@ -195,6 +195,7 @@ export default class Tutorial extends Phaser.Scene {
             .setDepth(999)
             .setAlpha(0);
 
+        this.tutIdx = 0;
         this.updateState();
     }
 
