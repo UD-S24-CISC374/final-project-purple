@@ -6,14 +6,14 @@ export default class Pantry extends Phaser.GameObjects.Zone {
     ingredientSprites: Ingredient[] = [];
     ingredients = [{ name: "carrot", x: 328, y: 380 }];
 
-    constructor(scene: Phaser.Scene, x: number, y: number) {
+   /* constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 150, 270);
         this.setInteractive().on("pointerdown", this.click);
         this.inside = scene.add.image(250, 450, "pantry-inside").setAlpha(0);
         scene.add.zone(x, y, 155, 200);
         scene.add.existing(this);
 
-        this.ingredients.forEach((ingredient) => {
+        /*this.ingredients.forEach((ingredient) => {
             const ingredientSprite = new Ingredient(
                 scene,
                 ingredient.x,
@@ -25,6 +25,18 @@ export default class Pantry extends Phaser.GameObjects.Zone {
             ingredientSprite.setVisible(false);
             this.ingredientSprites.push(ingredientSprite);
         });
+    }
+
+    spawnIngredient(ingrdName: string, x: number, y: number) {
+        const ingredient = new Ingredient(
+            this.scene,
+            x,
+            y,
+            ingrdName,
+            ingrdName
+        );
+        this.closePantry();
+        return ingredient;
     }
 
     click() {
@@ -48,4 +60,5 @@ export default class Pantry extends Phaser.GameObjects.Zone {
             if (sprite.isInPantry) sprite.setVisible(false);
         });
     }
+ */   
 }
