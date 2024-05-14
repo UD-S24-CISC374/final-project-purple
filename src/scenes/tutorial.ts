@@ -6,6 +6,7 @@ import Dish from "../objects/dish";
 import DialogBox from "../objects/dialogBox";
 import { Dialog } from "../objects/dialogBox";
 import CareerData from "../data/careerData";
+import ShowButton from "../objects/showButton";
 
 const DIALOG1: Dialog = {
     0: {
@@ -29,7 +30,7 @@ const DIALOG2: Dialog = {
 
 const DIALOG3: Dialog = {
     0: {
-        text: "Luckily, we only have one waiting in the queue. Go ahead and drag it into the [current order] zone.",
+        text: "To schedule a ticket, go ahead and drag it into the [current order] zone.",
         face: 0,
     },
 };
@@ -51,22 +52,14 @@ const DIALOG5: Dialog = {
         face: 2,
     },
     1: {
-        text: "Hopefully they're pretty intuitive, if not...",
-        face: 0,
-    },
-    2: {
-        text: "GET OUT OF MY KITCHEN!",
-        face: 1,
-    },
-    3: {
-        text: "Luckily most stations are labelled, so finding your way around shouldn't be an issue. Let's start making this dish, shall we?",
+        text: "Hopefully they're pretty intuitive, if not you can refer to them anytime by clicking [HELP].",
         face: 0,
     },
 };
 
 const DIALOG6: Dialog = {
     0: {
-        text: "First we need to grab our ingredients.",
+        text: "To make a dish we first need to grab our ingredients.",
         face: 2,
     },
 };
@@ -77,12 +70,8 @@ const DIALOG7: Dialog = {
         face: 0,
     },
     1: {
-        text: "Then simply click on what you need.",
+        text: "Then simply drag out what you need.",
         face: 2,
-    },
-    2: {
-        text: "Make sure to close the doors once you're done.",
-        face: 0,
     },
 };
 
@@ -92,19 +81,15 @@ const DIALOG8: Dialog = {
         face: 2,
     },
     1: {
-        text: "It's best to setup your plating first. Click on the pile of plates above this dialog to spawn one.",
-        face: 0,
-    },
-    2: {
-        text: "Now drag it to the service table right beneath the serving bell.",
+        text: "Drag a plate up to the service table (beneath the bell).",
         face: 0,
     },
     3: {
-        text: "This is where you will combine your final ingredients. Keep in mind you may only plate one dish at a time!",
+        text: "This is where you will combine your final ingredients (you may only plate one dish at a time)!",
         face: 2,
     },
     4: {
-        text: "Now all that's left is to cook the ingredients. Simply drag what you grabbed onto a station, and place the newly qualified ingredient onto the service dish.",
+        text: "Next, drag what your raw ingredient onto a station, then drag the newly qualified ingredient onto the service dish.",
         face: 0,
     },
     5: {
@@ -186,12 +171,20 @@ export default class Tutorial extends Phaser.Scene {
         this.notes = this.add
             .sprite(
                 this.cameras.main.centerX,
-                this.cameras.main.centerY,
+                this.cameras.main.centerY - 100,
                 "notes"
             )
             .setOrigin(0.5)
             .setDepth(999)
             .setVisible(false);
+
+        const notes = this.add.sprite(
+            this.cameras.main.centerX,
+            this.cameras.main.centerY,
+            "notes"
+        );
+
+        new ShowButton(this, this.cameras.main.width - 90, 200, "HELP", notes);
 
         this.tutIdx = 0;
         this.updateState();
