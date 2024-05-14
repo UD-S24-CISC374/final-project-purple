@@ -22,7 +22,7 @@ export default class CareerMenu extends Phaser.Scene {
         this.add
             .text(
                 200,
-                640,
+                370,
                 `Day: ${
                     this.career.shift
                 }\nShift: ${this.getShiftName()}\nProfit: ${
@@ -35,12 +35,12 @@ export default class CareerMenu extends Phaser.Scene {
             )
             .setOrigin(0.5, 1);
 
-        new MenuButton(this, 200, 400, "continue", `Shift${this.career.shift}`);
+        new MenuButton(this, 200, 250, "continue", `Shift${this.career.shift}`);
 
         this.add
             .text(
-                this.cameras.main.centerX,
-                640,
+                200,
+                560,
                 `Day: 1\nShift: First Come First Served\nProfit: 0`,
                 {
                     color: "#54d6d2",
@@ -49,15 +49,12 @@ export default class CareerMenu extends Phaser.Scene {
             )
             .setOrigin(0.5, 1);
 
-        new MenuButton(
-            this,
-            this.cameras.main.centerX,
-            400,
-            "new",
-            "Shift1"
-        ).on("pointerdown", () => {
-            CareerData.init(this, true);
-        });
+        new MenuButton(this, 200, 450, "new", "Shift1").on(
+            "pointerdown",
+            () => {
+                CareerData.init(this, true);
+            }
+        );
 
         new MenuButton(
             this,
