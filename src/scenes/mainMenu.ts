@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import MenuButton from "../objects/menuButton";
 import CareerData from "../data/careerData";
+import Title from "../objects/title";
 
 export default class MainMenu extends Phaser.Scene {
     career: CareerData;
@@ -14,12 +15,7 @@ export default class MainMenu extends Phaser.Scene {
     }
 
     create() {
-        this.add
-            .text(this.cameras.main.centerX, 200, "SCHEDULSINE", {
-                color: "#54d6d2",
-                fontSize: "100px",
-            })
-            .setOrigin(0.5, 1);
+        new Title(this, "title");
 
         new MenuButton(this, 200, 400, "career", "CareerMenu");
 

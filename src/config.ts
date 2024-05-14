@@ -15,7 +15,7 @@ export const CONFIG = {
     title: "Schedulsine",
     version: "beta",
     type: Phaser.AUTO,
-    backgroundColor: "#ffffff",
+    backgroundColor: "903",
     scale: {
         parent: "phaser-game",
         mode: Phaser.Scale.FIT,
