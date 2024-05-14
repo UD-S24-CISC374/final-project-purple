@@ -1,16 +1,15 @@
 # Game Name
 
-TEXT GOES HERE
+Schedulsine
 
 # Team Color
 
-TEXT GOES HERE
+Purple
 
 # Developers
 
-* Name (email)
-* Name (email)
-* Name (email)
+* Michael Bocelli (mbocelli@udel.edu)
+* Farhan Ohe (farhanto@udel.edu)
 
 # Blurb
 
@@ -30,7 +29,7 @@ TEXT GOES HERE
 
 # Educational Game Design Document
 
-Link to our [egdd](Educational Game Design Document)
+Link to our [egdd](docs/egdd.md)
 
 # Credits
 
