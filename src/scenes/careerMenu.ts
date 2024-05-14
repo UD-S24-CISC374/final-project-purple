@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import MenuButton from "../objects/menuButton";
 import CareerData from "../data/careerData";
+import Title from "../objects/title";
 
 export default class CareerMenu extends Phaser.Scene {
     career: CareerData;
@@ -12,25 +13,22 @@ export default class CareerMenu extends Phaser.Scene {
     create() {
         this.career = this.registry.get("career");
 
-        this.add
-            .text(this.cameras.main.centerX, 200, "CAREER", {
-                color: "#54d6d2",
-                fontSize: "100px",
-            })
-            .setOrigin(0.5, 1);
+        new Title(this, "career-title");
 
         this.add
             .text(
                 200,
-                370,
+                380,
                 `Day: ${
                     this.career.shift
                 }\nShift: ${this.getShiftName()}\nProfit: ${
                     this.career.profit
                 }`,
                 {
-                    color: "#54d6d2",
-                    fontSize: "1.2rem",
+                    color: "#000",
+                    backgroundColor: "#f8f0ce",
+                    padding: { left: 10, right: 10, top: 10, bottom: 10 },
+                    fontSize: "1rem",
                 }
             )
             .setOrigin(0.5, 1);
@@ -40,11 +38,13 @@ export default class CareerMenu extends Phaser.Scene {
         this.add
             .text(
                 200,
-                560,
+                580,
                 `Day: 1\nShift: First Come First Served\nProfit: 0`,
                 {
-                    color: "#54d6d2",
-                    fontSize: "1.2rem",
+                    color: "#000",
+                    backgroundColor: "#f8f0ce",
+                    padding: { left: 10, right: 10, top: 10, bottom: 10 },
+                    fontSize: "1rem",
                 }
             )
             .setOrigin(0.5, 1);

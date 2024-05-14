@@ -64,6 +64,9 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("textbox", "assets/gui/textbox.png");
         this.load.image("continue", "assets/img/continue.png");
         this.load.image("new", "assets/img/new.png");
+        this.load.image("title", "assets/gui/title.png");
+        this.load.image("career-title", "assets/gui/career-title.png");
+        this.load.image("tutorial-title", "assets/gui/tutorial-title.png");
     }
 
     create() {
