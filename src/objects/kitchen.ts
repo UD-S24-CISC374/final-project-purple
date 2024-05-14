@@ -289,9 +289,9 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             []
         );
         this.fridge.setIngredients([
-            new Ingredient(this.scene, 171, 375, "milk", this.fridge, 1),
-            new Ingredient(this.scene, 328, 380, "butter", this.fridge, 0.5),
-            new Ingredient(this.scene, 250, 520, "chicken", this.fridge, 3),
+            new Ingredient(this.scene, 171, 375, "milk", this.fridge, 2),
+            new Ingredient(this.scene, 328, 380, "butter", this.fridge, 1),
+            new Ingredient(this.scene, 250, 520, "chicken", this.fridge, 4),
         ]);
 
         this.pantry = new Container(

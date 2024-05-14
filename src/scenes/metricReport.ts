@@ -4,6 +4,7 @@ import CareerData from "../data/careerData";
 
 export default class MetricReport extends Phaser.Scene {
     report: Phaser.GameObjects.Text;
+    passed: boolean = false;
 
     constructor() {
         super({ key: "MetricReport" });
@@ -33,15 +34,20 @@ export default class MetricReport extends Phaser.Scene {
                 { color: "black" }
             )
             .setOrigin(0.5);
-        this.nextButton(userShift, accuracy >= 60);
+        if (accuracy >= 60 && sceneData.ticketsCompleted >= 1)
+            this.passed = true;
+
+        if (this.passed) CareerData.addMetrics(this, sceneData);
+
+        this.nextButton(userShift);
     }
 
-    nextButton(shift: number, passed: boolean) {
+    nextButton(shift: number) {
         this.add
             .text(
                 this.cameras.main.centerX,
                 this.cameras.main.centerY + 300,
-                passed ? "CONTINUE" : "RETRY",
+                this.passed ? "CONTINUE" : "RETRY",
                 {
                     backgroundColor: "black",
                     padding: { top: 5, bottom: 5, left: 5, right: 5 },
@@ -49,7 +55,7 @@ export default class MetricReport extends Phaser.Scene {
             )
             .setInteractive()
             .on("pointerdown", () => {
-                const nextShift = passed ? shift + 1 : shift;
+                const nextShift = this.passed ? shift + 1 : shift;
                 this.scene.start(`Shift${nextShift}`);
                 CareerData.setShift(this, nextShift);
             });

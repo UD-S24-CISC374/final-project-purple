@@ -7,6 +7,8 @@ import DialogBox from "../objects/dialogBox";
 import ShiftTimer from "../objects/shiftTimer";
 import ShowButton from "../objects/showButton";
 
+const LENGTH = 16000;
+
 const DIALOG1: Record<number, { text: string; face: number }> = {
     0: {
         text: "Welcome to your first shift pigeon.",
@@ -61,7 +63,7 @@ export default class Shift1 extends Phaser.Scene {
             this,
             this.cameras.main.width - 15,
             15,
-            160000
+            LENGTH
         );
 
         // Initialize  first 3 tickets

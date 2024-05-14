@@ -31,6 +31,7 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     startY: number;
     container: Container;
     isInContainer: boolean = true;
+    costPopup: Phaser.GameObjects.Text;
 
     constructor(
         scene: Phaser.Scene,
@@ -69,22 +70,34 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
                 });
             })
             .on("destroy", () => {
-                this.subtractCost();
                 this.statusIcon.destroy();
+                this.costPopup.destroy();
             });
+
         this.cost = cost;
+
         this.statusIcon = scene.add
             .sprite(x, y, "sink-status")
             .setAlpha(0)
             .setDepth(this.depth + 1)
             .setOrigin(0.5, 1);
+
+        this.costPopup = scene.add
+            .text(x + 30, y - 40, `- $${cost.toFixed(2)}`, {
+                color: "red",
+                stroke: "black",
+                strokeThickness: 3,
+                fontSize: 28,
+            })
+            .setAlpha(0);
+
         scene.events.on("update", this.update, this);
         scene.add.existing(this);
     }
 
     dragStart() {
         if (this.isInContainer) {
-            /// make new ingredient
+            // make new ingredient
             const temp: Ingredient = new Ingredient(
                 this.scene,
                 this.startX,
@@ -94,12 +107,12 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
                 this.cost
             );
             this.container.ingredients.push(temp);
-            console.log(temp);
             this.isInContainer = false;
+            this.subtractCost();
         }
-        console.log(this.container.ingredients.length);
         this.setScale(0.3).setDepth(3);
     }
+
     dragEnter(ingrd: Ingredient, target: Station) {
         if (
             (target instanceof Service && target.dish) ||
@@ -132,7 +145,6 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
             if (target.dish) {
                 target.dish.ingredients.push({ ...this });
                 target.dish.play("fill-dish", true);
-                this.statusIcon.destroy();
                 this.destroy();
             }
         } else if (!target.occupied && target instanceof Station) {
@@ -170,11 +182,27 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     }
 
     subtractCost() {
-        const updatedCareer: CareerData = {
-            ...this.scene.registry.get("career"),
-        };
-        updatedCareer.profit -= this.cost;
-        this.scene.registry.set("career", updatedCareer);
+        CareerData.addProfit(this.scene, -this.cost);
+        this.popupTweens();
+    }
+
+    popupTweens() {
+        this.scene.add.tween({
+            targets: [this.costPopup],
+            alpha: { from: 0, to: 1 },
+            duration: 200,
+        });
+        this.scene.add.tween({
+            targets: [this.costPopup],
+            y: { from: this.costPopup.y, to: this.costPopup.y - 100 },
+            duration: 1500,
+        });
+        this.scene.add.tween({
+            targets: [this.costPopup],
+            alpha: { from: 1, to: 0 },
+            delay: 1000,
+            duration: 100,
+        });
     }
 
     update() {

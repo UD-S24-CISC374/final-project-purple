@@ -56,9 +56,7 @@ export default class CareerMenu extends Phaser.Scene {
             "new",
             "Shift1"
         ).on("pointerdown", () => {
-            const career = new CareerData(1);
-            localStorage.setItem("career", JSON.stringify(career));
-            this.registry.set("career", career);
+            CareerData.init(this, true);
         });
 
         new MenuButton(
