@@ -127,7 +127,7 @@ export default class Tutorial extends Phaser.Scene {
     tutIdx: number;
     dialogBox: DialogBox;
     pointer: Phaser.GameObjects.Sprite;
-    qualifiers: Phaser.GameObjects.Text; // going to convert to a cookbook/notebook feature which can be accessed anytime ingame
+    notes: Phaser.GameObjects.Sprite;
     oldCareerData: CareerData;
 
     constructor() {
@@ -179,16 +179,15 @@ export default class Tutorial extends Phaser.Scene {
             .setAlpha(0)
             .setDepth(999);
 
-        this.qualifiers = this.add
-            .text(
+        this.notes = this.add
+            .sprite(
                 this.cameras.main.centerX,
                 this.cameras.main.centerY,
-                "OVEN -> BAKED\nPREP -> PREPPED\nSINK -> WASHED\nSTOVE -> COOKED\nNOTHING -> RAW",
-                { fontSize: "2rem", backgroundColor: "black" }
+                "notes"
             )
             .setOrigin(0.5)
             .setDepth(999)
-            .setAlpha(0);
+            .setVisible(false);
 
         this.tutIdx = 0;
         this.updateState();
@@ -247,11 +246,11 @@ export default class Tutorial extends Phaser.Scene {
                 this.dialogBox.setDialog(DIALOG4);
                 break;
             case 4:
-                this.qualifiers.setAlpha(1);
+                this.notes.setVisible(true);
                 this.dialogBox.setDialog(DIALOG5);
                 break;
             case 5:
-                this.qualifiers.setAlpha(0);
+                this.notes.setVisible(false);
                 this.dialogBox.setDialog(DIALOG6);
                 // this can all be a method translateManager in DialogBox
                 this.tweens.add({

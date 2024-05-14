@@ -17,7 +17,6 @@ export default class Fridge extends Phaser.GameObjects.Zone {
         this.inside = scene.add.image(250, 450, "fridge-inside").setAlpha(0);
         scene.add.zone(x, y, 155, 200);
         scene.add.existing(this);
-
         this.ingredients.forEach((ingredient) => {
             const sprite = scene.add
                 .sprite(ingredient.x, ingredient.y, ingredient.name)
