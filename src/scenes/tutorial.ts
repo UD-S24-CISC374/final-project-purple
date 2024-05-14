@@ -141,6 +141,10 @@ export default class Tutorial extends Phaser.Scene {
     }
 
     create() {
+        this.events.on("shutdown", () => {
+            localStorage.setItem("career", JSON.stringify(this.oldCareerData));
+        });
+
         this.kitchen = new Kitchen(this);
         this.tickets = [];
 
