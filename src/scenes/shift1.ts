@@ -4,6 +4,10 @@ import ShiftGUI from "./shiftGUI";
 import Kitchen from "../objects/kitchen";
 import Dish from "../objects/dish";
 import DialogBox from "../objects/dialogBox";
+import ShiftTimer from "../objects/shiftTimer";
+import ShowButton from "../objects/showButton";
+
+const LENGTH = 16000;
 
 const DIALOG1: Record<number, { text: string; face: number }> = {
     0: {
@@ -19,11 +23,15 @@ const DIALOG1: Record<number, { text: string; face: number }> = {
         face: 1,
     },
     3: {
-        text: "Anyways, first come first serve is exactly what is sounds like. Complete the tickets that come in first.",
+        text: "First come first serve is exactly what it sounds like; schedule the tickets that arrive in the kitchen first.",
         face: 0,
     },
     4: {
-        text: "It's so simple even a donut like you should be able to figure it out. Good luck!",
+        text: "As long as you schedule at least 60% of your tickets this way, we should be fine.",
+        face: 0,
+    },
+    5: {
+        text: "It's so simple even a donut like you should be able to figure it out. Restaurant closes at 9PM, good luck!",
         face: 2,
     },
 };
@@ -36,8 +44,7 @@ export default class Shift1 extends Phaser.Scene {
     bell: Phaser.GameObjects.Sprite;
     kitchen: Kitchen;
     dialog: DialogBox | null;
-    timer: Phaser.GameObjects.Text;
-    length: number = 160000; // length of the shift
+    timer: ShiftTimer;
 
     constructor() {
         super({ key: "Shift1" });
@@ -51,18 +58,19 @@ export default class Shift1 extends Phaser.Scene {
     create() {
         this.kitchen = new Kitchen(this);
         this.tickets = [];
-        this.timer = this.add
-            .text(this.cameras.main.width - 15, 15, "", {
-                color: "#000000",
-                fontSize: "24px",
-            })
-            .setOrigin(1, 0);
+
+        this.timer = new ShiftTimer(
+            this,
+            this.cameras.main.width - 15,
+            15,
+            LENGTH
+        );
 
         // Initialize  first 3 tickets
         this.kitchen.ticketHolders.map((holder, idx) => {
             this.time.delayedCall(Phaser.Math.Between(3000, 10000), () => {
-                holder.ticket = this.kitchen.generateRandomTicket(idx);
-                this.tickets.push(holder.ticket);
+                const tick = this.kitchen.generateRandomTicket(idx);
+                this.tickets.push(tick);
             });
         });
 
@@ -94,6 +102,30 @@ export default class Shift1 extends Phaser.Scene {
             this.cameras.main.height - 110
         );
         this.dialog.setDialog(DIALOG1);
+
+        const objSprite = this.add
+            .sprite(
+                this.cameras.main.centerX,
+                this.cameras.main.centerY,
+                "fcfs-obj"
+            )
+            .setScale(0.5);
+
+        new ShowButton(
+            this,
+            this.cameras.main.width - 210,
+            200,
+            "OBJECTIVE",
+            objSprite
+        );
+
+        const notes = this.add.sprite(
+            this.cameras.main.centerX,
+            this.cameras.main.centerY,
+            "notes"
+        );
+
+        new ShowButton(this, this.cameras.main.width - 90, 200, "HELP", notes);
     }
 
     update(time: number) {
@@ -102,11 +134,9 @@ export default class Shift1 extends Phaser.Scene {
             this.dialog = null;
         }
 
-        this.timer.setText(
-            ((this.length - (time - this.time.startTime)) / 1000).toFixed(0)
-        );
-        if (time - this.time.startTime > this.length)
-            // 2.5 minutes
+        this.timer.updateTimer(time, this.time.startTime);
+
+        if (time - this.time.startTime > this.timer.shiftLength)
             this.kitchen.finishShift("first come first served");
     }
 

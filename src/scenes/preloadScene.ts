@@ -44,6 +44,9 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("stove-status", "assets/img/stove-status.png");
         this.load.image("prep-status", "assets/img/prep-status.png");
         this.load.image("sink-status", "assets/img/sink-status.png");
+        this.load.image("trash", "assets/img/trash.png");
+        this.load.image("fcfs-obj", "assets/img/fcfs-obj.png");
+        this.load.image("notes", "assets/img/notes.png");
 
         //Audios
 
@@ -59,6 +62,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("tutorial", "assets/gui/tutorial.png");
         this.load.image("exit", "assets/gui/exit.png");
         this.load.image("textbox", "assets/gui/textbox.png");
+        this.load.image("continue", "assets/img/continue.png");
+        this.load.image("new", "assets/img/new.png");
     }
 
     create() {

@@ -1,10 +1,12 @@
 import Phaser from "phaser";
 import Service from "./stations/service";
 import Ingredient from "./ingredient";
+import Trash from "./trash";
 
 export default class Dish extends Phaser.GameObjects.Sprite {
     ingredients: Ingredient[] = [];
     display: Phaser.GameObjects.Text;
+    isOnTable: boolean = true;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, "dish");
@@ -39,7 +41,11 @@ export default class Dish extends Phaser.GameObjects.Sprite {
                     });
                 },
                 this
-            );
+            )
+            .on("destroy", () => {
+                this.display.destroy();
+            });
+        //this.platingRef = plating;
         this.display = scene.add
             .text(x + 35, y - 30, "", {
                 backgroundColor: "dodgerblue",
@@ -48,13 +54,20 @@ export default class Dish extends Phaser.GameObjects.Sprite {
             .setAlpha(0);
 
         scene.events.on("update", this.update, this);
+        scene.add.existing(this);
     }
 
     dragStart() {
+        this.setDepth(this.depth + 1);
+        if (this.isOnTable) {
+            new Dish(this.scene, this.x, this.y);
+            this.isOnTable = false;
+        }
         this.setScale(4);
     }
 
     dragEnd() {
+        this.setDepth(this.depth - 1);
         this.setScale(3);
     }
 
@@ -62,8 +75,8 @@ export default class Dish extends Phaser.GameObjects.Sprite {
         this.setPosition(dragX, dragY);
     }
 
-    dragEnter(dish: Dish, target: Service) {
-        if (target instanceof Service) {
+    dragEnter(dish: Dish, target: Phaser.GameObjects.Zone) {
+        if (target instanceof Service || target instanceof Trash) {
             this.setScale(5);
         }
     }
@@ -81,6 +94,8 @@ export default class Dish extends Phaser.GameObjects.Sprite {
             target.setDish(this);
         } else if (target.dish === this) {
             this.setPosition(target.x, target.y);
+        } else if (target instanceof Trash) {
+            this.destroy();
         }
     }
 
@@ -96,6 +111,10 @@ export default class Dish extends Phaser.GameObjects.Sprite {
             ""
         );
         this.display.setText(contents).setAlpha(1);
+    }
+
+    getCost() {
+        return this.ingredients.reduce((cost, ingrd) => ingrd.cost + cost, 0);
     }
 
     update() {

@@ -10,6 +10,9 @@ import CurrentOrder from "./currentOrder";
 import Dish from "./dish";
 import Ingredient, { INGREDIENTS, IngredientState } from "./ingredient";
 import Ticket from "./ticket";
+import Trash from "./trash";
+import Metrics from "./metrics";
+import CareerData from "../data/careerData";
 import Container from "./containers";
 
 // FOR HOLDING ALL STATIONS AS ONE KITCHEN OBJECT
@@ -20,11 +23,10 @@ export default class Kitchen extends Phaser.GameObjects.Image {
     sinks: Sink[] = new Array<Sink>(2);
     service: Service;
     plating: Plating;
+    trash: Trash;
+    metrics: Metrics;
     fridge: Container;
     pantry: Container;
-    avgTaT: number = 0;
-    avgRT: number = 0;
-    ticketsCompleted: number = 0;
 
     ticketHolders: TicketHolder[] = [];
     currentOrder: CurrentOrder;
@@ -84,6 +86,8 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         this.initHolders();
         this.initIngredientHolders();
         this.initStations();
+        this.trash = new Trash(scene, scene.cameras.main.width - 210, 280);
+        this.metrics = new Metrics();
     }
 
     submitDish(
@@ -122,31 +126,36 @@ export default class Kitchen extends Phaser.GameObjects.Image {
                 (nxtTicket as Ticket).elapsedTime
             );
 
-            this.updateMetrics();
+            this.updateMetrics(scheduleRes as boolean, dishRes);
+            this.updateProfit(
+                this.service.dish,
+                scheduleRes as boolean,
+                dishRes
+            );
             this.cleanOrder();
         }
     }
 
     finishShift(algoName: string) {
+        this.metrics.algo = algoName;
         this.scene.scene.stop("ShiftGUI");
-        this.scene.scene.start("MetricReport", {
-            algorithm: algoName,
-            ticketsCompleted: this.ticketsCompleted,
-            avgTaT: this.avgTaT,
-            avgRT: this.avgRT,
-        });
+        this.scene.scene.start("MetricReport", this.metrics);
     }
 
-    updateMetrics() {
+    updateMetrics(scheduleRes: boolean, dishRes: boolean) {
         this.currentOrder.ticket?.setTurnaroundTime();
 
-        this.ticketsCompleted++;
-
+        this.metrics.ticketsCompleted++;
+        this.metrics.correctSchedules += scheduleRes ? 1 : 0;
+        this.metrics.correctDishes += dishRes ? 1 : 0;
         // compute moving averages
-        this.avgRT +=
-            this.currentOrder.ticket!.responseTime / this.ticketsCompleted;
-        this.avgTaT +=
-            this.currentOrder.ticket!.turnaroundTime / this.ticketsCompleted;
+        this.metrics.updateAvgerages(this.currentOrder.ticket!);
+    }
+
+    updateProfit(dish: Dish, scheduleRes: boolean, dishRes: boolean) {
+        let profit = dish.getCost() + (dish.ingredients.length > 2 ? 20 : 10);
+        profit += scheduleRes ? profit * 0.2 : 0;
+        if (dishRes) CareerData.addProfit(this.scene, profit);
     }
 
     cleanOrder() {
@@ -280,9 +289,9 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             []
         );
         this.fridge.setIngredients([
-            new Ingredient(this.scene, 171, 375, "milk", this.fridge),
-            new Ingredient(this.scene, 328, 380, "butter", this.fridge),
-            new Ingredient(this.scene, 250, 520, "chicken", this.fridge),
+            new Ingredient(this.scene, 171, 375, "milk", this.fridge, 2),
+            new Ingredient(this.scene, 328, 380, "butter", this.fridge, 1),
+            new Ingredient(this.scene, 250, 520, "chicken", this.fridge, 4),
         ]);
 
         this.pantry = new Container(
@@ -293,31 +302,9 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             []
         );
         this.pantry.setIngredients([
-            new Ingredient(this.scene, 171, 375, "carrot", this.pantry),
+            new Ingredient(this.scene, 171, 375, "carrot", this.pantry, 0.1),
         ]);
     }
-    /*initIngredientHolders() {
-        this.fridge = new Container(
-            this.scene,
-            this.scene.cameras.main.x + 10,
-            this.scene.cameras.main.height - 385,
-            "fridge-inside",
-            [
-                { name: "milk", x: 171, y: 375 },
-                { name: "butter", x: 328, y: 380 },
-                { name: "chicken", x: 250, y: 520 },
-            ]
-        );
-
-        this.pantry = new Container(
-            this.scene,
-            this.scene.cameras.main.x + 10,
-            this.scene.cameras.main.height - 130,
-            "pantry-inside",
-            [{ name: "carrot", x: 171, y: 375 }]
-        );
-    }
-    */
 
     initStations() {
         this.service = new Service(

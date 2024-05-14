@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 import Station from "./station";
 import Service from "./stations/service";
+import Trash from "./trash";
+import CareerData from "../data/careerData";
 import Container from "./containers";
 
 export enum IngredientState {
@@ -24,16 +26,20 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     station: Station | null;
     state: IngredientState = IngredientState.RAW;
     statusIcon: Phaser.GameObjects.Sprite;
+    cost: number = 0;
     startX: number;
     startY: number;
     container: Container;
     isInContainer: boolean = true;
+    costPopup: Phaser.GameObjects.Text;
+
     constructor(
         scene: Phaser.Scene,
         x: number,
         y: number,
         name: string,
-        container: Container
+        container: Container,
+        cost: number
     ) {
         super(scene, x, y, name);
         this.startX = x;
@@ -62,38 +68,56 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
                     scale: { from: 0.3, to: 0.2 },
                     duration: 100,
                 });
+            })
+            .on("destroy", () => {
+                this.statusIcon.destroy();
+                this.costPopup.destroy();
             });
+
+        this.cost = cost;
 
         this.statusIcon = scene.add
             .sprite(x, y, "sink-status")
             .setAlpha(0)
             .setDepth(this.depth + 1)
             .setOrigin(0.5, 1);
+
+        this.costPopup = scene.add
+            .text(x + 30, y - 40, `- $${cost.toFixed(2)}`, {
+                color: "red",
+                stroke: "black",
+                strokeThickness: 3,
+                fontSize: 28,
+            })
+            .setAlpha(0);
+
         scene.events.on("update", this.update, this);
         scene.add.existing(this);
     }
 
     dragStart() {
         if (this.isInContainer) {
-            /// make new ingredient
+            // make new ingredient
             const temp: Ingredient = new Ingredient(
                 this.scene,
                 this.startX,
                 this.startY,
                 this.name,
-                this.container
+                this.container,
+                this.cost
             );
             this.container.ingredients.push(temp);
-            console.log(temp);
             this.isInContainer = false;
+            this.subtractCost();
         }
-        console.log(this.container.ingredients.length);
         this.setScale(0.3).setDepth(3);
     }
+
     dragEnter(ingrd: Ingredient, target: Station) {
         if (
             (target instanceof Service && target.dish) ||
-            (target instanceof Station && !(target instanceof Service))
+            (target instanceof Station && !(target instanceof Service)) ||
+            target instanceof Trash
         )
             this.setScale(0.4);
     }
@@ -121,7 +145,6 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
             if (target.dish) {
                 target.dish.ingredients.push({ ...this });
                 target.dish.play("fill-dish", true);
-                this.statusIcon.destroy();
                 this.destroy();
             }
         } else if (!target.occupied && target instanceof Station) {
@@ -129,6 +152,8 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
             this.station = target;
             this.station.cook(this);
             this.setPosition(target.x, target.y);
+        } else if (target instanceof Trash) {
+            this.destroy();
         }
     }
 
@@ -154,6 +179,30 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
             default:
                 break;
         }
+    }
+
+    subtractCost() {
+        CareerData.addProfit(this.scene, -this.cost);
+        this.popupTweens();
+    }
+
+    popupTweens() {
+        this.scene.add.tween({
+            targets: [this.costPopup],
+            alpha: { from: 0, to: 1 },
+            duration: 200,
+        });
+        this.scene.add.tween({
+            targets: [this.costPopup],
+            y: { from: this.costPopup.y, to: this.costPopup.y - 100 },
+            duration: 1500,
+        });
+        this.scene.add.tween({
+            targets: [this.costPopup],
+            alpha: { from: 1, to: 0 },
+            delay: 1000,
+            duration: 100,
+        });
     }
 
     update() {

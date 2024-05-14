@@ -1,12 +1,14 @@
 import Phaser from "phaser";
-import { CONFIG } from "../config";
 import Ticket from "../objects/ticket";
 import ShiftGUI from "./shiftGUI";
 import Kitchen from "../objects/kitchen";
 import Dish from "../objects/dish";
 import DialogBox from "../objects/dialogBox";
+import { Dialog } from "../objects/dialogBox";
+import CareerData from "../data/careerData";
+import ShowButton from "../objects/showButton";
 
-const DIALOG1: Record<number, { text: string; face: number }> = {
+const DIALOG1: Dialog = {
     0: {
         text: "Welcome to Schedulsine soldier! Silicon valley's newest Michelin Star restaurant.",
         face: 2,
@@ -19,21 +21,21 @@ const DIALOG1: Record<number, { text: string; face: number }> = {
     3: { text: "Anyways, let's see what you're made of.", face: 0 },
 };
 
-const DIALOG2: Record<number, { text: string; face: number }> = {
+const DIALOG2: Dialog = {
     0: {
         text: "To get started, you need to schedule a ticket. In any given shift, we'll have a lot of tickets, so choosing which to work on will directly impact how many we can get done in a night.",
         face: 0,
     },
 };
 
-const DIALOG3: Record<number, { text: string; face: number }> = {
+const DIALOG3: Dialog = {
     0: {
-        text: "Luckily, we only have one waiting in the queue. Go ahead and drag it into the [current order] zone.",
+        text: "To schedule a ticket, go ahead and drag it into the [current order] zone.",
         face: 0,
     },
 };
 
-const DIALOG4: Record<number, { text: string; face: number }> = {
+const DIALOG4: Dialog = {
     0: {
         text: "Now you can see the ingredients necessary to complete the order!",
         face: 2,
@@ -44,66 +46,50 @@ const DIALOG4: Record<number, { text: string; face: number }> = {
     },
 };
 
-const DIALOG5: Record<number, { text: string; face: number }> = {
+const DIALOG5: Dialog = {
     0: {
         text: "Here's a list of the stations and which qualifiers they apply to an ingredient.",
         face: 2,
     },
     1: {
-        text: "Hopefully they're pretty intuitive, if not...",
-        face: 0,
-    },
-    2: {
-        text: "GET OUT OF MY KITCHEN!",
-        face: 1,
-    },
-    3: {
-        text: "Luckily most stations are labelled, so finding your way around shouldn't be an issue. Let's start making this dish, shall we?",
+        text: "Hopefully they're pretty intuitive, if not you can refer to them anytime by clicking [HELP].",
         face: 0,
     },
 };
 
-const DIALOG6: Record<number, { text: string; face: number }> = {
+const DIALOG6: Dialog = {
     0: {
-        text: "First we need to grab our ingredients.",
+        text: "To make a dish we first need to grab our ingredients.",
         face: 2,
     },
 };
 
-const DIALOG7: Record<number, { text: string; face: number }> = {
+const DIALOG7: Dialog = {
     0: {
         text: "Click on the fridge or pantry, depending on the ingredient.",
         face: 0,
     },
     1: {
-        text: "Then simply click on what you need.",
+        text: "Then simply drag out what you need.",
         face: 2,
-    },
-    2: {
-        text: "Make sure to close the doors once you're done.",
-        face: 0,
     },
 };
 
-const DIALOG8: Record<number, { text: string; face: number }> = {
+const DIALOG8: Dialog = {
     0: {
         text: "Time to cook chef!",
         face: 2,
     },
     1: {
-        text: "It's best to setup your plating first. Click on the pile of plates above this dialog to spawn one.",
-        face: 0,
-    },
-    2: {
-        text: "Now drag it to the service table right beneath the serving bell.",
+        text: "Drag a plate up to the service table (beneath the bell).",
         face: 0,
     },
     3: {
-        text: "This is where you will combine your final ingredients. Keep in mind you may only plate one dish at a time!",
+        text: "This is where you will combine your final ingredients (you may only plate one dish at a time)!",
         face: 2,
     },
     4: {
-        text: "Now all that's left is to cook the ingredients. Simply drag what you grabbed onto a station, and place the newly qualified ingredient onto the service dish.",
+        text: "Next, drag what your raw ingredient onto a station, then drag the newly qualified ingredient onto the service dish.",
         face: 0,
     },
     5: {
@@ -126,7 +112,8 @@ export default class Tutorial extends Phaser.Scene {
     tutIdx: number;
     dialogBox: DialogBox;
     pointer: Phaser.GameObjects.Sprite;
-    qualifiers: Phaser.GameObjects.Text; // going to convert to a cookbook/notebook feature which can be accessed anytime ingame
+    notes: Phaser.GameObjects.Sprite;
+    oldCareerData: CareerData;
 
     constructor() {
         super({ key: "Tutorial" });
@@ -135,21 +122,18 @@ export default class Tutorial extends Phaser.Scene {
     init() {
         this.scene.launch("ShiftGUI", { shift: this.scene.key });
         this.gui = this.scene.get("ShiftGUI") as ShiftGUI;
+        this.oldCareerData = this.registry.get("career");
     }
 
     create() {
-        const version = CONFIG.version;
+        this.events.on("shutdown", () => {
+            localStorage.setItem("career", JSON.stringify(this.oldCareerData));
+        });
+
         this.kitchen = new Kitchen(this);
+        this.tickets = [];
 
-        this.add
-            .text(this.cameras.main.width - 15, 15, version, {
-                color: "#000000",
-                fontSize: "24px",
-            })
-            .setOrigin(1, 0);
-
-        const tutTicket = this.kitchen.generateRandomTicket(2);
-        this.tickets.push(tutTicket);
+        this.tickets.push(this.kitchen.generateRandomTicket(2));
 
         this.dialogBox = new DialogBox(
             this,
@@ -184,16 +168,23 @@ export default class Tutorial extends Phaser.Scene {
             .setAlpha(0)
             .setDepth(999);
 
-        this.qualifiers = this.add
-            .text(
+        this.notes = this.add
+            .sprite(
                 this.cameras.main.centerX,
-                this.cameras.main.centerY,
-                "OVEN -> BAKED\nPREP -> PREPPED\nSINK -> WASHED\nSTOVE -> COOKED\nNOTHING -> RAW",
-                { fontSize: "2rem", backgroundColor: "black" }
+                this.cameras.main.centerY - 100,
+                "notes"
             )
             .setOrigin(0.5)
             .setDepth(999)
-            .setAlpha(0);
+            .setVisible(false);
+
+        const notes = this.add.sprite(
+            this.cameras.main.centerX,
+            this.cameras.main.centerY,
+            "notes"
+        );
+
+        new ShowButton(this, this.cameras.main.width - 90, 200, "HELP", notes);
 
         this.tutIdx = 0;
         this.updateState();
@@ -252,11 +243,11 @@ export default class Tutorial extends Phaser.Scene {
                 this.dialogBox.setDialog(DIALOG4);
                 break;
             case 4:
-                this.qualifiers.setAlpha(1);
+                this.notes.setVisible(true);
                 this.dialogBox.setDialog(DIALOG5);
                 break;
             case 5:
-                this.qualifiers.setAlpha(0);
+                this.notes.setVisible(false);
                 this.dialogBox.setDialog(DIALOG6);
                 // this can all be a method translateManager in DialogBox
                 this.tweens.add({

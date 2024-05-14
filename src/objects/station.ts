@@ -43,10 +43,9 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
         this.highlight.fillColor = RED;
         this.setTimer();
         ingrd.setScale(0.2).disableInteractive();
-      
+
         const music = this.scene.sound.add(this.name, { volume: 1 });
         music.play(), music.setVolume(3);
-
 
         // each station provides its own time (might switch to ingredient wise)
         this.scene.time.delayedCall(this.duration, () => {
