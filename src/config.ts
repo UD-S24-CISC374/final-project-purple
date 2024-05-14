@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import Shift1 from "./scenes/shift1";
+import Shift3 from "./scenes/shift3";
 import PreloadScene from "./scenes/preloadScene";
 import MainMenu from "./scenes/mainMenu";
 import ShiftGUI from "./scenes/shiftGUI";
@@ -31,6 +32,7 @@ export const CONFIG = {
         Tutorial,
         MetricReport,
         Shift1,
+        Shift3,
         ShiftGUI,
     ],
     physics: {
