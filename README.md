@@ -26,7 +26,6 @@ TEXT GOES HERE
 
 # Gameplay Video
 
-TEXT GOES HERE
 
 # Educational Game Design Document
 
