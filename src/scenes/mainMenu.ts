@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import MenuButton from "../objects/menuButton";
 import CareerData from "../data/careerData";
 import Title from "../objects/title";
+import audioManager from "../objects/audioManager";
 
 export default class MainMenu extends Phaser.Scene {
     career: CareerData;
@@ -44,11 +45,8 @@ export default class MainMenu extends Phaser.Scene {
 
         new MenuButton(this, this.cameras.main.width - 200, 400, "exit", "");
 
-        const music = this.sound.add("menuAudio", { volume: 0.1 });
-        music.play(), music.setVolume(0.1);
+        audioManager.playMusic(this, "menuAudio", { volume: 0.1 }); // Play music using AudioManager
 
-        this.events.on("shutdown", () => {
-            music.stop();
-        });
+        this.events.on("shutdown", () => {});
     }
 }
