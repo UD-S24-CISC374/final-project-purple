@@ -11,13 +11,15 @@ export default class FinishWeek extends Phaser.Scene {
         this.confetti = new Array(20);
         for (let i = 0; i < this.confetti.length; i++) {
             if (i < this.confetti.length / 2) {
-                this.confetti[i] = this.add.rectangle(
-                    Phaser.Math.Between(0, this.cameras.main.centerX - 300),
-                    -100,
-                    30,
-                    50,
-                    Phaser.Math.Between(0x000000, 0xffffff)
-                );
+                this.confetti[i] = this.add
+                    .rectangle(
+                        Phaser.Math.Between(0, this.cameras.main.centerX - 300),
+                        -100,
+                        30,
+                        50,
+                        Phaser.Math.Between(0x000000, 0xffffff)
+                    )
+                    .setRotation(Phaser.Math.Between(0, 360));
                 this.add.tween({
                     targets: [this.confetti[i]],
                     x: {
@@ -36,16 +38,18 @@ export default class FinishWeek extends Phaser.Scene {
                     duration: Phaser.Math.Between(2000, 4000),
                 });
             } else {
-                this.confetti[i] = this.add.rectangle(
-                    Phaser.Math.Between(
-                        this.cameras.main.centerX + 300,
-                        this.cameras.main.width
-                    ),
-                    -100,
-                    30,
-                    50,
-                    Phaser.Math.Between(0x000000, 0xffffff)
-                );
+                this.confetti[i] = this.add
+                    .rectangle(
+                        Phaser.Math.Between(
+                            this.cameras.main.centerX + 300,
+                            this.cameras.main.width
+                        ),
+                        -100,
+                        30,
+                        50,
+                        Phaser.Math.Between(0x000000, 0xffffff)
+                    )
+                    .setRotation(Phaser.Math.Between(0, 360));
                 this.add.tween({
                     targets: [this.confetti[i]],
                     x: {

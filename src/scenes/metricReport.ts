@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Metrics from "../objects/metrics";
 import CareerData from "../data/careerData";
+import Confetti from "../objects/confetti";
 
 export default class MetricReport extends Phaser.Scene {
     report: Phaser.GameObjects.Text;
@@ -40,6 +41,7 @@ export default class MetricReport extends Phaser.Scene {
         if (this.passed) CareerData.addMetrics(this, sceneData);
 
         this.nextButton(userShift);
+        new Confetti(this, 20);
     }
 
     nextButton(shift: number) {
@@ -65,26 +67,26 @@ export default class MetricReport extends Phaser.Scene {
                     );
                 });
         } else {
-        this.add
-            .text(
-                this.cameras.main.centerX,
-                this.cameras.main.centerY + 300,
-                this.passed ? "CONTINUE" : "RETRY",
-                {
-                    backgroundColor: "black",
-                    padding: { top: 5, bottom: 5, left: 5, right: 5 },
-                }
-            )
-            .setInteractive()
-            .on("pointerdown", () => {
-                const nextShift = this.passed ? shift + 1 : shift;
-                this.scene.start(`Shift${nextShift}`);
-                CareerData.setShift(this, nextShift);
-                localStorage.setItem(
-                    "career",
-                    JSON.stringify(this.registry.get("career"))
-                );
-            });
+            this.add
+                .text(
+                    this.cameras.main.centerX,
+                    this.cameras.main.centerY + 300,
+                    this.passed ? "CONTINUE" : "RETRY",
+                    {
+                        backgroundColor: "black",
+                        padding: { top: 5, bottom: 5, left: 5, right: 5 },
+                    }
+                )
+                .setInteractive()
+                .on("pointerdown", () => {
+                    const nextShift = this.passed ? shift + 1 : shift;
+                    this.scene.start(`Shift${nextShift}`);
+                    CareerData.setShift(this, nextShift);
+                    localStorage.setItem(
+                        "career",
+                        JSON.stringify(this.registry.get("career"))
+                    );
+                });
         }
     }
 }
