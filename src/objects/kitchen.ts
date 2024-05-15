@@ -13,6 +13,7 @@ import Ticket from "./ticket";
 import Trash from "./trash";
 import Metrics from "./metrics";
 import Container from "./containers";
+import Time from "../util/time";
 
 // FOR HOLDING ALL STATIONS AS ONE KITCHEN OBJECT
 export default class Kitchen extends Phaser.GameObjects.Image {
@@ -141,10 +142,11 @@ export default class Kitchen extends Phaser.GameObjects.Image {
 
     updateMetrics(scheduleRes: boolean, dishRes: boolean, ticket: Ticket) {
         ticket.setTurnaroundTime();
-
+        console.log(ticket.turnaroundTime);
         this.metrics.ticketsCompleted++;
         this.metrics.correctSchedules += scheduleRes ? 1 : 0;
         this.metrics.correctDishes += dishRes ? 1 : 0;
+
         // compute moving averages
         this.metrics.updateAvgerages(ticket);
     }
@@ -216,8 +218,8 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             ? this.scheduleRes.setText(`Correctly Scheduled`).setColor("green")
             : this.scheduleRes
                   .setText(
-                      `Poorly scheduled, the right one arrived ${nextTicketTime.toFixed(
-                          2
+                      `Poorly scheduled, the right one arrived ${Time.toSec(
+                          nextTicketTime
                       )}s ago`
                   )
                   .setColor("red");

@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import Metrics from "../objects/metrics";
 import CareerData from "../data/careerData";
 import Confetti from "../objects/confetti";
+import Time from "../util/time";
 
 export default class MetricReport extends Phaser.Scene {
     report: Phaser.GameObjects.Text;
@@ -30,8 +31,8 @@ export default class MetricReport extends Phaser.Scene {
             Orders scheduled correctly: ${sceneData.correctSchedules}\n
 
             Scheduling accuracy: ${accuracy}%\n
-            Average turnaround time: ${sceneData.avgTaT.toFixed(2)}s\n
-            Average response time: ${sceneData.avgRT.toFixed(2)}s`,
+            Average turnaround time: ${Time.toSec(sceneData.avgTaT)}s\n
+            Average response time: ${Time.toSec(sceneData.avgRT)}s`,
                 { color: "black" }
             )
             .setOrigin(0.5);
