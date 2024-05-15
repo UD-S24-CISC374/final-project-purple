@@ -42,8 +42,8 @@ Link to our [egdd](docs/egdd.md)
 
 All artwork - Michael Bocelli
 
--   "Wood Fire Burning Audio: https://www.youtube.com/watch?v=AgXIaK7iNp0&ab_channel=AshwinRajani"
--   "Chopping Vegetables Audio: https://www.youtube.com/watch?v=QeO1_lZN8c8&ab_channel=YourFilmSounds"
--   "Oil Sizzling Audio: https://www.youtube.com/watch?v=VuW50fbPtQM&ab_channel=OriginalSoundEffects"
--   "Washing Vegetable in sink Audio: https://www.youtube.com/shorts/-LEBK1uBB3A"
--   "Hells Kitchen Audio: https://www.youtube.com/watch?v=-8yVErvnufQ&ab_channel=Soundbeats129"
+-   Wood Fire Burning Audio: https://www.youtube.com/watch?v=AgXIaK7iNp0&ab_channel=AshwinRajani
+-   Chopping Vegetables Audio: https://www.youtube.com/watch?v=QeO1_lZN8c8&ab_channel=YourFilmSounds
+-   Oil Sizzling Audio: https://www.youtube.com/watch?v=VuW50fbPtQM&ab_channel=OriginalSoundEffects
+-   Washing Vegetables in sink Audio: https://www.youtube.com/shorts/-LEBK1uBB3A
+-   Hells Kitchen Audio: https://www.youtube.com/watch?v=-8yVErvnufQ&ab_channel=Soundbeats129
