@@ -38,10 +38,12 @@ export default class MetricReport extends Phaser.Scene {
         if (accuracy >= 60 && sceneData.ticketsCompleted >= 1)
             this.passed = true;
 
-        if (this.passed) CareerData.addMetrics(this, sceneData);
+        if (this.passed) {
+            CareerData.addMetrics(this, sceneData);
+            new Confetti(this, 20);
+        }
 
         this.nextButton(userShift);
-        new Confetti(this, 20);
     }
 
     nextButton(shift: number) {

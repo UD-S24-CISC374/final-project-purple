@@ -20,7 +20,8 @@ export default class Metrics {
     }
 
     updateAvgerages(ticket: Ticket) {
-        this.avgRT += ticket.responseTime / this.ticketsCompleted;
-        this.avgTaT += ticket.turnaroundTime / this.ticketsCompleted;
+        this.avgRT = (this.avgRT + ticket.responseTime) / this.ticketsCompleted;
+        this.avgTaT =
+            (this.avgTaT + ticket.turnaroundTime) / this.ticketsCompleted;
     }
 }
