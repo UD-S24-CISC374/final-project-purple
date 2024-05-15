@@ -17,6 +17,12 @@ export default class MainMenu extends Phaser.Scene {
     create() {
         new Title(this, "title");
 
+        this.add
+            .sprite(130, this.cameras.main.height / 7, "manager", 1)
+            .setOrigin(0.5, 0.5)
+            .setScale(2.5)
+            .setFlipX(true);
+
         new MenuButton(this, 200, 400, "career", "CareerMenu");
 
         new MenuButton(
