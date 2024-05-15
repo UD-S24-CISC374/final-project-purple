@@ -9,6 +9,9 @@ export default class Metrics {
     avgRT: number;
     shiftProfit: number;
 
+    private rollingTaT: number;
+    private rollingRT: number;
+
     constructor() {
         this.algo = "";
         this.ticketsCompleted = 0;
@@ -17,12 +20,14 @@ export default class Metrics {
         this.avgTaT = 0;
         this.avgRT = 0;
         this.shiftProfit = 0;
+        this.rollingTaT = 0;
+        this.rollingRT = 0;
     }
 
     updateAvgerages(ticket: Ticket) {
-        console.log(ticket.turnaroundTime);
-        this.avgRT = (this.avgRT + ticket.responseTime) / this.ticketsCompleted;
+        this.avgRT =
+            (this.rollingRT += ticket.responseTime) / this.ticketsCompleted;
         this.avgTaT =
-            (this.avgTaT + ticket.turnaroundTime) / this.ticketsCompleted;
+            (this.rollingTaT += ticket.turnaroundTime) / this.ticketsCompleted;
     }
 }

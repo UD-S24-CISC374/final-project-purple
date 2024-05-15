@@ -112,7 +112,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
 
             tickets.splice(tickIdx, 1);
 
-            this.scene.time.delayedCall(Phaser.Math.Between(500, 2000), () => {
+            this.scene.time.delayedCall(Phaser.Math.Between(800, 2300), () => {
                 const newTick = this.generateRandomTicket(emptyHolderIdx);
                 this.ticketHolders[emptyHolderIdx].ticket = newTick;
                 tickets.push(newTick);
@@ -142,7 +142,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
 
     updateMetrics(scheduleRes: boolean, dishRes: boolean, ticket: Ticket) {
         ticket.setTurnaroundTime();
-        console.log(ticket.turnaroundTime);
+
         this.metrics.ticketsCompleted++;
         this.metrics.correctSchedules += scheduleRes ? 1 : 0;
         this.metrics.correctDishes += dishRes ? 1 : 0;

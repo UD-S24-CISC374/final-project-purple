@@ -37,30 +37,17 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         this.holder = holder;
         this.holder.ticket = this;
 
-        this.details = scene.add
-            .text(
-                this.x,
-                this.y + 200,
-                `Arrived ${Time.toSec(this.elapsedTime)}s ago.`,
-                { backgroundColor: "tomato", padding: { top: 5, left: 5 } }
-            )
-            .setAlpha(0)
-            .setOrigin(0.5, 1)
-            .setDepth(10);
-
         this.requirements = requirements;
 
-        // requirements.forEach((ingrd) => {
-        //     switch (ingrd.split(" ")[0]) {
-        //         case :
-        //             break;
+        requirements.forEach((ingrd) => {
+            switch (ingrd.split(" ")[0]) {
+                case "":
+                    break;
 
-        //         default:
-        //             break;
-        //     }
-
-        // }
-        // );
+                default:
+                    break;
+            }
+        });
 
         this.scene.add.tween({
             targets: [this],
@@ -70,6 +57,18 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         });
 
         this.scene.time.delayedCall(400, () => this.setDepth(1));
+
+        this.details = scene.add
+            .text(
+                this.x,
+                this.y + 200,
+                `Arrived ${Time.toSec(this.elapsedTime)}s ago.\n
+                Cook time ${Time.toSec(this.cookTime)}s.`,
+                { backgroundColor: "tomato", padding: { top: 5, left: 5 } }
+            )
+            .setAlpha(0)
+            .setOrigin(0.5, 1)
+            .setDepth(10);
 
         scene.events.on("update", this.update, this);
         scene.add.existing(this);

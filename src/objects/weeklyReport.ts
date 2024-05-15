@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import CareerData from "../data/careerData";
 import Metrics from "./metrics";
+import Time from "../util/time";
 
 export default class WeeklyReport {
     backdrop: Phaser.GameObjects.Sprite;
@@ -56,8 +57,8 @@ export default class WeeklyReport {
             .text(
                 this.backdrop.x,
                 this.backdrop.y - 60,
-                `Avg. Runtime Time: ${this.bestRT.avgRT.toFixed(
-                    2
+                `Avg. Runtime Time: ${Time.toSec(
+                    this.bestRT.avgRT
                 )}s\n\tAlgorithm:\n\t${this.bestRT.algo.toUpperCase()}`,
                 {
                     color: "black",
@@ -72,8 +73,8 @@ export default class WeeklyReport {
             .text(
                 this.backdrop.x,
                 this.backdrop.y + 20,
-                `Avg. Turnaround Time: ${this.bestTaT.avgTaT.toFixed(
-                    2
+                `Avg. Turnaround Time: ${Time.toSec(
+                    this.bestTaT.avgTaT
                 )}s\n\tAlgorithm:\n\t${this.bestTaT.algo.toUpperCase()}`,
                 {
                     color: "black",
