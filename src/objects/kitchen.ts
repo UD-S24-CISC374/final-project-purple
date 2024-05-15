@@ -12,7 +12,6 @@ import Ingredient, { INGREDIENTS, IngredientState } from "./ingredient";
 import Ticket from "./ticket";
 import Trash from "./trash";
 import Metrics from "./metrics";
-import CareerData from "../data/careerData";
 import Container from "./containers";
 
 // FOR HOLDING ALL STATIONS AS ONE KITCHEN OBJECT
@@ -83,11 +82,11 @@ export default class Kitchen extends Phaser.GameObjects.Image {
                 this.scheduleRes.setAlpha(0);
             });
 
+        this.metrics = new Metrics();
         this.initHolders();
         this.initIngredientHolders();
         this.initStations();
         this.trash = new Trash(scene, scene.cameras.main.width - 210, 280);
-        this.metrics = new Metrics();
     }
 
     submitDish(
@@ -155,7 +154,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
     updateProfit(dish: Dish, scheduleRes: boolean, dishRes: boolean) {
         let profit = dish.getCost() + (dish.ingredients.length > 2 ? 20 : 10);
         profit += scheduleRes ? profit * 0.2 : 0;
-        if (dishRes) CareerData.addProfit(this.scene, profit);
+        if (dishRes) this.metrics.shiftProfit += profit;
     }
 
     cleanOrder() {
@@ -289,9 +288,33 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             []
         );
         this.fridge.setIngredients([
-            new Ingredient(this.scene, 171, 375, "milk", this.fridge, 2),
-            new Ingredient(this.scene, 328, 380, "butter", this.fridge, 1),
-            new Ingredient(this.scene, 250, 520, "chicken", this.fridge, 4),
+            new Ingredient(
+                this.scene,
+                171,
+                375,
+                "milk",
+                this.fridge,
+                2,
+                this.metrics
+            ),
+            new Ingredient(
+                this.scene,
+                328,
+                380,
+                "butter",
+                this.fridge,
+                1.5,
+                this.metrics
+            ),
+            new Ingredient(
+                this.scene,
+                250,
+                520,
+                "chicken",
+                this.fridge,
+                4,
+                this.metrics
+            ),
         ]);
 
         this.pantry = new Container(
@@ -302,7 +325,15 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             []
         );
         this.pantry.setIngredients([
-            new Ingredient(this.scene, 171, 375, "carrot", this.pantry, 0.1),
+            new Ingredient(
+                this.scene,
+                171,
+                375,
+                "carrot",
+                this.pantry,
+                1,
+                this.metrics
+            ),
         ]);
     }
 

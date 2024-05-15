@@ -43,6 +43,24 @@ export default class MetricReport extends Phaser.Scene {
     }
 
     nextButton(shift: number) {
+        if (shift === 2 && this.passed) {
+            this.add
+                .text(
+                    this.cameras.main.centerX,
+                    this.cameras.main.centerY + 300,
+                    "FINISH",
+                    {
+                        backgroundColor: "black",
+                        padding: { top: 5, bottom: 5, left: 5, right: 5 },
+                    }
+                )
+                .setInteractive()
+                .on("pointerdown", () => {
+                    const nextShift = this.passed ? shift + 1 : shift;
+                    this.scene.start(`FinishWeek`);
+                    CareerData.setShift(this, nextShift);
+                });
+        }
         this.add
             .text(
                 this.cameras.main.centerX,

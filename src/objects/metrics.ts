@@ -7,6 +7,7 @@ export default class Metrics {
     correctSchedules: number;
     avgTaT: number;
     avgRT: number;
+    shiftProfit: number;
 
     constructor() {
         this.algo = "";
@@ -15,6 +16,7 @@ export default class Metrics {
         this.correctSchedules = 0;
         this.avgTaT = 0;
         this.avgRT = 0;
+        this.shiftProfit = 0;
     }
 
     updateAvgerages(ticket: Ticket) {
