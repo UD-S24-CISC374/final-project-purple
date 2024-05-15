@@ -32,11 +32,4 @@ export default class CareerData {
         newData.metricsList.push(metrics);
         sceneRef.registry.set("career", newData);
     }
-
-    getTotalProfit() {
-        return this.metricsList.reduce(
-            (total: number, metrics: Metrics) => total + metrics.shiftProfit,
-            0
-        );
-    }
 }
