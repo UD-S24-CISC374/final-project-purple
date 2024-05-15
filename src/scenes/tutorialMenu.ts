@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import MenuButton from "../objects/menuButton";
 import Title from "../objects/title";
+import audioManager from "../objects/audioManager"; // Import the AudioManager
 
 export default class TutorialMenu extends Phaser.Scene {
     constructor() {
@@ -20,11 +21,9 @@ export default class TutorialMenu extends Phaser.Scene {
             "MainMenu"
         );
 
-        const music = this.sound.add("menuAudio", { volume: 0.1 });
-        music.play(), music.setVolume(0.1);
-
+        audioManager.setVolume(0.1);
         this.events.on("shutdown", () => {
-            music.stop();
+            audioManager.stopMusic();
         });
     }
 }

@@ -3,6 +3,7 @@ import Ingredient from "./ingredient";
 
 const GREEN = 0x67eb34;
 const RED = 0xeb4334;
+const NORMALIZED_VOLUME = 0.05;
 
 export default abstract class Station extends Phaser.GameObjects.Zone {
     duration: number;
@@ -10,6 +11,7 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
     timer: Phaser.GameObjects.Sprite;
     highlight: Phaser.GameObjects.Rectangle;
     namePopup: Phaser.GameObjects.Text;
+    private stationMusic: Phaser.Sound.WebAudioSound | null = null;
 
     constructor(
         scene: Phaser.Scene,
@@ -20,8 +22,8 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
     ) {
         super(scene, x, y, width, height);
         this.setDropZone()
-            .on("pointerover", this.highlightStation)
-            .on("pointerout", this.unhighlightStation);
+            .on("pointerover", this.highlightStation.bind(this))
+            .on("pointerout", this.unhighlightStation.bind(this));
 
         scene.add.existing(this);
 
@@ -37,6 +39,8 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
             .setAlpha(0);
 
         this.namePopup = scene.add.text(x, y, "").setDepth(2).setOrigin(0.5);
+
+        scene.events.on("shutdown", this.stopStationMusic, this);
     }
 
     cook(ingrd: Ingredient) {
@@ -44,8 +48,11 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
         this.setTimer();
         ingrd.setScale(0.2).disableInteractive();
 
-        const music = this.scene.sound.add(this.name, { volume: 1 });
-        music.play(), music.setVolume(3);
+        this.stationMusic = this.scene.sound.add(this.name, {
+            volume: NORMALIZED_VOLUME,
+        }) as Phaser.Sound.WebAudioSound;
+        this.stationMusic.play();
+        this.stationMusic.setVolume(NORMALIZED_VOLUME);
 
         // each station provides its own time (might switch to ingredient wise)
         this.scene.time.delayedCall(this.duration, () => {
@@ -54,7 +61,7 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
             ingrd.setInteractive({ draggable: true, cursor: "pointer" });
             this.timer.setAlpha(0); // remove timer
             this.highlight.fillColor = GREEN;
-            music.stop();
+            this.stopStationMusic();
         });
     }
 
@@ -82,5 +89,12 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
             alpha: { from: 0.3, to: 0 },
             duration: 200,
         });
+    }
+
+    private stopStationMusic() {
+        if (this.stationMusic && this.stationMusic.isPlaying) {
+            this.stationMusic.stop();
+            this.stationMusic = null;
+        }
     }
 }

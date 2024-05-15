@@ -1,17 +1,17 @@
 import Phaser from "phaser";
 
-class audioManager {
-    private static instance: audioManager;
-    private music: Phaser.Sound.BaseSound | null = null;
+class AudioManager {
+    private static instance: AudioManager;
+    private currentMusic: Phaser.Sound.WebAudioSound | null = null;
 
     private constructor() {}
 
-    public static getInstance(): audioManager {
+    public static getInstance(): AudioManager {
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (!audioManager.instance) {
-            audioManager.instance = new audioManager();
+        if (!AudioManager.instance) {
+            AudioManager.instance = new AudioManager();
         }
-        return audioManager.instance;
+        return AudioManager.instance;
     }
 
     public playMusic(
@@ -19,25 +19,28 @@ class audioManager {
         key: string,
         config: Phaser.Types.Sound.SoundConfig = {}
     ): void {
-        if (!this.music) {
-            this.music = scene.sound.add(key, { ...config, loop: true });
-            this.music.play();
-        } else if (!this.music.isPlaying) {
-            this.music.play();
+        if (this.currentMusic) {
+            this.currentMusic.stop();
         }
+        this.currentMusic = scene.sound.add(key, {
+            ...config,
+            loop: true,
+        }) as Phaser.Sound.WebAudioSound;
+        this.currentMusic.play();
     }
 
     public stopMusic(): void {
-        if (this.music) {
-            this.music.stop();
+        if (this.currentMusic) {
+            this.currentMusic.stop();
+            this.currentMusic = null;
         }
     }
 
     public setVolume(volume: number): void {
-        if (this.music && this.music instanceof Phaser.Sound.WebAudioSound) {
-            this.music.setVolume(volume);
+        if (this.currentMusic) {
+            this.currentMusic.setVolume(volume);
         }
     }
 }
 
-export default audioManager.getInstance();
+export default AudioManager.getInstance();
