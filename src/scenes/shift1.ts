@@ -137,7 +137,7 @@ export default class Shift1 extends Phaser.Scene {
         this.timer.updateTimer(time, this.time.startTime);
 
         if (time - this.time.startTime > this.timer.shiftLength)
-            this.kitchen.finishShift("first come first served");
+            this.kitchen.finishShift("First Come First Served");
     }
 
     compareDishToTicket(dish: Dish, ticket: Ticket) {

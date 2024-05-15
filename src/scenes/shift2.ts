@@ -125,7 +125,7 @@ export default class Shift2 extends Phaser.Scene {
         this.timer.updateTimer(time, this.time.startTime);
 
         if (time - this.time.startTime > this.timer.shiftLength)
-            this.kitchen.finishShift("first come first served");
+            this.kitchen.finishShift("Shortest Job First");
     }
 
     compareDishToTicket(dish: Dish, ticket: Ticket) {
@@ -136,7 +136,6 @@ export default class Shift2 extends Phaser.Scene {
         return res;
     }
 
-    // First come first served
     compareTicketToAlgorithm(ticket: Ticket, tickets: Ticket[]) {
         const nxtTicket = tickets.reduce(
             (first, curr): Ticket =>

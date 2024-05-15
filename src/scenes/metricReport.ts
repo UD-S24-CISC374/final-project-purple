@@ -59,8 +59,12 @@ export default class MetricReport extends Phaser.Scene {
                     const nextShift = this.passed ? shift + 1 : shift;
                     this.scene.start(`FinishWeek`);
                     CareerData.setShift(this, nextShift);
+                    localStorage.setItem(
+                        "career",
+                        JSON.stringify(this.registry.get("career"))
+                    );
                 });
-        }
+        } else {
         this.add
             .text(
                 this.cameras.main.centerX,
@@ -76,6 +80,11 @@ export default class MetricReport extends Phaser.Scene {
                 const nextShift = this.passed ? shift + 1 : shift;
                 this.scene.start(`Shift${nextShift}`);
                 CareerData.setShift(this, nextShift);
+                localStorage.setItem(
+                    "career",
+                    JSON.stringify(this.registry.get("career"))
+                );
             });
+        }
     }
 }
