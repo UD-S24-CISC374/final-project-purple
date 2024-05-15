@@ -7,7 +7,7 @@ import DialogBox from "../objects/dialogBox";
 import ShiftTimer from "../objects/shiftTimer";
 import ShowButton from "../objects/showButton";
 
-const LENGTH = 16000;
+const LENGTH = 60000;
 
 const DIALOG3: Record<number, { text: string; face: number }> = {
     0: {
@@ -31,6 +31,39 @@ const DIALOG3: Record<number, { text: string; face: number }> = {
         face: 2,
     },
 };
+
+interface IQueue<T> {
+    enqueue(ticket: T): void;
+    dequeue(): T | undefined;
+    size(): number;
+}
+
+class TicketQueue<T> implements IQueue<T> {
+    private tickets: T[] = [];
+    constructor(private capacity: number = Infinity) {}
+
+    enqueue(ticket: T): void {
+        if (this.size() === this.capacity) {
+            throw Error("Queue is full.\n");
+        }
+        this.tickets.push(ticket);
+    }
+    dequeue(): T | undefined {
+        return this.tickets.shift();
+    }
+    size(): number {
+        return this.tickets.length;
+    }
+    removeTicket(predicate: (ticket: T) => boolean): T | undefined {
+        const index = this.tickets.findIndex(predicate);
+        if (index > -1) {
+            return this.tickets.splice(index, 1)[0];
+        }
+        return undefined;
+    }
+}
+
+const ticketQueue = new TicketQueue<Ticket>();
 
 // ROUND ROBIN
 export default class Shift3 extends Phaser.Scene {
@@ -68,6 +101,8 @@ export default class Shift3 extends Phaser.Scene {
             this.time.delayedCall(Phaser.Math.Between(3000, 10000), () => {
                 const tick = this.kitchen.generateRandomTicket(idx);
                 this.tickets.push(tick);
+                ticketQueue.enqueue(tick);
+                console.log(ticketQueue.size());
             });
         });
 
@@ -147,8 +182,13 @@ export default class Shift3 extends Phaser.Scene {
 
     // Round robin scheduling
     compareTicketToAlgorithm(ticket: Ticket, tickets: Ticket[]) {
-        const currentTicket = tickets[this.nxtTicketIndex];
-        this.nxtTicketIndex = (this.nxtTicketIndex + 1) % tickets.length;
-        return [ticket === currentTicket, currentTicket];
+        const num_ticets = tickets.length;
+        console.log("void", num_ticets);
+        console.log("Function call: ", ticketQueue.size());
+        const nextTicket: Ticket | undefined = ticketQueue.removeTicket(
+            (x) => x === ticket
+        );
+        console.log(nextTicket != null);
+        return [ticket === nextTicket, nextTicket];
     }
 }
