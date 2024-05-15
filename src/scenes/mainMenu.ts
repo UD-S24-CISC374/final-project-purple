@@ -45,7 +45,7 @@ export default class MainMenu extends Phaser.Scene {
 
         new MenuButton(this, this.cameras.main.width - 200, 400, "exit", "");
 
-        audioManager.playMusic(this, "menuAudio", { volume: 0.1 }); // Play music using AudioManager
+        audioManager.playMusic(this, "menuAudio", { volume: 0.15 }); // Play music using AudioManager
 
         this.events.on("shutdown", () => {});
     }

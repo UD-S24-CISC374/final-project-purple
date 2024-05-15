@@ -412,5 +412,20 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             110,
             75
         );
+        this.ovens.forEach((oven) => {
+            oven.setVolume(2); // Set volume for ovens
+        });
+
+        this.stoves.forEach((stove) => {
+            stove.setVolume(0.08); // Set volume for stoves
+        });
+
+        this.preps.forEach((prep) => {
+            prep.setVolume(0.3); // Set volume for prep
+        });
+
+        this.sinks.forEach((sink) => {
+            sink.setVolume(0.08); // Set volume for sink
+        });
     }
 }

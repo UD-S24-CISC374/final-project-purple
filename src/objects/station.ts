@@ -3,7 +3,7 @@ import Ingredient from "./ingredient";
 
 const GREEN = 0x67eb34;
 const RED = 0xeb4334;
-const NORMALIZED_VOLUME = 0.05;
+const NORMALIZED_VOLUME = 0.09;
 
 export default abstract class Station extends Phaser.GameObjects.Zone {
     duration: number;
@@ -12,6 +12,7 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
     highlight: Phaser.GameObjects.Rectangle;
     namePopup: Phaser.GameObjects.Text;
     private stationMusic: Phaser.Sound.WebAudioSound | null = null;
+    private volume: number;
 
     constructor(
         scene: Phaser.Scene,
@@ -21,6 +22,7 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
         height: number
     ) {
         super(scene, x, y, width, height);
+        this.volume = NORMALIZED_VOLUME; // Default volume level
         this.setDropZone()
             .on("pointerover", this.highlightStation.bind(this))
             .on("pointerout", this.unhighlightStation.bind(this));
@@ -49,10 +51,10 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
         ingrd.setScale(0.2).disableInteractive();
 
         this.stationMusic = this.scene.sound.add(this.name, {
-            volume: NORMALIZED_VOLUME,
+            volume: this.volume, // Use the set volume level
         }) as Phaser.Sound.WebAudioSound;
         this.stationMusic.play();
-        this.stationMusic.setVolume(NORMALIZED_VOLUME);
+        this.stationMusic.setVolume(this.volume);
 
         // each station provides its own time (might switch to ingredient wise)
         this.scene.time.delayedCall(this.duration, () => {
@@ -96,5 +98,9 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
             this.stationMusic.stop();
             this.stationMusic = null;
         }
+    }
+
+    setVolume(volume: number) {
+        this.volume = volume;
     }
 }
