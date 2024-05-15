@@ -3,6 +3,7 @@ import MenuButton from "../objects/menuButton";
 import CareerData from "../data/careerData";
 import Title from "../objects/title";
 import WeeklyReport from "../objects/weeklyReport";
+import audioManager from "../objects/audioManager"; // Import the AudioManager
 
 export default class CareerMenu extends Phaser.Scene {
     career: CareerData;
@@ -73,11 +74,10 @@ export default class CareerMenu extends Phaser.Scene {
 
         new WeeklyReport(this, this.cameras.main.centerX, 450);
 
-        const music = this.sound.add("menuAudio", { volume: 0.1 });
-        music.play(), music.setVolume(0.1);
+        audioManager.setVolume(0.1);
 
         this.events.on("shutdown", () => {
-            music.stop();
+            audioManager.stopMusic();
         });
     }
 
