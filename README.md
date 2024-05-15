@@ -28,7 +28,7 @@ plate to the service table under the bell. Then, drag the ingredients to it. Cli
 
 # Screenshot
 
-TEXT GOES HERE
+![Large screenshot of shift 1 Schedulsine gameplay.](docs/large.png)
 
 # Gameplay Video
 
