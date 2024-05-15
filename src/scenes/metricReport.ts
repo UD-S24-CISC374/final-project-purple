@@ -36,7 +36,7 @@ export default class MetricReport extends Phaser.Scene {
                 { color: "black" }
             )
             .setOrigin(0.5);
-        if (accuracy >= 60 && sceneData.ticketsCompleted >= 1)
+        if (accuracy >= 60 && sceneData.ticketsCompleted >= 0)
             this.passed = true;
 
         if (this.passed) {

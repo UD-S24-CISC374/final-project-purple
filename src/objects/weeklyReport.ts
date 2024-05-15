@@ -10,7 +10,7 @@ export default class WeeklyReport {
     bestRT: Metrics;
     bestProfit: Metrics;
 
-    constructor(scene: Phaser.Scene) {
+    constructor(scene: Phaser.Scene, x: number, y: number) {
         this.careerData = scene.registry.get("career");
 
         let baseComp = new Metrics();
@@ -42,9 +42,7 @@ export default class WeeklyReport {
             this.bestProfit.algo = "n/a";
         }
 
-        this.backdrop = scene.add
-            .sprite(scene.cameras.main.centerX, 450, "report")
-            .setScale(13);
+        this.backdrop = scene.add.sprite(x, y, "report").setScale(13);
 
         scene.add
             .text(this.backdrop.x, this.backdrop.y - 100, `BEST SCORES`, {

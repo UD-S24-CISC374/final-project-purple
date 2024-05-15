@@ -4,10 +4,12 @@ import Metrics from "../objects/metrics";
 export default class CareerData {
     shift: number = 1;
     metricsList: Metrics[] = [];
+    name: string = "";
 
     private constructor(shift: number = 1) {
         this.shift = shift;
         this.metricsList = [];
+        this.name = "";
     }
 
     static init(sceneRef: Phaser.Scene, overwrite: boolean) {

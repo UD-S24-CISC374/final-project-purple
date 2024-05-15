@@ -1,74 +1,38 @@
 import Phaser from "phaser";
+import Confetti from "../objects/confetti";
+import WeeklyReport from "../objects/weeklyReport";
+import Metrics from "../objects/metrics";
 
 export default class FinishWeek extends Phaser.Scene {
-    confetti: Phaser.GameObjects.Rectangle[] = [];
-
     constructor() {
         super({ key: "FinishWeek" });
     }
 
     create() {
-        this.confetti = new Array(20);
-        for (let i = 0; i < this.confetti.length; i++) {
-            if (i < this.confetti.length / 2) {
-                this.confetti[i] = this.add
-                    .rectangle(
-                        Phaser.Math.Between(0, this.cameras.main.centerX - 300),
-                        -100,
-                        30,
-                        50,
-                        Phaser.Math.Between(0x000000, 0xffffff)
-                    )
-                    .setRotation(Phaser.Math.Between(0, 360));
-                this.add.tween({
-                    targets: [this.confetti[i]],
-                    x: {
-                        from: this.confetti[i].x,
-                        to: this.confetti[i].x + Phaser.Math.Between(10, 20),
-                    },
-                    yoyo: true,
-                    repeat: -1,
-                });
-                this.add.tween({
-                    targets: [this.confetti[i]],
-                    y: {
-                        from: this.confetti[i].y,
-                        to: this.cameras.main.height + this.confetti[i].height,
-                    },
-                    duration: Phaser.Math.Between(2000, 4000),
-                });
-            } else {
-                this.confetti[i] = this.add
-                    .rectangle(
-                        Phaser.Math.Between(
-                            this.cameras.main.centerX + 300,
-                            this.cameras.main.width
-                        ),
-                        -100,
-                        30,
-                        50,
-                        Phaser.Math.Between(0x000000, 0xffffff)
-                    )
-                    .setRotation(Phaser.Math.Between(0, 360));
-                this.add.tween({
-                    targets: [this.confetti[i]],
-                    x: {
-                        from: this.confetti[i].x,
-                        to: this.confetti[i].x - Phaser.Math.Between(10, 20),
-                    },
-                    yoyo: true,
-                    repeat: -1,
-                });
+        const career = this.registry.get("career");
+        new Confetti(this, 50);
+        new WeeklyReport(this, 200, this.cameras.main.centerY);
 
-                this.add.tween({
-                    targets: [this.confetti[i]],
-                    y: {
-                        from: this.confetti[i].y,
-                        to: this.cameras.main.height + this.confetti[i].height,
-                    },
-                    duration: Phaser.Math.Between(2000, 4000),
-                });
-            }
-        }
+        this.add
+            .sprite(850, 400, "paycheck")
+            .setScale(6.5)
+            .setRotation(Phaser.Math.DegToRad(15));
+        this.add
+            .text(
+                1150,
+                510,
+                career
+                    ? career.metricsList
+                          .reduce(
+                              (total: number, curr: Metrics) =>
+                                  curr.shiftProfit + total,
+                              0
+                          )
+                          .toFixed(2)
+                    : "0.00",
+                { color: "black", fontSize: 45 }
+            )
+            .setRotation(Phaser.Math.DegToRad(15))
+            .setOrigin(1);
     }
 }

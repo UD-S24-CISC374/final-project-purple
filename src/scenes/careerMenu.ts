@@ -71,7 +71,7 @@ export default class CareerMenu extends Phaser.Scene {
             "MainMenu"
         );
 
-        new WeeklyReport(this);
+        new WeeklyReport(this, this.cameras.main.centerX, 450);
 
         const music = this.sound.add("menuAudio", { volume: 0.1 });
         music.play(), music.setVolume(0.1);

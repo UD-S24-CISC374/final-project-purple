@@ -17,18 +17,8 @@ export default class Confetti {
                         50,
                         Phaser.Math.Between(0x000000, 0xffffff)
                     )
+                    .setDepth(999)
                     .setRotation(Phaser.Math.Between(0, 360));
-                scene.add.tween({
-                    targets: [this.confettiPieces[i]],
-                    x: {
-                        from: this.confettiPieces[i].x,
-                        to:
-                            this.confettiPieces[i].x +
-                            Phaser.Math.Between(10, 20),
-                    },
-                    yoyo: true,
-                    repeat: -1,
-                });
                 scene.add.tween({
                     targets: [this.confettiPieces[i]],
                     y: {
@@ -51,19 +41,8 @@ export default class Confetti {
                         50,
                         Phaser.Math.Between(0x000000, 0xffffff)
                     )
+                    .setDepth(999)
                     .setRotation(Phaser.Math.Between(0, 360));
-                scene.add.tween({
-                    targets: [this.confettiPieces[i]],
-                    x: {
-                        from: this.confettiPieces[i].x,
-                        to:
-                            this.confettiPieces[i].x -
-                            Phaser.Math.Between(10, 20),
-                    },
-                    yoyo: true,
-                    repeat: -1,
-                });
-
                 scene.add.tween({
                     targets: [this.confettiPieces[i]],
                     y: {
@@ -76,5 +55,10 @@ export default class Confetti {
                 });
             }
         }
+        scene.time.delayedCall(5000, () => {
+            this.confettiPieces.forEach((con) => {
+                con.destroy();
+            });
+        });
     }
 }
