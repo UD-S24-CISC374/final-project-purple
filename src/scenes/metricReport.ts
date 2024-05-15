@@ -4,7 +4,7 @@ import CareerData from "../data/careerData";
 
 export default class MetricReport extends Phaser.Scene {
     report: Phaser.GameObjects.Text;
-    passed: boolean = true;
+    passed: boolean = false;
 
     constructor() {
         super({ key: "MetricReport" });
