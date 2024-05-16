@@ -6,8 +6,10 @@ import Dish from "../objects/dish";
 import DialogBox from "../objects/dialogBox";
 import ShiftTimer from "../objects/shiftTimer";
 import ShowButton from "../objects/showButton";
+import TicketHolder from "../objects/ticketHolder";
 
-const LENGTH = 60000;
+const LENGTH = 16000;
+const QUANTUM = LENGTH / 1.5;
 
 const DIALOG3: Record<number, { text: string; face: number }> = {
     0: {
@@ -15,7 +17,7 @@ const DIALOG3: Record<number, { text: string; face: number }> = {
         face: 2,
     },
     1: {
-        text: "The boss wants us to schedule tickets using the round robin algorithm tonight.",
+        text: "The boss wants us to schedule tickets using the Round Robin algorithm tonight.",
         face: 0,
     },
     2: {
@@ -23,7 +25,7 @@ const DIALOG3: Record<number, { text: string; face: number }> = {
         face: 1,
     },
     3: {
-        text: "Round robin scheduling assigns tickets in a rotating order. Each ticket gets a turn regardless of its arrival time.",
+        text: "Round robin scheduling assigns tickets in a rotating order. Much like first come first serve however you have a limited amount of time to work on the ticket before it goes back to queue. Then you go to the next.",
         face: 0,
     },
     4: {
@@ -32,40 +34,6 @@ const DIALOG3: Record<number, { text: string; face: number }> = {
     },
 };
 
-interface IQueue<T> {
-    enqueue(ticket: T): void;
-    dequeue(): T | undefined;
-    size(): number;
-}
-
-class TicketQueue<T> implements IQueue<T> {
-    private tickets: T[] = [];
-    constructor(private capacity: number = Infinity) {}
-
-    enqueue(ticket: T): void {
-        if (this.size() === this.capacity) {
-            throw Error("Queue is full.\n");
-        }
-        this.tickets.push(ticket);
-    }
-    dequeue(): T | undefined {
-        return this.tickets.shift();
-    }
-    size(): number {
-        return this.tickets.length;
-    }
-    removeTicket(predicate: (ticket: T) => boolean): T | undefined {
-        const index = this.tickets.findIndex(predicate);
-        if (index > -1) {
-            return this.tickets.splice(index, 1)[0];
-        }
-        return undefined;
-    }
-}
-
-const ticketQueue = new TicketQueue<Ticket>();
-
-// ROUND ROBIN
 export default class Shift3 extends Phaser.Scene {
     tickets: Ticket[];
     gui: ShiftGUI;
@@ -74,10 +42,15 @@ export default class Shift3 extends Phaser.Scene {
     kitchen: Kitchen;
     dialog: DialogBox | null;
     timer: ShiftTimer;
+    quantumTimeStart: number;
+    currentQuantum: number;
 
     constructor() {
         super({ key: "Shift3" });
         this.nxtTicketIndex = 0;
+        this.quantumTimeStart = 0;
+        this.currentQuantum = 0;
+        this.tickets = []; // Initialize the tickets array
     }
 
     init() {
@@ -101,8 +74,6 @@ export default class Shift3 extends Phaser.Scene {
             this.time.delayedCall(Phaser.Math.Between(3000, 10000), () => {
                 const tick = this.kitchen.generateRandomTicket(idx);
                 this.tickets.push(tick);
-                ticketQueue.enqueue(tick);
-                console.log(ticketQueue.size());
             });
         });
 
@@ -166,10 +137,36 @@ export default class Shift3 extends Phaser.Scene {
             this.dialog = null;
         }
 
+        if (Math.floor(time / 1000) % Math.floor(QUANTUM / 1000) === 0) {
+            console.log(
+                `Quantum ${this.currentQuantum} started at ${this.quantumTimeStart}`
+            );
+            this.quantumTimeStart = time;
+            this.currentQuantum++;
+
+            // Return all tickets to their original holders
+            this.tickets.forEach((ticket) => {
+                console.log(`Returning ticket to original holder:`, ticket);
+                ticket.holder.ticket = null; // Clear current holder
+                ticket.holder = ticket.prevHolder; // Set holder to original holder
+                ticket.holder.ticket = ticket; // Set original holder's ticket to this
+                ticket.setPosition(
+                    ticket.holder.x,
+                    ticket.holder.y +
+                        (ticket.holder instanceof TicketHolder ? 60 : 0)
+                ); // Snap back to original holder
+                console.error(
+                    `Ticket holder or original holder is undefined:`,
+                    ticket
+                );
+            });
+        }
+
         this.timer.updateTimer(time, this.time.startTime);
 
-        if (time - this.time.startTime > this.timer.shiftLength)
+        if (time - this.time.startTime > this.timer.shiftLength) {
             this.kitchen.finishShift("round robin");
+        }
     }
 
     compareDishToTicket(dish: Dish, ticket: Ticket) {
@@ -182,13 +179,11 @@ export default class Shift3 extends Phaser.Scene {
 
     // Round robin scheduling
     compareTicketToAlgorithm(ticket: Ticket, tickets: Ticket[]) {
-        const num_ticets = tickets.length;
-        console.log("void", num_ticets);
-        console.log("Function call: ", ticketQueue.size());
-        const nextTicket: Ticket | undefined = ticketQueue.removeTicket(
-            (x) => x === ticket
+        const nxtTicket = tickets.reduce(
+            (first, curr): Ticket =>
+                curr.arrivalTime < first.arrivalTime ? curr : first,
+            tickets[0]
         );
-        console.log(nextTicket != null);
-        return [ticket === nextTicket, nextTicket];
+        return [ticket === nxtTicket, nxtTicket];
     }
 }

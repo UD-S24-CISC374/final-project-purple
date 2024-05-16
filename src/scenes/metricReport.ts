@@ -55,7 +55,7 @@ export default class MetricReport extends Phaser.Scene {
             )
             .setInteractive()
             .on("pointerdown", () => {
-                const nextShift = this.passed ? shift + 1 : shift;
+                const nextShift = this.passed ? shift + 2 : shift; //set to two for now so that I can go straight to shift 3
                 this.scene.start(`Shift${nextShift}`);
                 CareerData.setShift(this, nextShift);
             });

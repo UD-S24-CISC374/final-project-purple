@@ -5,6 +5,7 @@ import TicketHolder from "./ticketHolder";
 export default class Ticket extends Phaser.GameObjects.Sprite {
     details: Phaser.GameObjects.Text;
     holder: TicketHolder | CurrentOrder;
+    prevHolder: TicketHolder | CurrentOrder;
     requirements: Set<string>;
     turnaroundTime: number = 0; // in sec
     arrivalTime: number = 0; // in sec
@@ -34,6 +35,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         this.arrivalTime = scene.time.now / 1000;
 
         this.holder = holder;
+        this.prevHolder = holder;
         this.holder.ticket = this;
 
         this.details = scene.add
@@ -118,6 +120,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             !target.ticket &&
             (target instanceof TicketHolder || target instanceof CurrentOrder)
         ) {
+            this.prevHolder = this.holder;
             this.holder.ticket = null; // set prev holder to empty
             this.holder = target; // assign new holder
             this.holder.ticket = this; // set new holder's ticket to this
