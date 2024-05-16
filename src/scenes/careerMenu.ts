@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import MenuButton from "../objects/menuButton";
 import CareerData from "../data/careerData";
 import Title from "../objects/title";
+import WeeklyReport from "../objects/weeklyReport";
 import audioManager from "../objects/audioManager"; // Import the AudioManager
 
 export default class CareerMenu extends Phaser.Scene {
@@ -20,11 +21,11 @@ export default class CareerMenu extends Phaser.Scene {
             .text(
                 200,
                 380,
-                `Day: ${
+                `DAY: ${
                     this.career.shift
-                }\nShift: ${this.getShiftName()}\nProfit: ${
-                    this.career.profit
-                }`,
+                }\nSHIFT: ${this.getShiftName()}\nTOTAL PROFIT: $${this.career.metricsList
+                    .reduce((total, curr) => curr.shiftProfit + total, 0)
+                    .toFixed(2)}`,
                 {
                     color: "#000",
                     backgroundColor: "#f8f0ce",
@@ -34,13 +35,19 @@ export default class CareerMenu extends Phaser.Scene {
             )
             .setOrigin(0.5, 1);
 
-        new MenuButton(this, 200, 250, "continue", `Shift${this.career.shift}`);
+        new MenuButton(
+            this,
+            200,
+            250,
+            "continue",
+            this.career.shift > 2 ? "FinishWeek" : `Shift${this.career.shift}`
+        );
 
         this.add
             .text(
                 200,
                 580,
-                `Day: 1\nShift: First Come First Served\nProfit: 0`,
+                `DAY: 1\nSHIFT: First Come First Served\nTOTAL PROFIT: $0.00`,
                 {
                     color: "#000",
                     backgroundColor: "#f8f0ce",
@@ -65,7 +72,10 @@ export default class CareerMenu extends Phaser.Scene {
             "MainMenu"
         );
 
+        new WeeklyReport(this, this.cameras.main.centerX, 450);
+
         audioManager.setVolume(0.1);
+
         this.events.on("shutdown", () => {
             audioManager.stopMusic();
         });

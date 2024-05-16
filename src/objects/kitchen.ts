@@ -12,8 +12,8 @@ import Ingredient, { INGREDIENTS, IngredientState } from "./ingredient";
 import Ticket from "./ticket";
 import Trash from "./trash";
 import Metrics from "./metrics";
-import CareerData from "../data/careerData";
 import Container from "./containers";
+import Time from "../util/time";
 
 // FOR HOLDING ALL STATIONS AS ONE KITCHEN OBJECT
 export default class Kitchen extends Phaser.GameObjects.Image {
@@ -83,11 +83,11 @@ export default class Kitchen extends Phaser.GameObjects.Image {
                 this.scheduleRes.setAlpha(0);
             });
 
+        this.metrics = new Metrics();
         this.initHolders();
         this.initIngredientHolders();
         this.initStations();
         this.trash = new Trash(scene, scene.cameras.main.width - 210, 280);
-        this.metrics = new Metrics();
     }
 
     submitDish(
@@ -96,11 +96,10 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         tickets: Ticket[]
     ) {
         if (this.service.dish && this.currentOrder.ticket) {
-            const dishRes = cmpFn1(this.service.dish, this.currentOrder.ticket);
-            const [scheduleRes, nxtTicket] = cmpFn2(
-                this.currentOrder.ticket,
-                tickets
-            );
+            const currTicket = this.currentOrder.ticket;
+
+            const dishRes = cmpFn1(this.service.dish, currTicket);
+            const [scheduleRes, nxtTicket] = cmpFn2(currTicket, tickets);
 
             // cleanup
             const emptyHolderIdx = this.ticketHolders.findIndex(
@@ -108,31 +107,30 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             );
 
             const tickIdx = tickets.findIndex(
-                (tick) =>
-                    tick.arrivalTime === this.currentOrder.ticket?.arrivalTime
+                (tick) => tick.arrivalTime === currTicket.arrivalTime
             );
 
             tickets.splice(tickIdx, 1);
 
-            this.scene.time.delayedCall(Phaser.Math.Between(500, 2000), () => {
+            this.scene.time.delayedCall(Phaser.Math.Between(800, 2300), () => {
                 const newTick = this.generateRandomTicket(emptyHolderIdx);
                 this.ticketHolders[emptyHolderIdx].ticket = newTick;
                 tickets.push(newTick);
             });
 
             this.showResult(
-                dishRes!, // if condition implies this will always exist
+                dishRes,
                 scheduleRes as boolean,
-                (nxtTicket as Ticket).elapsedTime
+                nxtTicket as Ticket
             );
 
-            this.updateMetrics(scheduleRes as boolean, dishRes);
+            this.updateMetrics(scheduleRes as boolean, dishRes, currTicket);
             this.updateProfit(
                 this.service.dish,
                 scheduleRes as boolean,
                 dishRes
             );
-            this.cleanOrder();
+            this.cleanOrder(currTicket, this.service.dish);
         }
     }
 
@@ -142,31 +140,32 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         this.scene.scene.start("MetricReport", this.metrics);
     }
 
-    updateMetrics(scheduleRes: boolean, dishRes: boolean) {
-        this.currentOrder.ticket?.setTurnaroundTime();
+    updateMetrics(scheduleRes: boolean, dishRes: boolean, ticket: Ticket) {
+        ticket.setTurnaroundTime();
 
         this.metrics.ticketsCompleted++;
         this.metrics.correctSchedules += scheduleRes ? 1 : 0;
         this.metrics.correctDishes += dishRes ? 1 : 0;
+
         // compute moving averages
-        this.metrics.updateAvgerages(this.currentOrder.ticket!);
+        this.metrics.updateAvgerages(ticket);
     }
 
     updateProfit(dish: Dish, scheduleRes: boolean, dishRes: boolean) {
         let profit = dish.getCost() + (dish.ingredients.length > 2 ? 20 : 10);
         profit += scheduleRes ? profit * 0.2 : 0;
-        if (dishRes) CareerData.addProfit(this.scene, profit);
+        if (dishRes) this.metrics.shiftProfit += profit;
     }
 
-    cleanOrder() {
+    cleanOrder(ticket: Ticket, dish: Dish) {
         this.currentOrder.hideRecipe();
-        this.currentOrder.ticket?.details.destroy();
-        this.currentOrder.ticket?.destroy();
+        ticket.details.destroy();
+        ticket.destroy();
         this.currentOrder.ticket = null;
 
-        this.service.dish?.display.setAlpha(0);
-        this.service.dish?.display.destroy();
-        this.service.dish?.destroy();
+        dish.display.setAlpha(0);
+        dish.display.destroy();
+        dish.destroy();
         this.service.dish = null;
     }
 
@@ -207,10 +206,17 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         );
     }
 
-    showResult(dishRes: boolean, scheduleRes: boolean, nextTicketTime: number) {
-        this.resImg.setTexture(
-            dishRes && scheduleRes ? "right-dish" : "wrong-dish"
-        );
+    showResult(dishRes: boolean, scheduleRes: boolean, nextTicket: Ticket) {
+        let tex = "";
+        if (dishRes && scheduleRes) {
+            tex = "right-dish";
+        } else if (dishRes || scheduleRes) {
+            tex = "mix-dish";
+        } else {
+            tex = "wrong-dish";
+        }
+
+        this.resImg.setTexture(tex);
 
         dishRes
             ? this.dishRes.setText(`Correct Ingredients`).setColor("green")
@@ -219,9 +225,11 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             ? this.scheduleRes.setText(`Correctly Scheduled`).setColor("green")
             : this.scheduleRes
                   .setText(
-                      `Poorly scheduled, the right one arrived ${nextTicketTime.toFixed(
-                          2
-                      )}s ago`
+                      `The right one arrived ${Time.toSec(
+                          nextTicket.elapsedTime
+                      )}s ago with a ${Time.toSec(
+                          nextTicket.runtime
+                      )}s runtime!`
                   )
                   .setColor("red");
 
@@ -289,9 +297,33 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             []
         );
         this.fridge.setIngredients([
-            new Ingredient(this.scene, 171, 375, "milk", this.fridge, 2),
-            new Ingredient(this.scene, 328, 380, "butter", this.fridge, 1),
-            new Ingredient(this.scene, 250, 520, "chicken", this.fridge, 4),
+            new Ingredient(
+                this.scene,
+                171,
+                375,
+                "milk",
+                this.fridge,
+                2,
+                this.metrics
+            ),
+            new Ingredient(
+                this.scene,
+                328,
+                380,
+                "butter",
+                this.fridge,
+                1.5,
+                this.metrics
+            ),
+            new Ingredient(
+                this.scene,
+                250,
+                520,
+                "chicken",
+                this.fridge,
+                4,
+                this.metrics
+            ),
         ]);
 
         this.pantry = new Container(
@@ -302,7 +334,15 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             []
         );
         this.pantry.setIngredients([
-            new Ingredient(this.scene, 171, 375, "carrot", this.pantry, 0.1),
+            new Ingredient(
+                this.scene,
+                171,
+                375,
+                "carrot",
+                this.pantry,
+                1,
+                this.metrics
+            ),
         ]);
     }
 

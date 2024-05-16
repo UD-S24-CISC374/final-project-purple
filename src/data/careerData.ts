@@ -3,15 +3,17 @@ import Metrics from "../objects/metrics";
 
 export default class CareerData {
     shift: number = 1;
-    profit: number = 0;
     metricsList: Metrics[] = [];
+    name: string = "";
 
     private constructor(shift: number = 1) {
         this.shift = shift;
+        this.metricsList = [];
+        this.name = "";
     }
 
     static init(sceneRef: Phaser.Scene, overwrite: boolean) {
-        let career = new CareerData(1);
+        let career: CareerData = new CareerData(1);
         let localCareer;
 
         if (!overwrite && (localCareer = localStorage.getItem("career")))
@@ -19,12 +21,6 @@ export default class CareerData {
 
         localStorage.setItem("career", JSON.stringify(career));
         sceneRef.registry.set("career", career);
-    }
-
-    static addProfit(sceneRef: Phaser.Scene, newProfit: number) {
-        const newData = { ...sceneRef.registry.get("career") };
-        newData.profit += newProfit;
-        sceneRef.registry.set("career", newData);
     }
 
     static setShift(sceneRef: Phaser.Scene, newShift: number) {
