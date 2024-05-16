@@ -3,6 +3,14 @@ import CurrentOrder from "./currentOrder";
 import TicketHolder from "./ticketHolder";
 import Time from "../util/time";
 
+const qualifierRuntime: Record<string, number> = {
+    Baked: 20000,
+    Raw: 0,
+    Cooked: 10000,
+    Washed: 3000,
+    Prepped: 7000,
+};
+
 export default class Ticket extends Phaser.GameObjects.Sprite {
     details: Phaser.GameObjects.Text;
     holder: TicketHolder | CurrentOrder;
@@ -40,13 +48,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         this.requirements = requirements;
 
         requirements.forEach((ingrd) => {
-            switch (ingrd.split(" ")[0]) {
-                case "":
-                    break;
-
-                default:
-                    break;
-            }
+            this.runtime += qualifierRuntime[ingrd.split(" ")[0]];
         });
 
         this.scene.add.tween({
@@ -132,7 +134,11 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     }
 
     showDetails() {
-        this.details.setText(`Arrived ${Time.toSec(this.elapsedTime)}s ago`);
+        this.details.setText(
+            `Arrived ${Time.toSec(this.elapsedTime)}s ago\nRuntime ${Time.toSec(
+                this.runtime
+            )}s`
+        );
         this.details.setAlpha(1);
         this.setDepth(3);
         this.scene.tweens.add({

@@ -6,13 +6,12 @@ import Dish from "../objects/dish";
 import DialogBox from "../objects/dialogBox";
 import ShiftTimer from "../objects/shiftTimer";
 import ShowButton from "../objects/showButton";
-
-const LENGTH = 10000;
+import ShiftController from "../util/shiftController";
 
 const DIALOG1: Record<number, { text: string; face: number }> = {
     0: {
         text: "Tonight we're doing [SHORTEST JOB FISRT] scheduling...",
-        face: 1,
+        face: 2,
     },
     1: {
         text: "This means that you should be scheduling tickets that will take the least amount of time to cook.",
@@ -20,7 +19,7 @@ const DIALOG1: Record<number, { text: string; face: number }> = {
     },
     2: {
         text: "Same deal; as long as you schedule at least 60% of your tickets this way before closing, we should be fine.",
-        face: 1,
+        face: 2,
     },
 };
 
@@ -51,7 +50,7 @@ export default class Shift2 extends Phaser.Scene {
             this,
             this.cameras.main.width - 15,
             15,
-            LENGTH
+            ShiftController.LENGTH
         );
 
         // Initialize  first 3 tickets

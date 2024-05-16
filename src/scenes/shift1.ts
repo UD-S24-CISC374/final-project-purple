@@ -6,8 +6,7 @@ import Dish from "../objects/dish";
 import DialogBox from "../objects/dialogBox";
 import ShiftTimer from "../objects/shiftTimer";
 import ShowButton from "../objects/showButton";
-
-const LENGTH = 1000;
+import ShiftController from "../util/shiftController";
 
 const DIALOG1: Record<number, { text: string; face: number }> = {
     0: {
@@ -63,7 +62,7 @@ export default class Shift1 extends Phaser.Scene {
             this,
             this.cameras.main.width - 15,
             15,
-            LENGTH
+            ShiftController.LENGTH
         );
 
         // Initialize  first 3 tickets

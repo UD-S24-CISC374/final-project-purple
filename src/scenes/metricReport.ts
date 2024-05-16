@@ -23,8 +23,19 @@ export default class MetricReport extends Phaser.Scene {
                     sceneData.correctSchedules / sceneData.ticketsCompleted
                 ).toFixed(3)
             ) * 100;
+
         accuracy = isNaN(accuracy) ? 0 : accuracy;
-        new Title(this, "title");
+
+        if (accuracy >= 0 && sceneData.ticketsCompleted >= 0)
+            this.passed = true;
+
+        if (this.passed) {
+            CareerData.addMetrics(this, sceneData);
+            new Confetti(this, 20);
+        }
+
+        new Title(this, sceneData.algo.toLowerCase());
+
         this.report = this.add
             .text(
                 this.cameras.main.centerX,
@@ -35,21 +46,16 @@ export default class MetricReport extends Phaser.Scene {
                     sceneData.correctDishes
                 }\nOrders scheduled correctly: ${
                     sceneData.correctSchedules
-                }\nScheduling accuracy: ${accuracy}%\nAverage turnaround time: ${Time.toSec(
+                }\nScheduling accuracy: ${accuracy}%${
+                    !this.passed ? " X" : ""
+                }\nAverage turnaround time: ${Time.toSec(
                     sceneData.avgTaT
                 )}s\nAverage response time: ${Time.toSec(
                     sceneData.avgRT
                 )}s\nNight's profit: $${sceneData.shiftProfit.toFixed(2)}`,
-                { color: "black", lineSpacing: 32 }
+                { color: "white", lineSpacing: 32 }
             )
             .setOrigin(0.5);
-        if (accuracy >= 60 && sceneData.ticketsCompleted >= 0)
-            this.passed = true;
-
-        if (this.passed) {
-            CareerData.addMetrics(this, sceneData);
-            new Confetti(this, 20);
-        }
 
         this.nextButtons();
     }
@@ -81,8 +87,7 @@ export default class MetricReport extends Phaser.Scene {
 
         new MetricMenuButton(
             this,
-            this.cameras.main.centerX -
-                (buttonContent.text === "FINISH" ? 0 : 200),
+            this.cameras.main.centerX - 200,
             this.cameras.main.centerY + 250,
             buttonContent.text,
             buttonContent.onClick
