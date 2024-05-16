@@ -11,7 +11,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     arrivalTime: number = 0; // in sec
     elapsedTime: number = 0;
     responseTime: number = 0;
-    cookTime: number = 0;
+    runtime: number = 0;
 
     constructor(
         scene: Phaser.Scene,
@@ -63,7 +63,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
                 this.x,
                 this.y + 200,
                 `Arrived ${Time.toSec(this.elapsedTime)}s ago.\n
-                Cook time ${Time.toSec(this.cookTime)}s.`,
+                Cook time ${Time.toSec(this.runtime)}s.`,
                 { backgroundColor: "tomato", padding: { top: 5, left: 5 } }
             )
             .setAlpha(0)

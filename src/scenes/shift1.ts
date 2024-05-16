@@ -7,7 +7,7 @@ import DialogBox from "../objects/dialogBox";
 import ShiftTimer from "../objects/shiftTimer";
 import ShowButton from "../objects/showButton";
 
-const LENGTH = 10000;
+const LENGTH = 1000;
 
 const DIALOG1: Record<number, { text: string; face: number }> = {
     0: {

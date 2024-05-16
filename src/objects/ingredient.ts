@@ -22,7 +22,7 @@ const stationState: Record<string, IngredientState> = {
     stove: IngredientState.COOKED,
 };
 
-console.log([IngredientState.BAKED]);
+console.log(stationState[IngredientState.BAKED]);
 
 export default class Ingredient extends Phaser.GameObjects.Sprite {
     station: Station | null;

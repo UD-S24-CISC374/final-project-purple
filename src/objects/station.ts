@@ -24,8 +24,8 @@ export default abstract class Station extends Phaser.GameObjects.Zone {
         super(scene, x, y, width, height);
         this.volume = NORMALIZED_VOLUME; // Default volume level
         this.setDropZone()
-            .on("pointerover", this.highlightStation.bind(this))
-            .on("pointerout", this.unhighlightStation.bind(this));
+            .on("pointerover", this.highlightStation)
+            .on("pointerout", this.unhighlightStation);
 
         scene.add.existing(this);
 

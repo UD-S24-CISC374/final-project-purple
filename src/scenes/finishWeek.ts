@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import Confetti from "../objects/confetti";
 import WeeklyReport from "../objects/weeklyReport";
 import Metrics from "../objects/metrics";
+import MetricMenuButton from "../objects/metricMenuButton";
 
 export default class FinishWeek extends Phaser.Scene {
     constructor() {
@@ -17,6 +18,7 @@ export default class FinishWeek extends Phaser.Scene {
             .sprite(850, 400, "paycheck")
             .setScale(6.5)
             .setRotation(Phaser.Math.DegToRad(15));
+
         this.add
             .text(
                 1150,
@@ -34,5 +36,15 @@ export default class FinishWeek extends Phaser.Scene {
             )
             .setRotation(Phaser.Math.DegToRad(15))
             .setOrigin(1);
+
+        new MetricMenuButton(
+            this,
+            this.cameras.main.centerX,
+            this.cameras.main.centerY + 300,
+            "EXIT",
+            () => {
+                this.scene.start("MainMenu");
+            }
+        );
     }
 }
