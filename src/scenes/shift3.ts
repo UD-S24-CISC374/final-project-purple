@@ -10,7 +10,7 @@ import TicketHolder from "../objects/ticketHolder";
 import CurrentOrder from "../objects/currentOrder";
 import ShiftController from "../util/shiftController";
 
-const QUANTUM = ShiftController.LENGTH / 4;
+const QUANTUM = 15000;
 
 const DIALOG3: Record<number, { text: string; face: number }> = {
     0: {

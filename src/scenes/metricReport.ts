@@ -5,6 +5,7 @@ import Confetti from "../objects/confetti";
 import Time from "../util/time";
 import MetricMenuButton from "../objects/metricMenuButton";
 import Title from "../objects/title";
+import ShiftController from "../util/shiftController";
 
 export default class MetricReport extends Phaser.Scene {
     report: Phaser.GameObjects.Text;
@@ -73,7 +74,7 @@ export default class MetricReport extends Phaser.Scene {
         const nextShift = this.passed ? this.userShift + 1 : this.userShift;
         CareerData.setShift(this, nextShift);
 
-        if (this.userShift === 2 && this.passed) {
+        if (this.userShift === ShiftController.LAST_SHIFT && this.passed) {
             buttonContent.text = "FINISH";
             buttonContent.onClick = () => {
                 this.sendToScene("FinishWeek");

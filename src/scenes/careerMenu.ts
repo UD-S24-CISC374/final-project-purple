@@ -64,13 +64,6 @@ export default class CareerMenu extends Phaser.Scene {
             }
         );
 
-        new MenuButton(this, 200, 450, "new", "Shift3").on(
-            "pointerdown",
-            () => {
-                CareerData.init(this, true);
-            }
-        );
-
         new MenuButton(
             this,
             this.cameras.main.width - 200,
