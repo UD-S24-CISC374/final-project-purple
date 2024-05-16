@@ -18,10 +18,14 @@ const DIALOG1: Record<number, { text: string; face: number }> = {
         face: 0,
     },
     2: {
-        text: "A job's runtime is a measure of how long it will execute for.",
+        text: "A job's runtime is a measure of how long it will execute for",
         face: 0,
     },
     3: {
+        text: "Break ties by arrival time!",
+        face: 1,
+    },
+    4: {
         text: "Same deal; as long as you schedule at least 60% of your tickets this way before closing, we should be fine.",
         face: 2,
     },
