@@ -1,63 +1,106 @@
 import Phaser from "phaser";
 import Metrics from "../objects/metrics";
 import CareerData from "../data/careerData";
+import Confetti from "../objects/confetti";
+import Time from "../util/time";
+import MetricMenuButton from "../objects/metricMenuButton";
+import Title from "../objects/title";
 
 export default class MetricReport extends Phaser.Scene {
     report: Phaser.GameObjects.Text;
     passed: boolean = false;
+    userShift: number = 1;
 
     constructor() {
         super({ key: "MetricReport" });
     }
 
     create(sceneData: Metrics) {
-        const userShift = this.registry.get("career").shift;
+        this.userShift = this.registry.get("career").shift;
         let accuracy =
             parseFloat(
                 (
                     sceneData.correctSchedules / sceneData.ticketsCompleted
                 ).toFixed(3)
             ) * 100;
+
         accuracy = isNaN(accuracy) ? 0 : accuracy;
+
+        if (accuracy >= 60 && sceneData.ticketsCompleted >= 6)
+            this.passed = true;
+
+        if (this.passed) {
+            CareerData.addMetrics(this, sceneData);
+            new Confetti(this, 20);
+        }
+
+        new Title(this, sceneData.algo.toLowerCase());
+
         this.report = this.add
             .text(
                 this.cameras.main.centerX,
                 this.cameras.main.centerY,
-                `${sceneData.algo.toUpperCase()}\n
-            Orders completed: ${sceneData.ticketsCompleted}\n
-            Orders made correctly: ${sceneData.correctDishes}\n
-            Orders scheduled correctly: ${sceneData.correctSchedules}\n
-
-            Scheduling accuracy: ${accuracy}%\n
-            Average turnaround time: ${sceneData.avgTaT.toFixed(2)}s\n
-            Average response time: ${sceneData.avgRT.toFixed(2)}s`,
-                { color: "black" }
+                `Orders completed: ${
+                    sceneData.ticketsCompleted
+                }\nOrders made correctly: ${
+                    sceneData.correctDishes
+                }\nOrders scheduled correctly: ${
+                    sceneData.correctSchedules
+                }\nScheduling accuracy: ${accuracy}%${
+                    !this.passed ? " X" : ""
+                }\nAverage turnaround time: ${Time.toSec(
+                    sceneData.avgTaT
+                )}s\nAverage response time: ${Time.toSec(
+                    sceneData.avgRT
+                )}s\nNight's profit: $${sceneData.shiftProfit.toFixed(2)}`,
+                { color: "white", lineSpacing: 32 }
             )
             .setOrigin(0.5);
-        if (accuracy >= 60 && sceneData.ticketsCompleted >= 1)
-            this.passed = true;
 
-        if (this.passed) CareerData.addMetrics(this, sceneData);
-
-        this.nextButton(userShift);
+        this.nextButtons();
     }
 
-    nextButton(shift: number) {
-        this.add
-            .text(
-                this.cameras.main.centerX,
-                this.cameras.main.centerY + 300,
-                this.passed ? "CONTINUE" : "RETRY",
-                {
-                    backgroundColor: "black",
-                    padding: { top: 5, bottom: 5, left: 5, right: 5 },
-                }
-            )
-            .setInteractive()
-            .on("pointerdown", () => {
-                const nextShift = this.passed ? shift + 2 : shift; //set to two for now so that I can go straight to shift 3
-                this.scene.start(`Shift${nextShift}`);
-                CareerData.setShift(this, nextShift);
-            });
+    sendToScene(sceneKey: string) {
+        this.scene.start(sceneKey);
+        localStorage.setItem(
+            "career",
+            JSON.stringify(this.registry.get("career"))
+        );
+    }
+
+    nextButtons() {
+        let buttonContent = { text: "", onClick: () => {} };
+        const nextShift = this.passed ? this.userShift + 1 : this.userShift;
+        CareerData.setShift(this, nextShift);
+
+        if (this.userShift === 2 && this.passed) {
+            buttonContent.text = "FINISH";
+            buttonContent.onClick = () => {
+                this.sendToScene("FinishWeek");
+            };
+        } else {
+            buttonContent.text = this.passed ? "CONTINUTE" : "RETRY";
+            buttonContent.onClick = () => {
+                this.sendToScene(`Shift${nextShift}`);
+            };
+        }
+
+        new MetricMenuButton(
+            this,
+            this.cameras.main.centerX - 200,
+            this.cameras.main.centerY + 250,
+            buttonContent.text,
+            buttonContent.onClick
+        );
+
+        new MetricMenuButton(
+            this,
+            this.cameras.main.centerX + 200,
+            this.cameras.main.centerY + 250,
+            "EXIT",
+            () => {
+                this.sendToScene("MainMenu");
+            }
+        );
     }
 }

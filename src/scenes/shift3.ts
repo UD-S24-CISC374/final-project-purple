@@ -8,9 +8,9 @@ import ShiftTimer from "../objects/shiftTimer";
 import ShowButton from "../objects/showButton";
 import TicketHolder from "../objects/ticketHolder";
 import CurrentOrder from "../objects/currentOrder";
+import ShiftController from "../util/shiftController";
 
-const LENGTH = 30000;
-const QUANTUM = LENGTH / 3;
+const QUANTUM = ShiftController.LENGTH / 4;
 
 const DIALOG3: Record<number, { text: string; face: number }> = {
     0: {
@@ -26,7 +26,7 @@ const DIALOG3: Record<number, { text: string; face: number }> = {
         face: 1,
     },
     3: {
-        text: "Round robin scheduling assigns tickets in a rotating order. Much like first come first serve however you have a limited amount of time to work on the ticket before it goes back to queue. Then you go to the next.",
+        text: "Round Robin is much like first come first serve. You choose the first ticket, but you have a limited amount of time to complete it until it goes to the end of the queue. Then you proceed to the next ticket",
         face: 0,
     },
     4: {
@@ -67,16 +67,8 @@ export default class Shift3 extends Phaser.Scene {
             this,
             this.cameras.main.width - 15,
             15,
-            LENGTH
+            ShiftController.LENGTH
         );
-
-        // Initialize first 3 tickets
-        this.kitchen.ticketHolders.map((holder, idx) => {
-            this.time.delayedCall(Phaser.Math.Between(3000, 10000), () => {
-                const tick = this.kitchen.generateRandomTicket(idx);
-                this.tickets.push(tick);
-            });
-        });
 
         this.bell = this.add
             .sprite(
@@ -132,34 +124,45 @@ export default class Shift3 extends Phaser.Scene {
         new ShowButton(this, this.cameras.main.width - 90, 200, "HELP", notes);
     }
 
+    initFirstTickets() {
+        let holderIndices = [
+            ...Array(this.kitchen.ticketHolders.length).keys(),
+        ];
+        // Initialize first 3 tickets
+        this.kitchen.ticketHolders.forEach((holder, idx) => {
+            const i = Phaser.Math.Between(0, holderIndices.length - 1);
+            const ranIdx = holderIndices[i];
+            holderIndices.splice(i, 1);
+            this.time.delayedCall(idx * 1000, () => {
+                const tick = this.kitchen.generateRandomTicket(ranIdx);
+                this.tickets.push(tick);
+            });
+        });
+    }
+
     update(time: number) {
         if (this.dialog && this.dialog.fin) {
             this.dialog.hide();
+            this.initFirstTickets();
             this.dialog = null;
         }
 
         // Return all tickets to their original holders
         this.tickets.forEach((ticket) => {
             if (ticket.holder instanceof CurrentOrder && ticket.holder.ticket) {
-                console.log("quant", QUANTUM / 500);
+                console.log("quant", QUANTUM);
                 console.log(
                     "calculation",
-                    Math.floor(
-                        ticket.scene.time.now / 1000 -
-                            ticket.holder.ticket.holderArrivalTime / 1000
-                    )
+                    time - ticket.holder.ticket.holderArrivalTime
                 );
                 if (
-                    Math.floor(
-                        ticket.scene.time.now / 1000 -
-                            ticket.holder.ticket.holderArrivalTime / 1000
-                    ) ===
-                    QUANTUM / 500
+                    Math.abs(
+                        time - ticket.holder.ticket.holderArrivalTime - QUANTUM
+                    ) <= 100
                 ) {
                     if (ticket.holder instanceof CurrentOrder) {
                         ticket.holder.hideRecipe();
-                        ticket.holder.ticket.arrivalTime =
-                            ticket.scene.time.now / 1000;
+                        ticket.holder.ticket.arrivalTime = time;
                     }
                     console.log(`Returning ticket to original holder:`, ticket);
                     ticket.holder.ticket = null; // Clear current holder
@@ -170,11 +173,6 @@ export default class Shift3 extends Phaser.Scene {
                         ticket.holder.y +
                             (ticket.holder instanceof TicketHolder ? 60 : 0)
                     ); // Snap back to original holder
-
-                    console.error(
-                        `Ticket holder or original holder is undefined:`,
-                        ticket
-                    );
                 }
             }
         });

@@ -1,6 +1,15 @@
 import Phaser from "phaser";
 import CurrentOrder from "./currentOrder";
 import TicketHolder from "./ticketHolder";
+import Time from "../util/time";
+
+const qualifierRuntime: Record<string, number> = {
+    Baked: 20000,
+    Raw: 0,
+    Cooked: 10000,
+    Washed: 3000,
+    Prepped: 7000,
+};
 
 export default class Ticket extends Phaser.GameObjects.Sprite {
     details: Phaser.GameObjects.Text;
@@ -11,7 +20,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     arrivalTime: number = 0; // in sec
     elapsedTime: number = 0;
     responseTime: number = 0;
-    cookTime: number = 0;
+    runtime: number = 0;
     holderArrivalTime: number = 0;
 
     constructor(
@@ -33,36 +42,17 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             .on("dragleave", this.dragLeave)
             .on("drop", this.drop);
 
-        this.arrivalTime = scene.time.now / 1000;
+        this.arrivalTime = scene.time.now;
 
         this.holder = holder;
         this.prevHolder = holder;
         this.holder.ticket = this;
 
-        this.details = scene.add
-            .text(
-                this.x,
-                this.y + 200,
-                `Arrived ${this.elapsedTime.toFixed(2)}s ago.`,
-                { backgroundColor: "tomato", padding: { top: 5, left: 5 } }
-            )
-            .setAlpha(0)
-            .setOrigin(0.5, 1)
-            .setDepth(10);
-
         this.requirements = requirements;
 
-        // requirements.forEach((ingrd) => {
-        //     switch (ingrd.split(" ")[0]) {
-        //         case :
-        //             break;
-
-        //         default:
-        //             break;
-        //     }
-
-        // }
-        // );
+        requirements.forEach((ingrd) => {
+            this.runtime += qualifierRuntime[ingrd.split(" ")[0]];
+        });
 
         this.scene.add.tween({
             targets: [this],
@@ -72,6 +62,18 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         });
 
         this.scene.time.delayedCall(400, () => this.setDepth(1));
+
+        this.details = scene.add
+            .text(
+                this.x,
+                this.y + 200,
+                `Arrived ${Time.toSec(this.elapsedTime)}s ago.\n
+                Cook time ${Time.toSec(this.runtime)}s.`,
+                { backgroundColor: "tomato", padding: { top: 5, left: 5 } }
+            )
+            .setAlpha(0)
+            .setOrigin(0.5, 1)
+            .setDepth(10);
 
         scene.events.on("update", this.update, this);
         scene.add.existing(this);
@@ -137,7 +139,11 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     }
 
     showDetails() {
-        this.details.setText(`Arrived ${this.elapsedTime.toFixed(2)}s ago`);
+        this.details.setText(
+            `Arrived ${Time.toSec(this.elapsedTime)}s ago\nRuntime ${Time.toSec(
+                this.runtime
+            )}s`
+        );
         this.details.setAlpha(1);
         this.setDepth(3);
         this.scene.tweens.add({
@@ -158,15 +164,15 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     }
 
     setTurnaroundTime() {
-        this.turnaroundTime = this.scene.time.now / 1000 - this.arrivalTime;
+        this.turnaroundTime = this.scene.time.now - this.arrivalTime;
     }
 
     setResponseTime() {
-        this.responseTime = this.scene.time.now / 1000 - this.arrivalTime;
+        this.responseTime = this.scene.time.now - this.arrivalTime;
     }
 
     update(time: number) {
         this.details.setPosition(this.x, this.y + 120);
-        this.elapsedTime = time / 1000 - this.arrivalTime;
+        this.elapsedTime = time - this.arrivalTime;
     }
 }

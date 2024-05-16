@@ -15,11 +15,7 @@ export default class ShiftGUI extends Phaser.Scene {
                 fontSize: "38px",
             })
             .setInteractive()
-            .on("pointerdown", () => {
-                localStorage.setItem(
-                    "career",
-                    JSON.stringify(this.registry.get("career"))
-                );
+            .on("pointerdown", () => { 
                 this.scene.stop(sceneData.shift);
                 this.scene.start("MainMenu");
             });

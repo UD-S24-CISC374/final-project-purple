@@ -6,8 +6,7 @@ import Dish from "../objects/dish";
 import DialogBox from "../objects/dialogBox";
 import ShiftTimer from "../objects/shiftTimer";
 import ShowButton from "../objects/showButton";
-
-const LENGTH = 16000;
+import ShiftController from "../util/shiftController";
 
 const DIALOG1: Record<number, { text: string; face: number }> = {
     0: {
@@ -63,16 +62,8 @@ export default class Shift1 extends Phaser.Scene {
             this,
             this.cameras.main.width - 15,
             15,
-            LENGTH
+            ShiftController.LENGTH
         );
-
-        // Initialize  first 3 tickets
-        this.kitchen.ticketHolders.map((holder, idx) => {
-            this.time.delayedCall(Phaser.Math.Between(3000, 10000), () => {
-                const tick = this.kitchen.generateRandomTicket(idx);
-                this.tickets.push(tick);
-            });
-        });
 
         this.bell = this.add
             .sprite(
@@ -128,16 +119,33 @@ export default class Shift1 extends Phaser.Scene {
         new ShowButton(this, this.cameras.main.width - 90, 200, "HELP", notes);
     }
 
+    initFirstTickets() {
+        let holderIndices = [
+            ...Array(this.kitchen.ticketHolders.length).keys(),
+        ];
+        // Initialize first 3 tickets
+        this.kitchen.ticketHolders.forEach((holder, idx) => {
+            const i = Phaser.Math.Between(0, holderIndices.length - 1);
+            const ranIdx = holderIndices[i];
+            holderIndices.splice(i, 1);
+            this.time.delayedCall(idx * 1000, () => {
+                const tick = this.kitchen.generateRandomTicket(ranIdx);
+                this.tickets.push(tick);
+            });
+        });
+    }
+
     update(time: number) {
         if (this.dialog && this.dialog.fin) {
             this.dialog.hide();
+            this.initFirstTickets();
             this.dialog = null;
         }
 
         this.timer.updateTimer(time, this.time.startTime);
 
         if (time - this.time.startTime > this.timer.shiftLength)
-            this.kitchen.finishShift("first come first served");
+            this.kitchen.finishShift("First Come First Served");
     }
 
     compareDishToTicket(dish: Dish, ticket: Ticket) {

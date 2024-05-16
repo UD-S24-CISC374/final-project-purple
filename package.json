@@ -36,7 +36,6 @@
     },
     "license": "MIT",
     "dependencies": {
-        "mongodb": "^6.6.1",
         "phaser": "^3.70.0"
     },
     "devDependencies": {

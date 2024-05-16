@@ -84,19 +84,19 @@ const DIALOG8: Dialog = {
         text: "Drag a plate up to the service table (beneath the bell).",
         face: 0,
     },
-    3: {
+    2: {
         text: "This is where you will combine your final ingredients (you may only plate one dish at a time)!",
         face: 2,
     },
-    4: {
-        text: "Next, drag what your raw ingredient onto a station, then drag the newly qualified ingredient onto the service dish.",
+    3: {
+        text: "Next, drag your raw ingredient onto a station, then drag the newly qualified ingredient onto the plate",
         face: 0,
     },
-    5: {
+    4: {
         text: "Once you think the dish matches the ticket, ring the bell and a waiter will serve it.",
         face: 0,
     },
-    6: {
+    5: {
         text: "Good luck! And don't worry if you mess up (for now), we'll supply unlimited tickets until you get it right.",
         face: 2,
     },

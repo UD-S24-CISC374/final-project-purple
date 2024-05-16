@@ -2,8 +2,8 @@ import Phaser from "phaser";
 import Station from "./station";
 import Service from "./stations/service";
 import Trash from "./trash";
-import CareerData from "../data/careerData";
 import Container from "./containers";
+import Metrics from "./metrics";
 
 export enum IngredientState {
     BAKED = "Baked",
@@ -32,6 +32,7 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     container: Container;
     isInContainer: boolean = true;
     costPopup: Phaser.GameObjects.Text;
+    currMetrics: Metrics;
 
     constructor(
         scene: Phaser.Scene,
@@ -39,7 +40,8 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
         y: number,
         name: string,
         container: Container,
-        cost: number
+        cost: number,
+        currMetrics: Metrics
     ) {
         super(scene, x, y, name);
         this.startX = x;
@@ -75,6 +77,7 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
             });
 
         this.cost = cost;
+        this.currMetrics = currMetrics;
 
         this.statusIcon = scene.add
             .sprite(x, y, "sink-status")
@@ -104,7 +107,8 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
                 this.startY,
                 this.name,
                 this.container,
-                this.cost
+                this.cost,
+                this.currMetrics
             );
             this.container.ingredients.push(temp);
             this.isInContainer = false;
@@ -182,7 +186,7 @@ export default class Ingredient extends Phaser.GameObjects.Sprite {
     }
 
     subtractCost() {
-        CareerData.addProfit(this.scene, -this.cost);
+        this.currMetrics.shiftProfit -= this.cost;
         this.popupTweens();
     }
 
