@@ -207,9 +207,16 @@ export default class Kitchen extends Phaser.GameObjects.Image {
     }
 
     showResult(dishRes: boolean, scheduleRes: boolean, nextTicket: Ticket) {
-        this.resImg.setTexture(
-            dishRes && scheduleRes ? "right-dish" : "wrong-dish"
-        );
+        let tex = "";
+        if (dishRes && scheduleRes) {
+            tex = "right-dish";
+        } else if (dishRes || scheduleRes) {
+            tex = "mix-dish";
+        } else {
+            tex = "wrong-dish";
+        }
+
+        this.resImg.setTexture(tex);
 
         dishRes
             ? this.dishRes.setText(`Correct Ingredients`).setColor("green")
@@ -218,7 +225,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             ? this.scheduleRes.setText(`Correctly Scheduled`).setColor("green")
             : this.scheduleRes
                   .setText(
-                      `Poorly scheduled, the right one arrived ${Time.toSec(
+                      `The right one arrived ${Time.toSec(
                           nextTicket.elapsedTime
                       )}s ago with a ${Time.toSec(
                           nextTicket.runtime
