@@ -12,6 +12,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
     elapsedTime: number = 0;
     responseTime: number = 0;
     cookTime: number = 0;
+    holderArrivalTime: number = 0;
 
     constructor(
         scene: Phaser.Scene,
@@ -120,6 +121,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             !target.ticket &&
             (target instanceof TicketHolder || target instanceof CurrentOrder)
         ) {
+            this.holderArrivalTime = this.scene.time.now;
             this.prevHolder = this.holder;
             this.holder.ticket = null; // set prev holder to empty
             this.holder = target; // assign new holder

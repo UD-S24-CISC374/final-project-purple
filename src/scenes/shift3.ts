@@ -9,8 +9,8 @@ import ShowButton from "../objects/showButton";
 import TicketHolder from "../objects/ticketHolder";
 import CurrentOrder from "../objects/currentOrder";
 
-const LENGTH = 16000;
-const QUANTUM = LENGTH / 1.5;
+const LENGTH = 30000;
+const QUANTUM = LENGTH / 3;
 
 const DIALOG3: Record<number, { text: string; face: number }> = {
     0: {
@@ -138,34 +138,46 @@ export default class Shift3 extends Phaser.Scene {
             this.dialog = null;
         }
 
-        if (Math.floor(time / 1000) % Math.floor(QUANTUM / 1000) === 0) {
-            console.log(
-                `Quantum ${this.currentQuantum} started at ${this.quantumTimeStart}`
-            );
-            this.quantumTimeStart = time;
-            this.currentQuantum++;
-
-            // Return all tickets to their original holders
-            this.tickets.forEach((ticket) => {
-                if (ticket.holder instanceof CurrentOrder) {
-                    ticket.holder.hideRecipe();
-                }
-                console.log(`Returning ticket to original holder:`, ticket);
-                ticket.holder.ticket = null; // Clear current holder
-                ticket.holder = ticket.prevHolder; // Set holder to original holder
-                ticket.holder.ticket = ticket; // Set original holder's ticket to this
-                ticket.setPosition(
-                    ticket.holder.x,
-                    ticket.holder.y +
-                        (ticket.holder instanceof TicketHolder ? 60 : 0)
-                ); // Snap back to original holder
-
-                console.error(
-                    `Ticket holder or original holder is undefined:`,
-                    ticket
+        // Return all tickets to their original holders
+        this.tickets.forEach((ticket) => {
+            if (ticket.holder instanceof CurrentOrder && ticket.holder.ticket) {
+                console.log("quant", QUANTUM / 500);
+                console.log(
+                    "calculation",
+                    Math.floor(
+                        ticket.scene.time.now / 1000 -
+                            ticket.holder.ticket.holderArrivalTime / 1000
+                    )
                 );
-            });
-        }
+                if (
+                    Math.floor(
+                        ticket.scene.time.now / 1000 -
+                            ticket.holder.ticket.holderArrivalTime / 1000
+                    ) ===
+                    QUANTUM / 500
+                ) {
+                    if (ticket.holder instanceof CurrentOrder) {
+                        ticket.holder.hideRecipe();
+                        ticket.holder.ticket.arrivalTime =
+                            ticket.scene.time.now / 1000;
+                    }
+                    console.log(`Returning ticket to original holder:`, ticket);
+                    ticket.holder.ticket = null; // Clear current holder
+                    ticket.holder = ticket.prevHolder; // Set holder to original holder
+                    ticket.holder.ticket = ticket; // Set original holder's ticket to this
+                    ticket.setPosition(
+                        ticket.holder.x,
+                        ticket.holder.y +
+                            (ticket.holder instanceof TicketHolder ? 60 : 0)
+                    ); // Snap back to original holder
+
+                    console.error(
+                        `Ticket holder or original holder is undefined:`,
+                        ticket
+                    );
+                }
+            }
+        });
 
         this.timer.updateTimer(time, this.time.startTime);
 
