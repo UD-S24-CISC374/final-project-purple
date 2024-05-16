@@ -14,10 +14,14 @@ const DIALOG1: Record<number, { text: string; face: number }> = {
         face: 2,
     },
     1: {
-        text: "This means that you should be scheduling tickets that will take the least amount of time to cook.",
+        text: "This means that you should be scheduling tickets that with the shortest [RUNTIME] first.",
         face: 0,
     },
     2: {
+        text: "A job's runtime is a measure of how long it will execute for.",
+        face: 0,
+    },
+    3: {
         text: "Same deal; as long as you schedule at least 60% of your tickets this way before closing, we should be fine.",
         face: 2,
     },
@@ -52,14 +56,6 @@ export default class Shift2 extends Phaser.Scene {
             15,
             ShiftController.LENGTH
         );
-
-        // Initialize  first 3 tickets
-        this.kitchen.ticketHolders.map((holder, idx) => {
-            this.time.delayedCall(Phaser.Math.Between(3000, 10000), () => {
-                const tick = this.kitchen.generateRandomTicket(idx);
-                this.tickets.push(tick);
-            });
-        });
 
         this.bell = this.add
             .sprite(
@@ -115,9 +111,20 @@ export default class Shift2 extends Phaser.Scene {
         new ShowButton(this, this.cameras.main.width - 90, 200, "HELP", notes);
     }
 
+    initFirstTickets() {
+        // Initialize first 3 tickets
+        this.kitchen.ticketHolders.map((holder, idx) => {
+            this.time.delayedCall(idx * 1000, () => {
+                const tick = this.kitchen.generateRandomTicket(idx);
+                this.tickets.push(tick);
+            });
+        });
+    }
+
     update(time: number) {
         if (this.dialog && this.dialog.fin) {
             this.dialog.hide();
+            this.initFirstTickets();
             this.dialog = null;
         }
 

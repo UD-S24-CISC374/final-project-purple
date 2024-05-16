@@ -65,14 +65,6 @@ export default class Shift1 extends Phaser.Scene {
             ShiftController.LENGTH
         );
 
-        // Initialize  first 3 tickets
-        this.kitchen.ticketHolders.map((holder, idx) => {
-            this.time.delayedCall(Phaser.Math.Between(3000, 10000), () => {
-                const tick = this.kitchen.generateRandomTicket(idx);
-                this.tickets.push(tick);
-            });
-        });
-
         this.bell = this.add
             .sprite(
                 this.kitchen.service.x,
@@ -127,9 +119,20 @@ export default class Shift1 extends Phaser.Scene {
         new ShowButton(this, this.cameras.main.width - 90, 200, "HELP", notes);
     }
 
+    initFirstTickets() {
+        // Initialize first 3 tickets
+        this.kitchen.ticketHolders.forEach((holder, idx) => {
+            this.time.delayedCall(idx * 1000, () => {
+                const tick = this.kitchen.generateRandomTicket(idx);
+                this.tickets.push(tick);
+            });
+        });
+    }
+
     update(time: number) {
         if (this.dialog && this.dialog.fin) {
             this.dialog.hide();
+            this.initFirstTickets();
             this.dialog = null;
         }
 
