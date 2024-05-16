@@ -4,6 +4,7 @@ import CareerData from "../data/careerData";
 import Title from "../objects/title";
 import WeeklyReport from "../objects/weeklyReport";
 import audioManager from "../objects/audioManager"; // Import the AudioManager
+import ShiftController from "../util/shiftController";
 
 export default class CareerMenu extends Phaser.Scene {
     career: CareerData;
@@ -40,7 +41,9 @@ export default class CareerMenu extends Phaser.Scene {
             200,
             250,
             "continue",
-            this.career.shift > 2 ? "FinishWeek" : `Shift${this.career.shift}`
+            this.career.shift > ShiftController.LAST_SHIFT
+                ? "FinishWeek"
+                : `Shift${this.career.shift}`
         );
 
         this.add
@@ -90,7 +93,7 @@ export default class CareerMenu extends Phaser.Scene {
             case 3:
                 return "Round Robin";
             default:
-                return "Something went horribly wrong...";
+                return "FINISHED";
         }
     }
 }
