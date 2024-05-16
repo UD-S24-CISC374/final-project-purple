@@ -7,6 +7,7 @@ import DialogBox from "../objects/dialogBox";
 import ShiftTimer from "../objects/shiftTimer";
 import ShowButton from "../objects/showButton";
 import TicketHolder from "../objects/ticketHolder";
+import CurrentOrder from "../objects/currentOrder";
 
 const LENGTH = 16000;
 const QUANTUM = LENGTH / 1.5;
@@ -146,6 +147,9 @@ export default class Shift3 extends Phaser.Scene {
 
             // Return all tickets to their original holders
             this.tickets.forEach((ticket) => {
+                if (ticket.holder instanceof CurrentOrder) {
+                    ticket.holder.hideRecipe();
+                }
                 console.log(`Returning ticket to original holder:`, ticket);
                 ticket.holder.ticket = null; // Clear current holder
                 ticket.holder = ticket.prevHolder; // Set holder to original holder
@@ -155,6 +159,7 @@ export default class Shift3 extends Phaser.Scene {
                     ticket.holder.y +
                         (ticket.holder instanceof TicketHolder ? 60 : 0)
                 ); // Snap back to original holder
+
                 console.error(
                     `Ticket holder or original holder is undefined:`,
                     ticket
