@@ -26,7 +26,7 @@ export default class MetricReport extends Phaser.Scene {
 
         accuracy = isNaN(accuracy) ? 0 : accuracy;
 
-        if (accuracy >= 0 && sceneData.ticketsCompleted >= 0)
+        if (accuracy >= 60 && sceneData.ticketsCompleted >= 5)
             this.passed = true;
 
         if (this.passed) {

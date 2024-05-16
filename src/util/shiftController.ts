@@ -1,3 +1,3 @@
 export default class ShiftController {
-    static LENGTH: number = 16000;
+    static LENGTH: number = 160000;
 }
