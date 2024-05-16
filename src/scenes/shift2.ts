@@ -94,7 +94,7 @@ export default class Shift2 extends Phaser.Scene {
             .sprite(
                 this.cameras.main.centerX,
                 this.cameras.main.centerY,
-                "fcfs-obj"
+                "sjf-obj"
             )
             .setScale(0.5);
 
