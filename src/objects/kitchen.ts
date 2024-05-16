@@ -121,7 +121,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             this.showResult(
                 dishRes,
                 scheduleRes as boolean,
-                (nxtTicket as Ticket).elapsedTime
+                nxtTicket as Ticket
             );
 
             this.updateMetrics(scheduleRes as boolean, dishRes, currTicket);
@@ -206,7 +206,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         );
     }
 
-    showResult(dishRes: boolean, scheduleRes: boolean, nextTicketTime: number) {
+    showResult(dishRes: boolean, scheduleRes: boolean, nextTicket: Ticket) {
         this.resImg.setTexture(
             dishRes && scheduleRes ? "right-dish" : "wrong-dish"
         );
@@ -219,8 +219,10 @@ export default class Kitchen extends Phaser.GameObjects.Image {
             : this.scheduleRes
                   .setText(
                       `Poorly scheduled, the right one arrived ${Time.toSec(
-                          nextTicketTime
-                      )}s ago`
+                          nextTicket.elapsedTime
+                      )}s ago with a ${Time.toSec(
+                          nextTicket.runtime
+                      )}s runtime!`
                   )
                   .setColor("red");
 

@@ -120,10 +120,16 @@ export default class Shift1 extends Phaser.Scene {
     }
 
     initFirstTickets() {
+        let holderIndices = [
+            ...Array(this.kitchen.ticketHolders.length).keys(),
+        ];
         // Initialize first 3 tickets
         this.kitchen.ticketHolders.forEach((holder, idx) => {
+            const i = Phaser.Math.Between(0, holderIndices.length - 1);
+            const ranIdx = holderIndices[i];
+            holderIndices.splice(i, 1);
             this.time.delayedCall(idx * 1000, () => {
-                const tick = this.kitchen.generateRandomTicket(idx);
+                const tick = this.kitchen.generateRandomTicket(ranIdx);
                 this.tickets.push(tick);
             });
         });

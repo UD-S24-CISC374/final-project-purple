@@ -112,10 +112,16 @@ export default class Shift2 extends Phaser.Scene {
     }
 
     initFirstTickets() {
+        let holderIndices = [
+            ...Array(this.kitchen.ticketHolders.length).keys(),
+        ];
         // Initialize first 3 tickets
-        this.kitchen.ticketHolders.map((holder, idx) => {
+        this.kitchen.ticketHolders.forEach((holder, idx) => {
+            const i = Phaser.Math.Between(0, holderIndices.length - 1);
+            const ranIdx = holderIndices[i];
+            holderIndices.splice(i, 1);
             this.time.delayedCall(idx * 1000, () => {
-                const tick = this.kitchen.generateRandomTicket(idx);
+                const tick = this.kitchen.generateRandomTicket(ranIdx);
                 this.tickets.push(tick);
             });
         });
@@ -145,7 +151,7 @@ export default class Shift2 extends Phaser.Scene {
     compareTicketToAlgorithm(ticket: Ticket, tickets: Ticket[]) {
         const nxtTicket = tickets.reduce(
             (first, curr): Ticket =>
-                curr.arrivalTime < first.arrivalTime ? curr : first,
+                curr.runtime < first.runtime ? curr : first,
             tickets[0]
         );
         return [ticket === nxtTicket, nxtTicket];
