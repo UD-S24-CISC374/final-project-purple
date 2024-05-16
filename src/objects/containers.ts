@@ -4,6 +4,7 @@ import Ingredient from "./ingredient";
 export default class Container extends Phaser.GameObjects.Zone {
     public inside: Phaser.GameObjects.Image;
     ingredients: Ingredient[];
+    private static currentOpenContainer: Container | null = null;
 
     constructor(
         scene: Phaser.Scene,
@@ -14,7 +15,7 @@ export default class Container extends Phaser.GameObjects.Zone {
     ) {
         super(scene, x, y, 150, 270);
         this.ingredients = ingredients;
-        this.setInteractive().on("pointerdown", this.click);
+        this.setInteractive().on("pointerdown", this.click, this);
         this.inside = scene.add.image(250, 450, image).setAlpha(0);
         scene.add.existing(this);
     }
@@ -23,7 +24,11 @@ export default class Container extends Phaser.GameObjects.Zone {
         if (this.inside.alpha > 0) {
             this.closeContainer();
         } else {
+            if (Container.currentOpenContainer) {
+                Container.currentOpenContainer.closeContainer();
+            }
             this.openContainer();
+            Container.currentOpenContainer = this;
         }
     }
 
@@ -39,7 +44,11 @@ export default class Container extends Phaser.GameObjects.Zone {
         this.ingredients.forEach((ingredient) => {
             if (ingredient.isInContainer) ingredient.setVisible(false);
         });
+        if (Container.currentOpenContainer === this) {
+            Container.currentOpenContainer = null;
+        }
     }
+
     setIngredients(ingredients: Ingredient[]) {
         this.ingredients = ingredients;
         this.ingredients.forEach((ingredient) => ingredient.setVisible(false));
