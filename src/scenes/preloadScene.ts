@@ -75,6 +75,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("shortest job first", "assets/gui/sjf.png");
         this.load.image("round robin", "assets/gui/rr.png");
         this.load.image("finish", "assets/gui/fin.png");
+        this.load.image("comp", "assets/gui/comp.png");
     }
 
     create() {

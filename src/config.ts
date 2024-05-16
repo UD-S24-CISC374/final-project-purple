@@ -10,6 +10,7 @@ import Tutorial from "./scenes/tutorial";
 import MetricReport from "./scenes/metricReport";
 import Shift2 from "./scenes/shift2";
 import FinishWeek from "./scenes/finishWeek";
+import CompetitiveMenu from "./scenes/competitiveMenu";
 
 const DEFAULT_WIDTH = 1280;
 const DEFAULT_HEIGHT = 720;
@@ -31,6 +32,7 @@ export const CONFIG = {
         MainMenu,
         TutorialMenu,
         CareerMenu,
+        CompetitiveMenu,
         Tutorial,
         MetricReport,
         Shift1,
