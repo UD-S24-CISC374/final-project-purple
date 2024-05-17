@@ -11,12 +11,15 @@ export default class MetricReport extends Phaser.Scene {
     report: Phaser.GameObjects.Text;
     passed: boolean = false;
     userShift: number = 1;
+    isComp: boolean = false;
 
     constructor() {
         super({ key: "MetricReport" });
     }
 
     create(sceneData: Metrics) {
+        this.isComp = sceneData.algo === "Competitive";
+
         this.userShift = this.registry.get("career").shift;
         let accuracy =
             parseFloat(
@@ -33,8 +36,10 @@ export default class MetricReport extends Phaser.Scene {
         )
             this.passed = true;
 
-        if (this.passed) {
+        if (this.passed && !this.isComp) {
             CareerData.addMetrics(this, sceneData);
+            new Confetti(this, 20);
+        } else if (this.isComp) {
             new Confetti(this, 20);
         }
 
@@ -61,7 +66,44 @@ export default class MetricReport extends Phaser.Scene {
             )
             .setOrigin(0.5);
 
-        this.nextButtons();
+        this.isComp
+            ? new MetricMenuButton(
+                  this,
+                  this.cameras.main.centerX,
+                  this.cameras.main.centerY + 250,
+                  "SUBMIT",
+                  () => {
+                      const compObj = this.registry.get("competitive");
+                      const newProf =
+                          compObj.best_profit >= sceneData.shiftProfit
+                              ? compObj.best_profit
+                              : sceneData.shiftProfit;
+                      compObj.best_profit = newProf;
+                      this.compUpdate(newProf, compObj.id).finally(() => {
+                          this.scene.start("CompetitiveMenu");
+                      });
+                  }
+              )
+            : this.nextButtons();
+    }
+
+    async compUpdate(profit: number, id: string) {
+        try {
+            const res = await fetch(
+                `https://schedulsine-api.onrender.com/users/${id}/profit`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ profit }),
+                }
+            );
+            const data = await res.json();
+            this.registry.set("competitive", data);
+        } catch (err) {
+            console.error("Failed to update profit", err);
+        }
     }
 
     sendToScene(sceneKey: string) {

@@ -48,7 +48,7 @@ export default class MainMenu extends Phaser.Scene {
             this.cameras.main.width - 200,
             400,
             "comp",
-            "competitiveMenu"
+            "CompetitiveMenu"
         );
 
         audioManager.playMusic(this, "menuAudio", { volume: 0.15 }); // Play music using AudioManager

@@ -51,6 +51,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("mix-dish", "assets/img/mix-dish.png");
         this.load.image("sjf-obj", "assets/img/sjf-obj.png");
         this.load.image("round-robin-obj", "assets/img/round-robin-obj.png");
+        this.load.image("comp-obj", "assets/img/comp-obj.png");
 
         //Audios
 
@@ -71,12 +72,14 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("title", "assets/gui/title.png");
         this.load.image("career-title", "assets/gui/career-title.png");
         this.load.image("tutorial-title", "assets/gui/tutorial-title.png");
+        this.load.image("competitive", "assets/gui/comp-title.png");
         this.load.image("report", "assets/img/report.png");
         this.load.image("first come first served", "assets/gui/fcfs.png");
         this.load.image("shortest job first", "assets/gui/sjf.png");
         this.load.image("round robin", "assets/gui/rr.png");
         this.load.image("finish", "assets/gui/fin.png");
         this.load.image("comp", "assets/gui/comp.png");
+        this.load.html("login", "assets/html/login.html");
     }
 
     create() {
