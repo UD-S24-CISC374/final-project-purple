@@ -14,12 +14,14 @@ const qualifierRuntime: Record<string, number> = {
 export default class Ticket extends Phaser.GameObjects.Sprite {
     details: Phaser.GameObjects.Text;
     holder: TicketHolder | CurrentOrder;
+    prevHolder: TicketHolder | CurrentOrder;
     requirements: Set<string>;
     turnaroundTime: number = 0; // in sec
     arrivalTime: number = 0; // in sec
     elapsedTime: number = 0;
     responseTime: number = 0;
     runtime: number = 0;
+    holderArrivalTime: number = 0;
 
     constructor(
         scene: Phaser.Scene,
@@ -43,6 +45,7 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
         this.arrivalTime = scene.time.now;
 
         this.holder = holder;
+        this.prevHolder = holder;
         this.holder.ticket = this;
 
         this.requirements = requirements;
@@ -120,6 +123,8 @@ export default class Ticket extends Phaser.GameObjects.Sprite {
             !target.ticket &&
             (target instanceof TicketHolder || target instanceof CurrentOrder)
         ) {
+            this.holderArrivalTime = this.scene.time.now;
+            this.prevHolder = this.holder;
             this.holder.ticket = null; // set prev holder to empty
             this.holder = target; // assign new holder
             this.holder.ticket = this; // set new holder's ticket to this

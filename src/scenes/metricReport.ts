@@ -5,6 +5,7 @@ import Confetti from "../objects/confetti";
 import Time from "../util/time";
 import MetricMenuButton from "../objects/metricMenuButton";
 import Title from "../objects/title";
+import ShiftController from "../util/shiftController";
 
 export default class MetricReport extends Phaser.Scene {
     report: Phaser.GameObjects.Text;
@@ -26,7 +27,10 @@ export default class MetricReport extends Phaser.Scene {
 
         accuracy = isNaN(accuracy) ? 0 : accuracy;
 
-        if (accuracy >= 60 && sceneData.ticketsCompleted >= 6)
+        if (
+            accuracy >= ShiftController.PASSING_ACCURACY &&
+            sceneData.ticketsCompleted >= ShiftController.PASSING_TIX
+        )
             this.passed = true;
 
         if (this.passed) {
@@ -73,7 +77,7 @@ export default class MetricReport extends Phaser.Scene {
         const nextShift = this.passed ? this.userShift + 1 : this.userShift;
         CareerData.setShift(this, nextShift);
 
-        if (this.userShift === 2 && this.passed) {
+        if (nextShift > ShiftController.LAST_SHIFT && this.passed) {
             buttonContent.text = "FINISH";
             buttonContent.onClick = () => {
                 this.sendToScene("FinishWeek");

@@ -92,7 +92,10 @@ export default class Kitchen extends Phaser.GameObjects.Image {
 
     submitDish(
         cmpFn1: (dish: Dish, ticket: Ticket) => boolean,
-        cmpFn2: (ticket: Ticket, tickets: Ticket[]) => (boolean | Ticket)[],
+        cmpFn2: (
+            ticket: Ticket,
+            tickets: Ticket[]
+        ) => (boolean | Ticket | undefined)[],
         tickets: Ticket[]
     ) {
         if (this.service.dish && this.currentOrder.ticket) {
