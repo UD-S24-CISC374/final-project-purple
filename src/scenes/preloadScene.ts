@@ -50,6 +50,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("paycheck", "assets/img/paycheck.png");
         this.load.image("mix-dish", "assets/img/mix-dish.png");
         this.load.image("sjf-obj", "assets/img/sjf-obj.png");
+        this.load.image("round-robin-obj", "assets/img/round-robin-obj.png");
 
         //Audios
 
