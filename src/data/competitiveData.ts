@@ -1,6 +1,11 @@
 export default class CompetitiveData {
-    userID: string;
-    bestProfit: number;
+    id: string;
+    username: string;
+    best_profit: number;
 
-    constructor() {}
+    constructor(id: string, username: string, best_profit: number) {
+        this.id = id;
+        this.username = username;
+        this.best_profit = best_profit;
+    }
 }

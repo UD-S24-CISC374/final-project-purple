@@ -56,7 +56,7 @@ router.get("/leaderboard", async (req, res) => {
         const collection = await db.collection("users");
         const results = await collection
             .aggregate([
-                { $project: { name: 1, best_profit: 1 } },
+                { $project: { username: 1, best_profit: 1 } },
                 { $sort: { best_profit: -1 } },
                 { $limit: 10 },
             ])
