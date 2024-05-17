@@ -1,0 +1,38 @@
+<form>
+    <input
+        type="text"
+        id="username"
+        placeholder="Username"
+        required
+        maxlength="13"
+    />
+    <input type="text" id="password" placeholder="Password" required />
+    <input type="submit" id="login" value="LOGIN" />
+</form>
+
+<style>
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    input {
+        margin: 1.5rem;
+        font-size: 32px;
+    }
+
+    #username,
+    #password {
+        height: 60px;
+    }
+
+    #login {
+        width: 200px;
+        height: 70px;
+        font-weight: bolder;
+        background-color: #c7f0ff;
+        color: black;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+</style>

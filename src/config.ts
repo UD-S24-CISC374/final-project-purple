@@ -1,15 +1,26 @@
 import Phaser from "phaser";
-import MainScene from "./scenes/mainScene";
+import Shift1 from "./scenes/shift1";
+import Shift3 from "./scenes/shift3";
 import PreloadScene from "./scenes/preloadScene";
+import MainMenu from "./scenes/mainMenu";
+import ShiftGUI from "./scenes/shiftGUI";
+import TutorialMenu from "./scenes/tutorialMenu";
+import CareerMenu from "./scenes/careerMenu";
+import Tutorial from "./scenes/tutorial";
+import MetricReport from "./scenes/metricReport";
+import Shift2 from "./scenes/shift2";
+import FinishWeek from "./scenes/finishWeek";
+import CompetitiveMenu from "./scenes/competitiveMenu";
+import ShiftX from "./scenes/shiftX";
 
 const DEFAULT_WIDTH = 1280;
 const DEFAULT_HEIGHT = 720;
 
 export const CONFIG = {
-    title: "My Untitled Phaser 3 Game",
-    version: "0.0.1",
+    title: "Schedulsine",
+    version: "beta",
     type: Phaser.AUTO,
-    backgroundColor: "#ffffff",
+    backgroundColor: "903",
     scale: {
         parent: "phaser-game",
         mode: Phaser.Scale.FIT,
@@ -17,11 +28,25 @@ export const CONFIG = {
         width: DEFAULT_WIDTH,
         height: DEFAULT_HEIGHT,
     },
-    scene: [PreloadScene, MainScene],
+    scene: [
+        PreloadScene,
+        MainMenu,
+        TutorialMenu,
+        CareerMenu,
+        CompetitiveMenu,
+        Tutorial,
+        MetricReport,
+        Shift1,
+        Shift3,
+        Shift2,
+        ShiftX,
+        FinishWeek,
+        ShiftGUI,
+    ],
     physics: {
         default: "arcade",
         arcade: {
-            debug: false,
+            debug: true,
             gravity: { y: 300 },
         },
     },
@@ -32,7 +57,10 @@ export const CONFIG = {
         gamepad: false,
     },
     render: {
-        pixelArt: false,
+        pixelArt: true,
         antialias: true,
+    },
+    dom: {
+        createContainer: true,
     },
 };

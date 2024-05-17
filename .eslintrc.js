@@ -19,7 +19,7 @@ module.exports = {
     parserOptions: {
         project: ["./tsconfig.json"],
     },
-    ignorePatterns: [".eslintrc.js"],
+    ignorePatterns: [".eslintrc.js", "/api"],
     rules: {
         // https://stackoverflow.com/questions/57802057/eslint-configuring-no-unused-vars-for-typescript
         // Use typescript's checker for unused vars (critical for Enums)
