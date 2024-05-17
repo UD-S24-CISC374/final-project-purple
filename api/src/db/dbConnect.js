@@ -1,3 +1,4 @@
+// Most of this is from the connection code provided by mongodb.com
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri = process.env.CONN_URI || "";
 
@@ -13,11 +14,8 @@ let conn;
 
 async function connDb() {
     try {
-        conn = await client.connect();
-        conn = await client.db();
-        console.log(
-            "Pinged your deployment. You successfully connected to MongoDB!"
-        );
+        await client.connect();
+        conn = client.db("competitive"); // just one db from the cluster, maybe we'll have more ;)
         return conn;
     } catch (e) {
         console.error(e);
