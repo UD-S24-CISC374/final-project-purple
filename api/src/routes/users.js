@@ -19,23 +19,33 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
     const collection = await db.collection("users");
     const { username, password } = req.body;
-    console.log(req.body);
+
     try {
         const existing = await collection.findOne({ username });
         if (existing) {
             const verified = await bcrypt.compare(password, existing.password);
             verified
-                ? res.send("Logged in").status(200)
-                : res.send("Wrong login").status(400);
+                ? res
+                      .send({
+                          id: existing._id,
+                          username,
+                          best_profit: existing.best_profit,
+                      })
+                      .status(200)
+                : res.send("Wrong login or username taken").status(400);
         } else {
             const salt = await bcrypt.genSalt();
             const hashedPass = await bcrypt.hash(password, salt);
 
             const newUser = { username, password: hashedPass, best_profit: 0 };
-            await collection.insertOne(newUser);
+            const insertion = await collection.insertOne(newUser);
+            res.send({
+                id: insertion.insertedId,
+                username: newUser.username,
+                best_profit: newUser.best_profit,
+            }).status(200);
         }
-    } catch (err) {
-        console.error("Ahh", err);
+    } catch {
         res.send("FAILED TO LOGIN").status(500);
     }
 });
