@@ -71,12 +71,39 @@ export default class MetricReport extends Phaser.Scene {
                   this,
                   this.cameras.main.centerX,
                   this.cameras.main.centerY + 250,
-                  "BACK",
+                  "SUBMIT",
                   () => {
-                      this.scene.start("CompetitiveMenu");
+                      const compObj = this.registry.get("competitive");
+                      const newProf =
+                          compObj.best_profit >= sceneData.shiftProfit
+                              ? compObj.best_profit
+                              : sceneData.shiftProfit;
+                      compObj.best_profit = newProf;
+                      this.compUpdate(newProf, compObj.id).finally(() => {
+                          this.scene.start("CompetitiveMenu");
+                      });
                   }
               )
             : this.nextButtons();
+    }
+
+    async compUpdate(profit: number, id: string) {
+        try {
+            const res = await fetch(
+                `http://localhost:3000/users/${id}/profit`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ profit }),
+                }
+            );
+            const data = await res.json();
+            this.registry.set("competitive", data);
+        } catch (err) {
+            console.error("Failed to update profit", err);
+        }
     }
 
     sendToScene(sceneKey: string) {

@@ -45,6 +45,7 @@ export default class Shift3 extends Phaser.Scene {
     timer: ShiftTimer;
     quantumTimeStart: number;
     currentQuantum: number;
+    quantumTimer: Phaser.GameObjects.Text;
 
     constructor() {
         super({ key: "Shift3" });
@@ -121,6 +122,15 @@ export default class Shift3 extends Phaser.Scene {
             "notes"
         );
 
+        this.quantumTimer = this.add
+            .text(
+                this.kitchen.currentOrder.x,
+                this.kitchen.currentOrder.y - 90,
+                "15s",
+                { color: "black" }
+            )
+            .setOrigin(0.5);
+
         new ShowButton(this, this.cameras.main.width - 90, 200, "HELP", notes);
     }
 
@@ -150,10 +160,12 @@ export default class Shift3 extends Phaser.Scene {
         // Return all tickets to their original holders
         this.tickets.forEach((ticket) => {
             if (ticket.holder instanceof CurrentOrder && ticket.holder.ticket) {
-                console.log("quant", QUANTUM);
-                console.log(
-                    "calculation",
-                    time - ticket.holder.ticket.holderArrivalTime
+                this.quantumTimer.setText(
+                    `${(
+                        (QUANTUM -
+                            (time - ticket.holder.ticket.holderArrivalTime)) /
+                        1000
+                    ).toFixed(0)}s`
                 );
                 if (
                     Math.abs(
@@ -173,6 +185,7 @@ export default class Shift3 extends Phaser.Scene {
                         ticket.holder.y +
                             (ticket.holder instanceof TicketHolder ? 60 : 0)
                     ); // Snap back to original holder
+                    this.quantumTimer.setText("15s");
                 }
             }
         });

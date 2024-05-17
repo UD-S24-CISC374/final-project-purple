@@ -62,7 +62,7 @@ export default class ShiftX extends Phaser.Scene {
             .sprite(
                 this.cameras.main.centerX,
                 this.cameras.main.centerY,
-                "fcfs-obj"
+                "comp-obj"
             )
             .setScale(0.5);
 

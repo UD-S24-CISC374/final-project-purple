@@ -11,6 +11,7 @@ import MetricReport from "./scenes/metricReport";
 import Shift2 from "./scenes/shift2";
 import FinishWeek from "./scenes/finishWeek";
 import CompetitiveMenu from "./scenes/competitiveMenu";
+import ShiftX from "./scenes/shiftX";
 
 const DEFAULT_WIDTH = 1280;
 const DEFAULT_HEIGHT = 720;
@@ -38,6 +39,7 @@ export const CONFIG = {
         Shift1,
         Shift3,
         Shift2,
+        ShiftX,
         FinishWeek,
         ShiftGUI,
     ],

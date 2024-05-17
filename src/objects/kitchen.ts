@@ -34,6 +34,7 @@ export default class Kitchen extends Phaser.GameObjects.Image {
     resImg: Phaser.GameObjects.Image;
     dishRes: Phaser.GameObjects.Text;
     scheduleRes: Phaser.GameObjects.Text;
+    profitTracker: Phaser.GameObjects.Text;
 
     constructor(scene: Phaser.Scene) {
         super(
@@ -88,6 +89,11 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         this.initIngredientHolders();
         this.initStations();
         this.trash = new Trash(scene, scene.cameras.main.width - 210, 280);
+        this.profitTracker = scene.add
+            .text(1000, 15, `Profit: $${this.metrics.shiftProfit.toFixed(2)}`, {
+                color: "white",
+            })
+            .setOrigin(0);
     }
 
     submitDish(
@@ -158,6 +164,10 @@ export default class Kitchen extends Phaser.GameObjects.Image {
         let profit = dish.getCost() + (dish.ingredients.length > 2 ? 20 : 10);
         profit += scheduleRes ? profit * 0.2 : 0;
         if (dishRes) this.metrics.shiftProfit += profit;
+
+        this.profitTracker
+            .setText(`Profit: $${this.metrics.shiftProfit.toFixed(2)}`)
+            .setColor(this.metrics.shiftProfit < 0 ? "red" : "green");
     }
 
     cleanOrder(ticket: Ticket, dish: Dish) {

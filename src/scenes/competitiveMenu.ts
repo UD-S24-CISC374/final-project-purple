@@ -1,29 +1,42 @@
 import Phaser from "phaser";
 import CompetitiveData from "../data/competitiveData";
 import Title from "../objects/title";
+//import MetricMenuButton from "../objects/metricMenuButton";
+import MenuButton from "../objects/menuButton";
+import CareerData from "../data/careerData";
 import MetricMenuButton from "../objects/metricMenuButton";
 
 export default class CompetitiveMenu extends Phaser.Scene {
     competitiveData: CompetitiveData;
     form: Phaser.GameObjects.DOMElement;
+    play: MenuButton;
+    error: Phaser.GameObjects.Text;
     leaderboardNames: Phaser.GameObjects.Text;
     leaderboardProfits: Phaser.GameObjects.Text;
+    logout: MetricMenuButton;
 
     constructor() {
         super({ key: "CompetitiveMenu" });
     }
 
-    init() {
-        if (localStorage.getItem("competitive")) {
-            this.form.setAlpha(0);
-        }
-        // get comp data from local
-        //      if can, then skip login
-        //      else, show login
-    }
-
     create() {
         new Title(this, "competitive");
+
+        this.error = this.add
+            .text(350, this.cameras.main.centerY - 100, "")
+            .setOrigin(0.5)
+            .setDepth(999)
+            .setFontSize(24)
+            .setAlpha(0);
+
+        this.play = new MenuButton(
+            this,
+            200,
+            400,
+            "play-button",
+            "ShiftX"
+        ).setAlpha(0);
+
         this.form = this.add
             .dom(350, this.cameras.main.centerY + 100)
             .createFromCache("login");
@@ -63,9 +76,29 @@ export default class CompetitiveMenu extends Phaser.Scene {
 
         this.updateLeaderBoard();
 
-        new MetricMenuButton(this, 100, 500, "REFRESH", () => {
+        if (this.registry.get("competitive")) {
+            this.play.setAlpha(1);
+            this.form.setAlpha(0);
+        }
+
+        new MetricMenuButton(
+            this,
+            70,
+            this.cameras.main.height - 50,
+            "EXIT",
+            () => this.scene.start("MainMenu")
+        );
+
+        this.logout = new MetricMenuButton(this, 90, 50, "LOGOUT", () => {
+            this.registry.remove("competitive");
+            this.play.setAlpha(0);
+            this.form.setAlpha(1);
+            this.error.setAlpha(0);
+            this.logout.setAlpha(0);
+        }).setAlpha(this.registry.get("competitive") ? 1 : 0);
+        /*new MetricMenuButton(this, 100, 500, "REFRESH", () => {
             this.updateLeaderBoard();
-        });
+        });*/
     }
 
     updateLeaderBoard() {
@@ -124,8 +157,20 @@ export default class CompetitiveMenu extends Phaser.Scene {
                 },
                 body: JSON.stringify(creds),
             });
-            const data = await (res.status === 200 ? res.json() : res.text());
-            console.log(data);
+
+            if (res.status === 200) {
+                const data = await res.json();
+                this.registry.set("competitive", data as CareerData);
+                console.log(this.registry.get("competitive"));
+                this.play.setAlpha(1);
+                this.form.setAlpha(0);
+                this.error.setAlpha(0);
+                this.logout.setAlpha(1);
+            } else {
+                const msg = await res.text();
+                this.error.setAlpha(1);
+                this.error.setText(msg);
+            }
         } catch (err) {
             console.error("Failed to login", err);
         }

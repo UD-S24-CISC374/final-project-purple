@@ -1,5 +1,6 @@
 // All routes pertaining to handling users collection data
 const router = require("express").Router();
+const { ObjectId } = require("mongodb");
 const connDb = require("../db/dbConnect");
 const bcrypt = require("bcrypt");
 
@@ -9,13 +10,7 @@ connDb().then((_db) => {
     db = _db;
 });
 
-router.get("/", async (req, res) => {
-    const collection = await db.collection("users");
-    const results = await collection.find({}).toArray();
-
-    res.send(results).status(200);
-});
-
+// create a user or login if exists
 router.post("/", async (req, res) => {
     const collection = await db.collection("users");
     const { username, password } = req.body;
@@ -32,7 +27,7 @@ router.post("/", async (req, res) => {
                           best_profit: existing.best_profit,
                       })
                       .status(200)
-                : res.send("Wrong login or username taken").status(400);
+                : res.status(400).send("Wrong login or username taken");
         } else {
             const salt = await bcrypt.genSalt();
             const hashedPass = await bcrypt.hash(password, salt);
@@ -46,7 +41,34 @@ router.post("/", async (req, res) => {
             }).status(200);
         }
     } catch {
-        res.send("FAILED TO LOGIN").status(500);
+        res.status(500).send("FAILED TO LOGIN");
+    }
+});
+
+// update a user's profit
+router.put("/:id/profit", async (req, res) => {
+    const collection = await db.collection("users");
+    const { id } = req.params;
+    const { profit } = req.body;
+
+    const objId = new ObjectId(id);
+
+    if (profit === null) res.status(400).send("Missing profit");
+
+    try {
+        const user = await collection.findOneAndUpdate(
+            { _id: objId },
+            { $set: { best_profit: parseFloat(profit) || 0 } },
+            { new: true }
+        );
+
+        res.send({
+            id: user._id,
+            username: user.username,
+            best_profit: profit,
+        }).status(200);
+    } catch {
+        res.status(500).send("FAILED TO UPDATE PROFIT");
     }
 });
 
@@ -63,7 +85,7 @@ router.get("/leaderboard", async (req, res) => {
             .toArray();
         res.send(results).status(200);
     } catch {
-        res.send("FAILED TO LOAD").status(500);
+        res.status(500).send("FAILED TO LOAD");
     }
 });
 
