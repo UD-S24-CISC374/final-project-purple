@@ -134,7 +134,9 @@ export default class CompetitiveMenu extends Phaser.Scene {
     }
 
     async getLeaderboardUsers() {
-        const res = await fetch("http://localhost:3000/users/leaderboard");
+        const res = await fetch(
+            "https://schedulsine-api.onrender.com/users/leaderboard"
+        );
         const users: [] = await res.json();
         return users;
     }
@@ -150,13 +152,16 @@ export default class CompetitiveMenu extends Phaser.Scene {
         };
 
         try {
-            const res = await fetch("http://localhost:3000/users", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(creds),
-            });
+            const res = await fetch(
+                "https://schedulsine-api.onrender.com/users",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(creds),
+                }
+            );
 
             if (res.status === 200) {
                 const data = await res.json();

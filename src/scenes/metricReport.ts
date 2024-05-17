@@ -90,7 +90,7 @@ export default class MetricReport extends Phaser.Scene {
     async compUpdate(profit: number, id: string) {
         try {
             const res = await fetch(
-                `http://localhost:3000/users/${id}/profit`,
+                `https://schedulsine-api.onrender.com/users/${id}/profit`,
                 {
                     method: "PUT",
                     headers: {
