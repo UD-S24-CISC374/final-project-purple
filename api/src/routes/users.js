@@ -1,6 +1,7 @@
-// All routes pertaining to handling user collection data
+// All routes pertaining to handling users collection data
 const router = require("express").Router();
 const connDb = require("../db/dbConnect");
+const bcrypt = require("bcrypt");
 
 let db;
 
@@ -9,17 +10,41 @@ connDb().then((_db) => {
 });
 
 router.get("/", async (req, res) => {
-    let collection = await db.collection("users");
-    let results = await collection.find({}).toArray();
+    const collection = await db.collection("users");
+    const results = await collection.find({}).toArray();
 
     res.send(results).status(200);
+});
+
+router.post("/", async (req, res) => {
+    const collection = await db.collection("users");
+    const { username, password } = req.body;
+    console.log(req.body);
+    try {
+        const existing = await collection.findOne({ username });
+        if (existing) {
+            const verified = await bcrypt.compare(password, existing.password);
+            verified
+                ? res.send("Logged in").status(200)
+                : res.send("Wrong login").status(400);
+        } else {
+            const salt = await bcrypt.genSalt();
+            const hashedPass = await bcrypt.hash(password, salt);
+
+            const newUser = { username, password: hashedPass, best_profit: 0 };
+            await collection.insertOne(newUser);
+        }
+    } catch (err) {
+        console.error("Ahh", err);
+        res.send("FAILED TO LOGIN").status(500);
+    }
 });
 
 // get top 10 players with highest profit
 router.get("/leaderboard", async (req, res) => {
     try {
-        let collection = await db.collection("users");
-        let results = await collection
+        const collection = await db.collection("users");
+        const results = await collection
             .aggregate([
                 { $project: { name: 1, best_profit: 1 } },
                 { $sort: { best_profit: -1 } },

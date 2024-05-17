@@ -58,4 +58,7 @@ export const CONFIG = {
         pixelArt: true,
         antialias: true,
     },
+    dom: {
+        createContainer: true,
+    },
 };
